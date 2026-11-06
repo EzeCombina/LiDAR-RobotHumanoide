@@ -46,7 +46,10 @@ literal) y cómo se resolvió.
 - Faltan paquetes: `ros-jazzy-pcl-ros`, `ros-dev-tools` (trae `python3-rosdep`), `tmux`, `gh`. No se
   pudieron instalar desde la sesión de Claude porque `sudo` pide contraseña.
 
-**Pendiente**
+**Cómo se resolvió**
 
-- Autenticación con GitHub e instalación de los paquetes faltantes, a cargo del usuario. Hasta
-  resolverlo, los commits quedan locales.
+- El usuario instaló `ros-jazzy-pcl-ros`, `ros-dev-tools`, `tmux` y `gh`, corrió
+  `sudo rosdep init && rosdep update` y se autenticó con `gh auth login` + `gh auth setup-git`
+  (cuenta `EzeCombina`, protocolo HTTPS). Después de eso `git pull` y `git push` funcionaron.
+- Relevamiento posterior: todos los paquetes del paso 00 instalados (versiones en
+  `docs/versiones.md`). Etapa 0 cerrada.
