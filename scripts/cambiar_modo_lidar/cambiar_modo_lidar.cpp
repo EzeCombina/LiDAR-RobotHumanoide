@@ -23,7 +23,11 @@
  *     ./cambiar_modo_lidar ethernet                    # puerto /dev/ttyACM0
  *     ./cambiar_modo_lidar ethernet /dev/ttyACM1
  *
- * Compilación: ver README.md de esta carpeta.
+ * Compilación (requiere el SDK clonado en ~/lidar_ws/unilidar_sdk2):
+ *   cd scripts/cambiar_modo_lidar && mkdir -p build && cd build
+ *   cmake .. && make
+ *   (otra ubicación del SDK: cmake -DUNILIDAR_SDK_DIR=/ruta/unitree_lidar_sdk ..)
+ *   El ejecutable queda en scripts/cambiar_modo_lidar/build/cambiar_modo_lidar.
  * ============================================================================= */
 
 #include <chrono>
