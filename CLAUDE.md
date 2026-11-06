@@ -258,7 +258,9 @@ Dejar un documento `docs/pasos/futuro_navegacion.md` con:
   que ejecute `StopMove()`. Decidir si se procesa en la PC (Wi-Fi) o a bordo.
 
 ### Etapa 6 — Documento PDF final
-- Seguir `docs/FORMATO_DOCUMENTO.md`.
+- Seguir `docs/FORMATO_DOCUMENTO.md`. Como referencia visual, abrir
+  `docs/referencias/formato/Referencia_formato_Documentacion_Firmware_PLC14_v0.0.5.pdf`: copiar solo
+  el diseño, nunca su contenido ni la marca DataPyme.
 - Contenido: guía desde cero hasta el archivo de la habitación (etapas 1 a 3), más los capítulos de la
   Jetson (etapa 4) y del trabajo futuro (etapa 5).
 - Público: estudiantes de nivel básico, medio y avanzado. Explicar los conceptos (qué es una nube de

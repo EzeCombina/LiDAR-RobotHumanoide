@@ -1,9 +1,14 @@
 # Formato del documento PDF final
 
 El documento final sigue el **mismo formato** que la documentación técnica de referencia que entregó
-el usuario: la "Documentación Firmware PLC14 v0.0.5", que **no está en este repositorio** porque es un
-documento de otra empresa. Este archivo describe ese formato adaptado a la identidad de la **UTN
-Facultad Regional San Francisco**.
+el usuario: `docs/referencias/formato/Referencia_formato_Documentacion_Firmware_PLC14_v0.0.5.pdf`.
+**Ese PDF sirve solo como referencia visual de diseño** (maquetación, portada, encabezados, tablas,
+recuadros, índice). Su contenido y su marca (DataPyme) no tienen relación con este proyecto: no copiar
+textos, logos ni nombres de ese documento.
+
+Este archivo describe ese formato adaptado a la identidad de la **UTN Facultad Regional San
+Francisco**. Donde la referencia usa el verde y el logo de DataPyme, acá van los colores y el logo de
+la UTN FRSF.
 
 ## Identidad
 
