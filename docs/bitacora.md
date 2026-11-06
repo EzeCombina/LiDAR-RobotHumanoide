@@ -53,3 +53,40 @@ literal) y cómo se resolvió.
   (cuenta `EzeCombina`, protocolo HTTPS). Después de eso `git pull` y `git push` funcionaron.
 - Relevamiento posterior: todos los paquetes del paso 00 instalados (versiones en
   `docs/versiones.md`). Etapa 0 cerrada.
+
+## 2026-11-06 — Etapa 1: preparación del software (sin el sensor conectado)
+
+**Qué se hizo**
+
+- Se clonó y compiló `unilidar_sdk2` en `~/lidar_ws/unilidar_sdk2` (commit `0e3c51f`, SDK v2.0.10).
+  Los cinco ejemplos compilaron sin errores; CMake solo avisa
+  `CMake Deprecation Warning ... Compatibility with CMake < 3.5 will be removed` (no afecta).
+- Script `scripts/configurar_red_lidar.sh`: crea el perfil de NetworkManager `lidar-l2` (IP fija,
+  sin puerta de enlace, prioridad 10) y abre UDP 6201 en `ufw` solo en la placa del LiDAR. En esta
+  PC ya existía el perfil por DHCP "Conexión cableada 1" en `eno1` (prioridad −999): no se toca.
+  Todavía no se ejecutó (falta conectar el sensor y la confirmación del usuario).
+- **Decisión del usuario:** documentar las dos conexiones, Ethernet y USB (serie). USB para el
+  trabajo diario; Ethernet para el robot. Registrada en `CLAUDE.md`.
+- Herramienta propia `scripts/cambiar_modo_lidar/` (C++ + SDK) para pasar de Ethernet a serie y
+  viceversa. Compila; probado solo el camino de error sin sensor:
+  `[ERROR] Unilidar failed to initialize! Serial port "/dev/ttyACM0" does not exist!`.
+- Launch propio `config/unitree_lidar_ros2/l2_driver.launch.py` con `modo:=ethernet|usb` y
+  `rviz:=true|false`. Sintaxis verificada; falta probarlo con el driver compilado (paso 03).
+
+**Hallazgos al revisar el SDK y el driver**
+
+- Modo de fábrica: Ethernet (work mode 0). Para pasar a serie hay que comunicarse primero por
+  Ethernet (o con Unilidar 2) y después apagar y prender el sensor.
+- El driver ROS 2 ejecuta `setLidarWorkMode(work_mode)` al arrancar (`unitree_lidar_ros2.h:149`):
+  por USB hay que usar `work_mode: 8`; con el valor por defecto (0) el sensor vuelve a Ethernet.
+- `set_to_serial_mode` y `set_ip_address` del SDK tienen IPs fijas `192.168.123.110/.120`.
+  `set_ip_address` **cambia la IP del sensor** si se ejecuta: no correrlo.
+- `example_lidar_udp` reescribe el modo 0 y reinicia el sensor; si no llegan datos, se queda
+  esperando para siempre sin mensaje de error.
+- No hay una función para leer el modo actual: se deduce por qué interfaz responde.
+- El usuario `eze` ya pertenece al grupo `dialout` (acceso a `/dev/ttyACM0` sin `sudo`).
+
+**Equipo informado por el usuario**
+
+- L2 con fuente de 12 V 1 A, cable Ethernet y módulo adaptador con entrada de 12 V, USB y Ethernet.
+  Multímetro y PC con Windows disponibles. Polaridad del plug: **pendiente de medir**.

@@ -41,7 +41,7 @@ Firewall `ufw`: **activo** (habrá que abrir el puerto UDP 6201 en el paso 01).
 
 | Repositorio | URL | Commit | Fecha de clonado |
 |---|---|---|---|
-| unilidar_sdk2 | https://github.com/unitreerobotics/unilidar_sdk2 | | |
+| unilidar_sdk2 | https://github.com/unitreerobotics/unilidar_sdk2 | `0e3c51f512e6b8ff60b8c32f160b412cb48445c2` (SDK v2.0.10, 2025-03-10, rama `main`) | 2026-11-06, en `~/lidar_ws/unilidar_sdk2` |
 | point_lio_ros2 | https://github.com/dfloreaa/point_lio_ros2 | | |
 
 ## Paquetes apt
