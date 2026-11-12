@@ -269,3 +269,19 @@ Sensor en el piso, sobre su almohadilla, sin tocar. Driver por Ethernet. Script 
   abriendo RViz desde la terminal de Ubuntu. Quitar esas variables con `env -u` queda A VERIFICAR
   (con `rviz2 --help` sin ventana el error no se reproduce).
 - Documento del paso: `docs/pasos/03_driver_ros2.md` (Ethernet completo; USB pendiente del paso 02).
+
+## 2026-11-12 — Etapa 2: grabación (paso 04)
+
+- Por decisión del usuario (cable USB corto), se posterga el paso 02 (USB) y se pasa a la grabación.
+- Script `scripts/grabar_lidar.sh <nombre> [segundos] ["descripción"]`: controla entorno, tópicos y
+  espacio; graba `/unilidar/cloud` y `/unilidar/imu` en MCAP en `bags/<fecha>_<nombre>/`; corta con
+  `timeout -s INT` (Jazzy no tiene opción de duración en `ros2 bag record`) y escribe
+  `descripcion.txt`.
+- Prueba de 15 s: 173 nubes (11,98/s) y 3619 IMU (250,6/s) en 14,44 s, **sin pérdidas**;
+  28,2 MiB → **~117 MB/min**. Aviso corregido:
+  `[WARN] [ros2bag]: Positional "topics" argument deprecated. Please use optional "--topics" argument instead.`
+  (se pasó a `--topics`; prueba de 5 s sin aviso). Las grabaciones de prueba se borraron.
+- `bags/` está excluida de git (verificado con `git check-ignore`). Nuevo registro
+  `docs/grabaciones.md` para anotar cada grabación útil y dónde está.
+- Documento del paso: `docs/pasos/04_grabacion.md`, con el procedimiento de las tres grabaciones de
+  referencia (`sala_quieta`, `persona_caminando`, `recorrido_mano`).

@@ -76,6 +76,8 @@ el futuro una versión nueva rompe algo.
 | `python3-vcstool` | 0.3.0-1 (instalado 2026-11-06, con `ros-dev-tools`) | Descarga de varios repositorios | 00 |
 | `python3-rosdep` | 0.27.0-1 (instalado 2026-11-06, con `ros-dev-tools`) | Dependencias de paquetes ROS 2 | 00 |
 | `ros-jazzy-pcl-ros` | 2.6.5-1noble.20260916.065720 (instalado 2026-11-06) | Driver ROS 2 del L2 | 00 |
+| `ros-jazzy-rosbag2` | 0.26.11-1noble.20261006.034645 (viene con `ros-jazzy-desktop`) | Grabación (`ros2 bag`) | 04 |
+| `ros-jazzy-rosbag2-storage-mcap` | 0.26.11-1noble.20260911.143733 (viene con `ros-jazzy-desktop`) | Formato MCAP de las grabaciones | 04 |
 | `ros-jazzy-pcl-conversions` | 2.6.5-1noble.20260912.165932 | Driver ROS 2 del L2 | 00 |
 | `libpcl-dev` | 1.14.0+dfsg-1 | Driver del L2 / Point-LIO | 00 |
 | `libeigen3-dev` | 3.4.0-4build0.1 | Driver del L2 / Point-LIO | 00 |
