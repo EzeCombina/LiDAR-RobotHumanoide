@@ -92,6 +92,11 @@ cambia es qué parte del lugar queda en el mapa (paso 05, punto 6):
 En ambos casos: no tapar la ventana con la mano ni con el cable. El cuerpo de quien lo lleva queda
 filtrado si está a menos de 0,5 m del sensor (`blind`).
 
+> **Resultado (2026-11-12):** recorrido de una habitación con el sensor **vertical**, arrancando
+> apoyado y quieto: error de cierre 10,5 cm, inclinación 2–3°, mapa validado visualmente
+> (`mapas/2026-11-12_1445_habitacion_vertical_rapido`). La comparación con el sensor horizontal en
+> el mismo recorrido sigue pendiente.
+
 > **Prueba sugerida:** hacer el **mismo recorrido dos veces**, una con el sensor horizontal y otra
 > vertical (`<lugar>_horizontal` y `<lugar>_vertical`), y comparar los mapas. Sirve para elegir la
 > orientación y como dato para el montaje en el robot. Resultado: **pendiente** (A VERIFICAR).

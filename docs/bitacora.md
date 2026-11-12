@@ -484,3 +484,6 @@ Pedido del usuario: separar los archivos en subcarpetas. Opciones elegidas (de l
   **Confirmado: la inclinación se debía a arrancar con el sensor en movimiento.** Quedan 2–3°
   (posible error de la IMU o el giro al levantarlo; A VERIFICAR). `analizar_mapa.py` detectó dos
   planos a z ≈ 1,9 m (techo) y no el piso.
+- El usuario revisó el mapa `2026-11-12_1445_habitacion_vertical_rapido` en RViz: "se ve genial".
+  **Objetivo de corto plazo cumplido: mapa 3D de una habitación recorriéndola con el LiDAR en la
+  mano.** Paso 06 marcado como validado en el README.

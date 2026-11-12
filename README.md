@@ -55,7 +55,7 @@ del robot.
 | 03 | [Driver ROS 2 y RViz](docs/pasos/03_driver_ros2.md) | Completo (Ethernet) |
 | 04 | [Grabación de datos](docs/pasos/04_grabacion.md) | Completo |
 | 05 | [SLAM con Point-LIO](docs/pasos/05_slam_pointlio.md) | Completo |
-| 06 | [Mapear un lugar: procedimiento completo](docs/pasos/06_mapeo_de_un_lugar.md) | Procedimiento listo, falta el recorrido real |
+| 06 | [Mapear un lugar: procedimiento completo](docs/pasos/06_mapeo_de_un_lugar.md) | Validado con una habitación (2026-11-12) |
 
 ## Uso rápido: de un recorrido a un mapa
 
