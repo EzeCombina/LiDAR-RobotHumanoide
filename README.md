@@ -29,12 +29,13 @@ del robot.
 | `docs/pasos/` | Un documento por paso de la implementación |
 | `docs/bitacora.md` | Registro de cada sesión de trabajo |
 | `docs/versiones.md` | Versiones de todo lo instalado o clonado |
+| `docs/grabaciones.md`, `docs/mapas.md` | Registro de grabaciones y mapas, y dónde están guardados |
 | `docs/FORMATO_DOCUMENTO.md` | Formato del PDF final |
 | `docs/referencias/` | Documentación de referencia del proyecto |
 | `docs/pdf/` | Fuente y salida del documento PDF final |
 | `scripts/` | Scripts propios |
 | `config/` | Configuraciones propias o modificadas |
-| `mapas/` | Mapas livianos de ejemplo (los pesados quedan fuera de git) |
+| `mapas/` | Mapas generados (los `.pcd` quedan fuera de git; se suben sus resúmenes `.txt`) |
 | `bags/` | Grabaciones (fuera de git) |
 | `assets/` | Logo e imágenes |
 
@@ -43,6 +44,35 @@ del robot.
 - Unitree 4D LiDAR L2
 - PC con Ubuntu 24.04 + ROS 2 Jazzy
 - Robot Unitree R1 EDU (Jetson Orin NX)
+
+## Guía de pasos
+
+| Paso | Documento | Estado |
+|---|---|---|
+| 00 | [Preparación del entorno](docs/pasos/00_preparacion_entorno.md) | Completo |
+| 01 | [Conexión por Ethernet](docs/pasos/01_conexion_ethernet.md) | Completo |
+| 02 | Conexión por USB | Pendiente |
+| 03 | [Driver ROS 2 y RViz](docs/pasos/03_driver_ros2.md) | Completo (Ethernet) |
+| 04 | [Grabación de datos](docs/pasos/04_grabacion.md) | Completo |
+| 05 | [SLAM con Point-LIO](docs/pasos/05_slam_pointlio.md) | Completo |
+| 06 | [Mapear un lugar: procedimiento completo](docs/pasos/06_mapeo_de_un_lugar.md) | Procedimiento listo, falta el recorrido real |
+
+## Uso rápido: de un recorrido a un mapa
+
+Con todo instalado (pasos 00 a 05), desde la carpeta del repositorio:
+
+```bash
+# 1. Driver del sensor (dentro de tmux)
+ros2 launch config/unitree_lidar_ros2/l2_driver.launch.py modo:=ethernet rviz:=false
+# 2. Grabar el recorrido (Ctrl+C al volver al punto de partida)
+./scripts/grabar_lidar.sh <nombre> "" "<descripción>"
+# 3. Detener el driver y generar el mapa 3D
+./scripts/procesar_grabacion.sh bags/<carpeta>
+# 4. Ver el mapa en RViz (terminal del escritorio)
+./scripts/ver_mapa.sh mapas/<mapa>.pcd
+```
+
+Detalle en [docs/pasos/06_mapeo_de_un_lugar.md](docs/pasos/06_mapeo_de_un_lugar.md).
 
 ## Estado
 

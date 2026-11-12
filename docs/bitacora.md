@@ -343,3 +343,11 @@ Sensor en el piso, sobre su almohadilla, sin tocar. Driver por Ethernet. Script 
 - Documento del paso: `docs/pasos/05_slam_pointlio.md`. Incluye la orientación del sensor:
   con `gravity_align: true` cualquier orientación sirve si se arranca quieto (comparación
   práctica pendiente).
+
+## 2026-11-12 — Paso 06: procedimiento completo de mapeo
+
+- Nuevo `docs/pasos/06_mapeo_de_un_lugar.md`: reúne en orden preparación, grabación, generación,
+  revisión y registro de un mapa, con el resumen de comandos y la prueba sugerida de orientación
+  (mismo recorrido horizontal y vertical). Falta el recorrido real (el usuario lo hará en su
+  departamento).
+- `README.md`: tabla de pasos con su estado y "uso rápido" de cuatro comandos.
