@@ -34,8 +34,11 @@ Firewall `ufw`: **activo** (habrá que abrir el puerto UDP 6201 en el paso 01).
 
 | Elemento | Versión | Cómo se obtuvo |
 |---|---|---|
-| Hardware del L2 | (completar) | salida de `example_lidar_udp` |
-| Firmware del L2 | (completar) | salida de `example_lidar_udp` |
+| Hardware del L2 | 2.2.1.1 | salida de `example_lidar_udp` (2026-11-12) |
+| Firmware del L2 | 2.8.11.1 | salida de `example_lidar_udp` (2026-11-12) |
+| Versión que informa la librería del SDK | 2.0.9 | salida de `example_lidar_udp` (repositorio en v2.0.10) |
+| MAC del sensor | `0c:29:ab:7c:00:01` | `ip neigh show dev eno1` |
+| Modo de trabajo | 0 (Ethernet, fábrica) | 2026-11-12 |
 
 ## Repositorios de terceros
 

@@ -90,3 +90,31 @@ literal) y cómo se resolvió.
 
 - L2 con fuente de 12 V 1 A, cable Ethernet y módulo adaptador con entrada de 12 V, USB y Ethernet.
   Multímetro y PC con Windows disponibles. Polaridad del plug: **pendiente de medir**.
+
+## 2026-11-12 — Etapa 1, paso 01: conexión por Ethernet
+
+**Qué se hizo**
+
+- El usuario conectó el L2 por Ethernet a `eno1` y ejecutó `./scripts/configurar_red_lidar.sh eno1`.
+  Resultado: perfil `lidar-l2` activo, `eno1 UP 192.168.1.2/24`, enlace a 100 Mbit/s.
+- `ping 192.168.1.62`: 4/4 respuestas, ~0,1 ms. MAC del sensor `0c:29:ab:7c:00:01`.
+- Llegada de datos verificada **sin sudo** con un receptor UDP en Python (convertido en
+  `scripts/verificar_udp_lidar.py`), en lugar de `tcpdump`.
+- `example_lidar_udp`: hardware **2.2.1.1**, firmware **2.8.11.1**, librería del SDK 2.0.9,
+  *dirty percentage* 4,8 %, *time delay* 2,6 ms. Mensajes de IMU y de nube (≈5.100 puntos, 18
+  anillos).
+- Documento del paso: `docs/pasos/01_conexion_ethernet.md`.
+
+**Observaciones**
+
+- Con el sensor recién encendido llegaban solo paquetes de 1044 bytes (~215/s, 1,8 Mbit/s). Después
+  de correr el ejemplo aparecen también los de 80 bytes (~240/s, IMU) y de 1124 bytes (~11/s, tipo
+  sin identificar, A VERIFICAR). Tráfico total ≈ 2 Mbit/s: debería entrar en el serie de 4 Mbit/s.
+- En 40 s de `example_lidar_udp` (cortado con `timeout`) se imprimieron 1688 mensajes de IMU
+  (≈267 Hz) pero solo 2 de nube, y la salida se detuvo a los ~6 s de empezar a leer datos. El
+  ejemplo imprime mucho texto y no sirve para medir tasas: **A VERIFICAR** con `ros2 topic hz` en el
+  driver (paso 03).
+
+**Pendiente**
+
+- Polaridad medida del plug y comportamiento de los LEDs (datos del usuario).
