@@ -1,0 +1,12 @@
+Mapa: 2026-11-12_1445_habitacion_vertical_rapido/mapa.pcd
+Generado: 2026-11-12 14:47:19 en eze-laptop
+Grabación de origen: bags/2026-11-12_1442_habitacion_vertical_rapido
+SLAM: Point-LIO (point_lio_ros2), config/unilidar_l2.yaml + mapping_unilidar_l2.launch.py
+Puntos: 1102546
+Tamaño: 34M
+Commit del proyecto: 59a201c
+Trayectoria: 720 muestras, 72.5 s
+Largo del recorrido: 17.11 m
+Zona recorrida (x, y, z): 1.77 x 1.55 x 1.00 m
+Error de cierre (final vs. inicio): 0.105 m (horizontal 0.105 m, vertical +0.006 m)
+Trayectoria guardada en: 2026-11-12_1445_habitacion_vertical_rapido/trayectoria.csv

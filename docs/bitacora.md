@@ -471,3 +471,16 @@ Pedido del usuario: separar los archivos en subcarpetas. Opciones elegidas (de l
   el sensor desconectado y simulando datos con `ros2 bag play`.
 - Documentado en los pasos 01 (hora exacta del corte con `journalctl -k`), 04 (aviso y grabación
   incompleta) y 06 (esperar el resumen antes de desconectar).
+
+## 2026-11-12 — Habitación con arranque apoyado: se confirma la causa de la inclinación
+
+- Grabación `2026-11-12_1442_habitacion_vertical_rapido`: 74 s, completa (sin huecos, datos hasta
+  el final), arranque QUIETO (giróscopo 0,04–0,05 rad/s; el sensor estaba apoyado horizontal y
+  después se lo llevó vertical).
+- Driver detenido enviando SIGINT al proceso `ros2 launch` (padre del nodo) en lugar de
+  `pkill -f`, para no afectar al shell de Claude.
+- Mapa `2026-11-12_1445_habitacion_vertical_rapido`: 1,10 M puntos, **error de cierre 10,5 cm**
+  (antes 1,06 m), inclinación de los planos horizontales **2,1–2,9°** (antes 13,5–15,4°).
+  **Confirmado: la inclinación se debía a arrancar con el sensor en movimiento.** Quedan 2–3°
+  (posible error de la IMU o el giro al levantarlo; A VERIFICAR). `analizar_mapa.py` detectó dos
+  planos a z ≈ 1,9 m (techo) y no el piso.

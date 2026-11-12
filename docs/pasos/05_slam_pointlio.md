@@ -359,10 +359,13 @@ Primer resultado (2026-11-12):
 |---|---|---|---|
 | `sala_quieta` | Horizontal, apoyado en el piso | 0,006–0,09 rad/s (quieto) | 1,3–1,4° (nivelado) |
 | `departamento_vertical` | Vertical, en la mano | **0,24–0,31 rad/s** (en movimiento) | **13,5–15,4°** (torcido) |
+| `habitacion_vertical_rapido` | Arranque apoyado (horizontal) y recorrido en vertical | 0,04–0,05 rad/s (quieto) | 2,1–2,9° (casi nivelado) |
 
-Causa probable: el arranque en la mano. También puede influir el error de la IMU de este sensor
-(en reposo mide menos de 9,8 m/s² en su eje Z). Prueba pendiente para separar ambas causas: grabar
-en vertical **empezando con el sensor apoyado y quieto** 10 s (A VERIFICAR).
+**Confirmado (2026-11-12):** arrancando con el sensor apoyado y quieto, la inclinación bajó de
+13,5–15,4° a 2,1–2,9° y el error de cierre de 1,06 m a 10,5 cm. El sensor puede estar apoyado en
+otra orientación que la de trabajo (en la prueba estuvo horizontal y después se lo llevó vertical):
+lo importante es que esté **quieto**. Los 2–3° que quedan pueden deberse al error de la IMU de este
+sensor o al giro al levantarlo (A VERIFICAR).
 
 Para revisar el arranque de cualquier grabación **antes de procesarla**:
 `./scripts/grabacion/revisar_grabacion.py bags/<carpeta>` (paso 04, punto 2.1) indica si el sensor estaba
