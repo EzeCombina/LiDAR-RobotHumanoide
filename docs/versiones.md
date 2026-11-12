@@ -48,7 +48,9 @@ Firewall `ufw`: **activo** (habrá que abrir el puerto UDP 6201 en el paso 01).
 
 > El driver ROS 2 de `unilidar_sdk2` (`unitree_lidar_ros2`, versión de paquete 0.0.0) compila sin
 > cambios en Jazzy (verificado 2026-11-12).
-| point_lio_ros2 | https://github.com/dfloreaa/point_lio_ros2 | | |
+| point_lio_ros2 | https://github.com/dfloreaa/point_lio_ros2 | `a8e2d0d5090af97ead8dd4fac3d37cf3dbb33ff7` (2025-08-14, rama `main`) | 2026-11-12, en `~/lidar_ws/point_lio_ws/src/point_lio_ros2` |
+
+> Point-LIO (`point_lio`) compila sin cambios en Jazzy (verificado 2026-11-12).
 
 ## Paquetes apt
 

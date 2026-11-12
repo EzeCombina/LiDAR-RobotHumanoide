@@ -1,0 +1,7 @@
+Mapa: 2026-11-12_1049_persona_caminando_pointlio.pcd
+Generado: 2026-11-12 10:50:52 en eze-laptop
+Grabación de origen: bags/2026-11-12_1028_persona_caminando
+SLAM: Point-LIO (point_lio_ros2), config/unilidar_l2.yaml + mapping_unilidar_l2.launch.py
+Puntos: 1121515
+Tamaño: 35M
+Commit del proyecto: cc73e61

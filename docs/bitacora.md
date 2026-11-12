@@ -320,3 +320,26 @@ Sensor en el piso, sobre su almohadilla, sin tocar. Driver por Ethernet. Script 
   con la cúpula hacia arriba **no ve nada por debajo de su base** (semiesfera superior). Se agregó
   la limitación: los obstáculos bajos no quedan en el mapa con el sensor horizontal; la altura e
   inclinación para el robot se definen con el soporte (A VERIFICAR).
+
+## 2026-11-12 — Etapa 2: SLAM con Point-LIO (paso 05)
+
+- Se clonó `dfloreaa/point_lio_ros2` (commit `a8e2d0d`) en `~/lidar_ws/point_lio_ws/src`.
+  `rosdep check` sin faltantes. `colcon build` en Release: **compila nativo en Jazzy** (53 s),
+  0 advertencias del compilador; avisos de CMake `CMP0144`/`CMP0074` (PCL) y `CMP0148`
+  (`FindPythonLibs`). No hace falta Docker/Humble.
+- Primera corrida manual con `sala_quieta`: Point-LIO inicializa la IMU y procesa sin errores.
+  Trayectoria registrada desde `/aft_mapped_to_init` (≈ 3.840 mensajes/s): Z estable ±2 cm,
+  ~9 cm de corrimiento horizontal al inicio y luego estable, máximo 15 cm. Aceptable pero mayor
+  de lo esperable; posibles causas (A VERIFICAR): vibración y aceleración media de la IMU 7,8 m/s².
+- Mapa `sala_quieta`: 1,7 M de puntos, ~8 × 6 m en planta, Z de 0 a 2,85 m.
+- No hay visor de PCD instalado (`pcl-tools`, CloudCompare, Open3D). Se usa
+  `pcl_ros/pcd_to_pointcloud` (ya instalado) + RViz con `config/rviz/ver_mapa.rviz`.
+- Scripts nuevos: `procesar_grabacion.sh` (grabación → mapa en `mapas/` con `.txt` y `.log`) y
+  `ver_mapa.sh`. Probados con terminal simulada; `persona_caminando` → 1,12 M de puntos en 66 s.
+- **Falló** el control "ya hay un Point-LIO corriendo" con un falso positivo: `pgrep -f
+  pointlio_mapping` encontraba ese texto en la línea de comando del propio shell de pruebas. Se
+  cambió el patrón a la ruta del ejecutable (`lib/point_lio/pointlio_mapping`).
+- `mapas/*.log` agregado a `.gitignore`. Registro nuevo `docs/mapas.md`.
+- Documento del paso: `docs/pasos/05_slam_pointlio.md`. Incluye la orientación del sensor:
+  con `gravity_align: true` cualquier orientación sirve si se arranca quieto (comparación
+  práctica pendiente).

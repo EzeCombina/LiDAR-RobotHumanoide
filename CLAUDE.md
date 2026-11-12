@@ -186,6 +186,9 @@ Fuentes: manual oficial del L2 (v1.1), manual de Unilidar 2 (v1.0), código de l
   compilan, usar un contenedor Docker `osrf/ros:humble-desktop` con `--net=host`. **Dentro del
   contenedor se corren el driver, la grabación y el SLAM juntos**, porque Jazzy y Humble no se
   comunican de forma confiable entre sí. Documentar cuál camino funcionó.
+  **Resultado (2026-11-12): el driver y Point-LIO compilan y funcionan nativos en Jazzy; no hizo
+  falta Docker.** Scripts: `grabar_lidar.sh`, `procesar_grabacion.sh` (grabación → mapa en
+  `mapas/`) y `ver_mapa.sh`. Pasos: 04 grabación, 05 SLAM.
 - Volumen de datos estimado: del orden de 1 a 2 GB cada 10 minutos de grabación.
 
 ---
