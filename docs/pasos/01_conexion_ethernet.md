@@ -242,6 +242,61 @@ Qué indica cada dato:
   (la gravedad).
 - **cloud size / ringNum:** unos 5.100 puntos por mensaje, 18 anillos.
 
+## 5. Estado interno del sensor (diagnóstico)
+
+La herramienta del proyecto `estado_lidar` muestra el estado interno que el sensor envía dentro de
+cada paquete de puntos: velocidad de los dos motores, suciedad, pérdida de paquetes, temperaturas y
+tensiones. Es útil para verificar que el sensor esté sano y para tener un registro de referencia.
+
+```bash
+cd ~/Documentos/LiDAR-RobotHumanoide/scripts/herramientas_sdk
+mkdir -p build && cd build
+cmake .. && make
+./estado_lidar udp 20        # 20 segundos; cerrar antes el driver o el ejemplo
+```
+
+**Salida obtenida** (resumen, sensor del laboratorio con unos minutos de funcionamiento,
+2026-11-12; salida completa en `docs/mediciones/estado_lidar_2026-11-12.txt`):
+
+```text
+Paquetes recibidos por tipo:
+    101  respuesta (ACK)                ...
+    102  puntos 3D                      ...  (216 por segundo)
+    104  IMU                            ...  (251 por segundo)
+Resumen del estado (4325 paquetes de puntos):
+                            mínimo     promedio      máximo
+  sys_rotation_period      4621.000     4624.262     4629.000
+  com_rotation_period    229426.000   230091.540   231579.000
+  dirty_index                 0.000        5.074       36.000
+  packet_lost_up              0.000        0.000        0.000
+  packet_lost_down            0.000        0.000        0.000
+  apd_temperature            41.001       41.528       41.982
+  apd_voltage               150.080      152.303      154.219
+  laser_voltage              49.487       49.749       49.991
+  imu_temperature            59.219       60.703       61.762
+```
+
+Cómo interpretarla:
+
+| Campo | Lectura | Interpretación |
+|---|---|---|
+| `sys_rotation_period` | ~4.620 | Período del **motor de alta velocidad (espejo)** en microsegundos → 1 / 4.620 µs ≈ **216,4 Hz**, igual a la frecuencia de barrido vertical del manual (216 Hz) |
+| `com_rotation_period` | ~230.100 | Período del **motor de baja velocidad (cabezal)** en microsegundos → **4,35 Hz**. El manual indica 5,55 Hz de barrido horizontal: **A VERIFICAR** con Unitree |
+| `dirty_index` | 0 a 36, promedio ~5 | Suciedad de la ventana; varía con la escena |
+| `packet_lost_*` | 0 | Sin pérdida de paquetes internos |
+| `apd_temperature` / `apd_voltage` | ~41 °C / ~152 V | La tensión del fotodetector sube con su temperatura (compensación térmica) |
+| `laser_voltage` | ~49,7 V | Tensión del emisor láser |
+| `imu_temperature` | ~60 °C | La IMU tiene calefacción controlada (el manual menciona su "función termostática") |
+
+> **Unidades:** el manual de Unilidar 2 dice que estas velocidades están en revoluciones por minuto y
+> asigna `sys` al motor horizontal y `com` al vertical. Los valores medidos solo son coherentes como
+> **períodos en microsegundos**, con `sys` = espejo y `com` = cabezal (el código del SDK los
+> comenta como *Up motor* y *Down motor*). Interpretación del proyecto: **A VERIFICAR** con
+> Unitree.
+
+Lo importante para el diagnóstico es que los períodos sean **estables**: en el sensor del laboratorio
+varían menos de ±0,2 % (espejo) y ±0,7 % (cabezal).
+
 ## Verificación final
 
 - [ ] `ping 192.168.1.62` sin pérdidas.

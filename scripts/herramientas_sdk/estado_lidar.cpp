@@ -17,8 +17,10 @@
  *   (programa de Windows que Unitree ya no ofrece para descargar). Sirve para diagnosticar el sensor (por
  *   ejemplo, si hace ruido: ver si los motores giran estables).
  *
- *   El programa SOLO ESCUCHA: no envía ningún comando de configuración, ni de
- *   rotación, ni de reinicio al sensor.
+ *   El programa no llama a ninguna función de configuración, rotación ni
+ *   reinicio. Igualmente, la librería del SDK intercambia mensajes internos con
+ *   el sensor al conectarse (se observan respuestas ACK, un paquete de versión y
+ *   uno de parámetros): no modifican la configuración guardada.
  *
  * Cómo se usa (cerrar antes el driver de ROS 2 u otro programa que use el puerto):
  *   ./estado_lidar udp                         # 10 s, IPs de fábrica
@@ -121,7 +123,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    printf("Escuchando %d s (solo lectura, no se envían comandos)...\n\n", segundos);
+    printf("Escuchando %d s (sin comandos de configuración)...\n\n", segundos);
     printf("seg | sys_rot | com_rot | dirty  | lost_up | lost_dn | T_apd | V_apd  | V_laser | T_imu | paq. puntos\n");
 
     std::map<int, long> tipos_total;

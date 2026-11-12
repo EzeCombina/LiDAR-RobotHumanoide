@@ -230,3 +230,30 @@ Sensor en el piso, sobre su almohadilla, sin tocar. Driver por Ethernet. Script 
   del robot).
 - El manual de Unilidar 2 se conserva en `docs/referencias/` porque describe los campos de estado
   del sensor (unidades de los motores, temperaturas, tensiones).
+
+## 2026-11-12 — Estado de los motores con `estado_lidar`
+
+- Sensor conectado por Ethernet, apoyado en la almohadilla, en el piso. `estado_lidar udp 15` y
+  luego `udp 20` (con unos minutos de funcionamiento, guardado en
+  `docs/mediciones/estado_lidar_2026-11-12.txt`).
+- **Motores estables:** `sys_rotation_period` 4.616–4.629 (≈ 4.621) y `com_rotation_period`
+  229.384–232.396 (≈ 230.100). Interpretados como períodos en µs: **espejo 216,4 Hz** (coincide
+  con los 216 Hz del manual) y **cabezal 4,35 Hz** (el manual dice 5,55 Hz: A VERIFICAR). Las
+  unidades y la asignación sys/com contradicen al manual de Unilidar 2, que habla de r/min y asigna
+  `sys` al motor horizontal.
+- Sin pérdida de paquetes internos. APD 38,7 → 41,5 °C y 148 → 152 V (sube con la temperatura),
+  láser 49,7 V, IMU ≈ 60,5 °C (calefaccionada), `dirty_index` promedio ≈ 5.
+- Paquetes por tipo: puntos 3D 216/s, IMU 251/s, ACK ≈ 1/s, 1 de versión, 1 de parámetros. La
+  librería del SDK intercambia mensajes con el sensor al conectarse aunque el programa no llame a
+  funciones de configuración: se corrigió el texto de `estado_lidar` que decía "solo escucha".
+  Los paquetes de 1124 bytes (~11/s) vistos con `verificar_udp_lidar.py` siguen sin identificar:
+  el SDK no los reporta con ningún tipo conocido (A VERIFICAR).
+- **Relación con el ruido:** en la medición de vibración del eje Z (`imu_reposo_2026-11-12.csv`),
+  ≈ 59 % de la energía está en **8,70–8,80 Hz = 2,00 × la rotación del cabezal**, con armónicos en
+  13,1 Hz (×3,0) y 18,9 Hz (×4,35). La vibración vertical está sincronizada con el giro del cabezal
+  (dos golpes por vuelta). En X e Y dominan 23,3 y 14,5 Hz, que no son armónicos del cabezal ni el
+  alias del espejo (34,4 Hz con la IMU a 250,8 Hz). Hipótesis: desbalance, juego o roce en el
+  conjunto que gira. No se puede confirmar sin un L2 de referencia; dato útil para el soporte de
+  Unitree.
+- Driver relanzado en `tmux` (sesión `lidar`, `modo:=ethernet rviz:=false`): `/unilidar/cloud` a
+  12,01 Hz.
