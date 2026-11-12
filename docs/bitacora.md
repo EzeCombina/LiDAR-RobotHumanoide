@@ -257,3 +257,15 @@ Sensor en el piso, sobre su almohadilla, sin tocar. Driver por Ethernet. Script 
   Unitree.
 - Driver relanzado en `tmux` (sesión `lidar`, `modo:=ethernet rviz:=false`): `/unilidar/cloud` a
   12,01 Hz.
+
+## 2026-11-12 — Primera nube en RViz y documento del driver
+
+- El usuario abrió RViz con `view.rviz` del SDK mientras el driver corría en `tmux`: la nube se ve
+  bien y se reconoce el lugar. Captura en `docs/img/rviz_primera_nube_2026-11-12.png`.
+- **Falló** el primer intento desde la terminal integrada de VS Code:
+  `rviz2: symbol lookup error: /snap/core20/current/lib/x86_64-linux-gnu/libpthread.so.0: undefined symbol: __libc_pthread_init, version GLIBC_PRIVATE`.
+  Causa: VS Code está instalado como snap (`code` 278, classic) y su terminal hereda `GTK_PATH`,
+  `GTK_EXE_PREFIX`, `GIO_MODULE_DIR`, `GTK_IM_MODULE_FILE`, `LOCPATH` y `SNAP`. **Se resolvió**
+  abriendo RViz desde la terminal de Ubuntu. Quitar esas variables con `env -u` queda A VERIFICAR
+  (con `rviz2 --help` sin ventana el error no se reproduce).
+- Documento del paso: `docs/pasos/03_driver_ros2.md` (Ethernet completo; USB pendiente del paso 02).
