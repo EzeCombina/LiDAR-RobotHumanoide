@@ -44,7 +44,7 @@ Firewall `ufw`: **activo** (habrá que abrir el puerto UDP 6201 en el paso 01).
 
 | Repositorio | URL | Commit | Fecha de clonado |
 |---|---|---|---|
-| unilidar_sdk2 | https://github.com/unitreerobotics/unilidar_sdk2 | `0e3c51f512e6b8ff60b8c32f160b412cb48445c2` (SDK v2.0.10, 2025-03-10, rama `main`) | 2026-11-06, en `~/lidar_ws/unilidar_sdk2` |
+| unilidar_sdk2 | https://github.com/unitreerobotics/unilidar_sdk2 | `0e3c51f512e6b8ff60b8c32f160b412cb48445c2` (tag `v2.0.10`, 2025-03-10; idéntico al `.zip` de la página de Unitree) | 2026-11-06, en `~/lidar_ws/unilidar_sdk2` |
 
 > El driver ROS 2 de `unilidar_sdk2` (`unitree_lidar_ros2`, versión de paquete 0.0.0) compila sin
 > cambios en Jazzy (verificado 2026-11-12).

@@ -182,6 +182,13 @@ cmake ..
 make -j"$(nproc)"
 ```
 
+> **Alternativa sin git:** la página oficial (`https://www.unitree.com/download/L2`) ofrece el
+> "Unilidar SDK 2 Software Package" como `unilidar_sdk2-2.0.10.zip`. Se verificó que su contenido
+> es idéntico al commit `0e3c51f` (tag `v2.0.10`). Descomprimirlo en `~/lidar_ws/` y renombrar la
+> carpeta a `unilidar_sdk2`. El paquete trae tres carpetas: `unitree_lidar_sdk/` (SDK en C++),
+> `unitree_lidar_ros2/` (driver ROS 2, el que usa este proyecto) y `unitree_lidar_ros/` (driver
+> ROS 1, que no aplica en Ubuntu 24.04).
+
 **Salida esperada:** termina con `[100%] Built target ...` para los cinco programas. CMake muestra
 un aviso `CMake Deprecation Warning ... Compatibility with CMake < 3.5 will be removed`: no afecta.
 
