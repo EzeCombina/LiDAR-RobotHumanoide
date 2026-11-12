@@ -206,12 +206,13 @@ Cada etapa termina con su documento en `docs/pasos/`, la bitácora actualizada y
 > cómoda para el trabajo diario en la PC; **Ethernet es la de destino para el robot**. Hay un solo
 > modo activo a la vez, guardado en el sensor (work mode 0 = Ethernet, 8 = serie, por bit3). De
 > fábrica viene en Ethernet: para pasar a USB primero hay que comunicarse por Ethernet. Cambio de modo
-> con la herramienta propia `scripts/cambiar_modo_lidar/` (los ejemplos `set_to_*_mode` del SDK
+> con la herramienta propia `scripts/herramientas_sdk/` (`cambiar_modo_lidar`) (los ejemplos `set_to_*_mode` del SDK
 > tienen IPs fijas `192.168.123.110/.120`). **Trampa del driver ROS 2:** al arrancar ejecuta
 > `setLidarWorkMode(work_mode)`; por USB hay que usar `work_mode: 8` o el sensor vuelve a Ethernet.
 > Usar el launch propio `config/unitree_lidar_ros2/l2_driver.launch.py modo:=ethernet|usb`.
-> Antes de llevar el sensor al robot, **dejarlo en modo Ethernet**. Pasos: 01 Ethernet, 02 USB,
-> 03 driver ROS 2 (ambos modos).
+> Antes de llevar el sensor al robot, **dejarlo en modo Ethernet**. Pasos: 01 prueba con Unilidar 2
+> (Windows), 02 Ethernet, 03 USB, 04 driver ROS 2 (ambos modos). Herramienta de diagnóstico
+> `estado_lidar` (motores, temperaturas, tensiones) en la misma carpeta.
 1. Verificación del contenido de la caja y de la **polaridad** del plug de la fuente.
 2. Configuración de red: IP fija `192.168.1.2/24` en la placa libre, con `nmcli` (sin puerta de
    enlace) y `ufw allow 6201/udp` si el firewall está activo. Revisar el choque de redes.

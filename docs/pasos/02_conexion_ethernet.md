@@ -1,4 +1,4 @@
-# Paso 01 — Conexión del LiDAR por Ethernet
+# Paso 02 — Conexión del LiDAR por Ethernet
 
 ## Objetivo
 
@@ -6,11 +6,13 @@ Conectar el LiDAR L2 a la PC por Ethernet, configurar la red, comprobar que lleg
 las versiones de hardware y firmware del sensor con el programa de ejemplo del SDK oficial.
 
 Ethernet es el **modo de fábrica** del sensor y es la conexión que se va a usar en el robot. Además,
-es obligatorio pasar por este paso para poder habilitar la conexión USB (paso 02).
+es obligatorio pasar por este paso para poder habilitar la conexión USB (paso 03).
 
 ## Requisitos
 
 - Paso 00 completo (ROS 2 Jazzy, herramientas de compilación, repositorio clonado).
+- Recomendado: paso 01 (primera prueba con Unilidar 2 en Windows), para saber que el sensor
+  funciona antes de configurar Ubuntu.
 - LiDAR Unitree L2 con su módulo adaptador, la fuente de 12 V y un cable Ethernet.
 - Una placa Ethernet libre en la PC (en la PC del laboratorio: `eno1`).
 - Multímetro.
@@ -29,7 +31,7 @@ El cable del sensor termina en un **módulo adaptador** que tiene tres conectore
 |---|---|
 | Entrada de alimentación (plug DC 3,5 × 1,35 mm) | Fuente de 12 V / 1 A incluida |
 | RJ45 (Ethernet) | Placa Ethernet libre de la PC |
-| USB-C | PC (solo en modo serie, ver paso 02) |
+| USB-C | PC (solo en modo serie, ver paso 03) |
 
 ### 1.1 Medir la polaridad de la fuente antes de conectarla
 
@@ -258,4 +260,4 @@ Qué indica cada dato:
 | `ERROR al abrir 192.168.1.2:6201: [Errno 98] Address already in use` | Otro programa (ejemplo del SDK o driver) está usando el puerto | Cerrarlo antes |
 | `Cannot assign requested address` | La PC no tiene la IP `192.168.1.2` | Volver a correr `configurar_red_lidar.sh` |
 | El sensor gira pero hay pocos o ningún punto | Arranque en frío: el sensor se calienta antes de medir | Esperar unos minutos |
-| El sensor dejó de responder en `192.168.1.62` | Se ejecutó `set_ip_address`, o está en modo serie | Probar `ping 192.168.123.110`; si está en modo serie, ver paso 02 |
+| El sensor dejó de responder en `192.168.1.62` | Se ejecutó `set_ip_address`, o está en modo serie | Probar `ping 192.168.123.110`; si está en modo serie, ver paso 03 |

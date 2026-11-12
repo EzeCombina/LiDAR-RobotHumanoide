@@ -50,7 +50,7 @@ RED_PC=$(echo "$IP_PC" | cut -d/ -f1 | cut -d. -f1-3)
 if ip -br addr | grep -v "^$PLACA " | grep -q " ${RED_PC}\."; then
     echo "ATENCIÓN: otra placa ya tiene una dirección ${RED_PC}.x:"
     ip -br addr | grep -v "^$PLACA " | grep " ${RED_PC}\."
-    echo "Hay choque de redes. Cambiar la red del sensor (ver docs/pasos/01_red_y_conexion.md)."
+    echo "Hay choque de redes. Cambiar la red del sensor (ver docs/pasos/02_conexion_ethernet.md)."
     exit 1
 fi
 

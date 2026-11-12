@@ -200,3 +200,20 @@ Sensor en el piso, sobre su almohadilla, sin tocar. Driver por Ethernet. Script 
   en `unitree_lidar_protocol.h`), así que también se pueden leer desde Ubuntu.
 - Diferencia entre manuales: el de Unilidar 2 dice que el modo de ángulo negativo (NEGA) viene
   activado de fábrica; el del L2 y el README del SDK dicen que no. A VERIFICAR en Unilidar 2.
+
+## 2026-11-12 — Renumeración de pasos y herramienta `estado_lidar`
+
+- El usuario descargó de la página de Unitree `unilidar_sdk2-2.0.10.zip`: es **idéntico** al clon
+  (commit `0e3c51f` = tag `v2.0.10`). No incluye el programa Unilidar 2. El manual de Unilidar 2
+  descargado es el mismo que ya estaba en `docs/referencias/`.
+- **Renumeración de los pasos** (decisión del usuario): 01 primera prueba con Unilidar 2 en Windows
+  (nuevo, `01_prueba_unilidar2_windows.md`, pendiente de validar), 02 Ethernet (antes 01,
+  `02_conexion_ethernet.md`), 03 USB, 04 driver ROS 2. Referencias actualizadas en `CLAUDE.md`,
+  paso 00, `versiones.md` y `configurar_red_lidar.sh` (que además apuntaba a un archivo
+  inexistente, `01_red_y_conexion.md`). Las entradas anteriores de esta bitácora conservan la
+  numeración vieja.
+- Las herramientas en C++ pasan a `scripts/herramientas_sdk/`: `cambiar_modo_lidar` y la nueva
+  **`estado_lidar`**, que lee el estado interno (`LidarInsideState`) de cada paquete de puntos:
+  velocidades de los dos motores, suciedad, pérdida de paquetes, temperaturas y tensiones, más un
+  conteo de paquetes por tipo. Solo escucha, no envía comandos. Compila sin advertencias; falta
+  probarla con el sensor conectado.
