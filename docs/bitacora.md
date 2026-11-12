@@ -412,3 +412,12 @@ Sensor en el piso, sobre su almohadilla, sin tocar. Driver por Ethernet. Script 
 - Conclusión provisoria: el mapa quedó torcido porque Point-LIO midió la gravedad con el sensor en
   movimiento. Se actualizó el procedimiento (paso 06): **arrancar con el sensor apoyado y quieto
   en la orientación de trabajo**. Prueba pendiente: repetir en vertical arrancando apoyado.
+- (Continuación) `revisar_grabacion.py` ahora revisa también el **arranque** (primeros 4 s de IMU:
+  aceleración media, eje de la gravedad y desvío del giróscopo con límite 0,1 rad/s → "QUIETO" o
+  "EN MOVIMIENTO"). Departamento: EN MOVIMIENTO (0,24–0,31 rad/s); sala quieta: QUIETO. Así el
+  análisis de arranque queda en un script y no solo en la bitácora.
+- Captura del usuario de RViz (13:53): el mapa se ve como una "caja" inclinada respecto de la
+  grilla, y aparece el aviso `Fixed Frame: No tf data. Actual err...` porque nadie publicaba el
+  marco `map`. Se agregó a `ver_mapa.sh` un `static_transform_publisher` (`map` → `mapa_origen`);
+  verificado en `/tf_static`. Esa ventana no mostraba la trayectoria porque se abrió con la versión
+  anterior de `ver_mapa.sh`.

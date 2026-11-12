@@ -11,6 +11,10 @@
 #       si se cortó el cable de red durante la grabación).
 #   Valores esperados para el L2: /unilidar/cloud ~12 Hz (83 ms) y
 #   /unilidar/imu ~250 Hz (4 ms).
+#   Además revisa el ARRANQUE: en los primeros 4 s de IMU calcula cuánto se
+#   movió el sensor (desvío del giróscopo) y hacia dónde apunta la gravedad.
+#   Point-LIO mide la gravedad al empezar y con eso nivela todo el mapa: si el
+#   sensor no estaba quieto, el mapa puede quedar inclinado.
 #
 #   No necesita el sensor ni el driver. Solo lee el archivo.
 #
@@ -23,6 +27,11 @@ import sys
 import numpy as np
 import rosbag2_py
 import yaml
+from rclpy.serialization import deserialize_message
+from sensor_msgs.msg import Imu
+
+SEGUNDOS_ARRANQUE = 4.0
+GIRO_QUIETO = 0.1  # rad/s: desvío del giróscopo por debajo del cual se considera "quieto"
 
 
 def main():
@@ -41,9 +50,14 @@ def main():
     lector.open(rosbag2_py.StorageOptions(uri=carpeta, storage_id=formato),
                 rosbag2_py.ConverterOptions("cdr", "cdr"))
     tiempos = {}
+    acel, giro = [], []
     while lector.has_next():
-        topico, _, t = lector.read_next()
+        topico, datos, t = lector.read_next()
         tiempos.setdefault(topico, []).append(t * 1e-9)
+        if topico == "/unilidar/imu" and t * 1e-9 - tiempos[topico][0] <= SEGUNDOS_ARRANQUE:
+            m = deserialize_message(datos, Imu)
+            acel.append([m.linear_acceleration.x, m.linear_acceleration.y, m.linear_acceleration.z])
+            giro.append([m.angular_velocity.x, m.angular_velocity.y, m.angular_velocity.z])
 
     print(f"Grabación: {carpeta} (formato {formato})")
     hay_huecos = False
@@ -66,6 +80,22 @@ def main():
             print("  sin huecos")
 
     print("\nResultado:", "HAY HUECOS: revisar la grabación" if hay_huecos else "grabación completa")
+
+    if len(acel) > 10:
+        a, g = np.array(acel).mean(axis=0), np.array(giro).std(axis=0)
+        eje = int(np.argmax(np.abs(a)))
+        otros = [i for i in range(3) if i != eje]
+        angulo = np.degrees(np.arctan2(np.linalg.norm(a[otros]), abs(a[eje])))
+        quieto = g.max() < GIRO_QUIETO
+        print(f"\nArranque (primeros {SEGUNDOS_ARRANQUE:.0f} s de IMU, {len(acel)} muestras):")
+        print(f"  aceleración media [m/s²]: x={a[0]:.2f} y={a[1]:.2f} z={a[2]:.2f} "
+              f"(módulo {np.linalg.norm(a):.2f})")
+        print(f"  gravedad sobre el eje {'xyz'[eje]} del sensor, a {angulo:.1f}° de ese eje")
+        print(f"  desvío del giróscopo [rad/s]: x={g[0]:.3f} y={g[1]:.3f} z={g[2]:.3f} "
+              f"-> {'QUIETO' if quieto else 'EN MOVIMIENTO'} (límite {GIRO_QUIETO} rad/s)")
+        if not quieto:
+            print("  ATENCIÓN: el sensor se movía al empezar. El mapa puede quedar inclinado;")
+            print("  conviene repetir la grabación arrancando con el sensor apoyado y quieto.")
 
 
 if __name__ == "__main__":

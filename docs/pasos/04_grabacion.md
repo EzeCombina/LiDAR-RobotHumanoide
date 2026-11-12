@@ -134,6 +134,21 @@ Grabación: bags/2026-11-12_1333_departamento_vertical (formato mcap)
 Resultado: grabación completa
 ```
 
+Al final, el script revisa el **arranque**: si el sensor estaba quieto en los primeros 4 s, que es
+cuando Point-LIO mide la gravedad para nivelar el mapa. Ejemplo real de una grabación que arrancó
+con el sensor en la mano:
+
+```text
+Arranque (primeros 4 s de IMU, 1001 muestras):
+  aceleración media [m/s²]: x=9.08 y=-2.91 z=1.53 (módulo 9.66)
+  gravedad sobre el eje x del sensor, a 19.9° de ese eje
+  desvío del giróscopo [rad/s]: x=0.242 y=0.305 z=0.139 -> EN MOVIMIENTO (límite 0.1 rad/s)
+  ATENCIÓN: el sensor se movía al empezar. El mapa puede quedar inclinado;
+  conviene repetir la grabación arrancando con el sensor apoyado y quieto.
+```
+
+Con el sensor apoyado (`sala_quieta`) da `0.087 / 0.081 / 0.006 rad/s -> QUIETO`.
+
 Se considera hueco un intervalo mayor a 3 veces el normal. Si aparecen huecos, conviene repetir la
 grabación: el SLAM puede perderse en esos momentos.
 

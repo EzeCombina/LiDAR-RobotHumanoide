@@ -10,8 +10,9 @@
 #      procesar_grabacion.sh) o se indica otra, la publica con
 #      publicar_trayectoria.py: recorrido en /trayectoria, esfera verde en la
 #      partida y roja en la llegada.
-#   3. Abre RViz con config/rviz/ver_mapa.rviz.
-#   4. Al cerrar RViz, detiene las publicaciones.
+#   3. Publica el marco "map" en /tf (evita el aviso "No tf data" de RViz).
+#   4. Abre RViz con config/rviz/ver_mapa.rviz.
+#   5. Al cerrar RViz, detiene las publicaciones.
 #
 # Requisitos: ROS 2 Jazzy con ros-jazzy-pcl-ros (paso 00). Correrlo desde una
 #             terminal del escritorio de Ubuntu (RViz es una ventana gráfica; no
@@ -42,6 +43,12 @@ set -u
 
 PIDS=()
 trap 'for p in "${PIDS[@]}"; do kill -INT "$p" 2>/dev/null || true; done' EXIT
+
+# Publica el marco "map" en /tf (transformada fija, vacía). Sin esto RViz muestra
+# el aviso "Fixed Frame: No tf data" aunque el mapa se vea bien.
+ros2 run tf2_ros static_transform_publisher --frame-id map --child-frame-id mapa_origen \
+    > /dev/null 2>&1 < /dev/null &
+PIDS+=($!)
 
 echo "Publicando $PCD en /cloud_pcd (cada 2 s)..."
 ros2 run pcl_ros pcd_to_pointcloud --ros-args \

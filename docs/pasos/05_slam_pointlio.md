@@ -217,7 +217,7 @@ detiene todo.
 > grabación. Que las paredes crucen la grilla en diagonal es **normal**. Lo que **no** es normal es
 > que el piso no sea paralelo a la grilla (ver 4.1, planos principales).
 
-**Lo mismo a mano (dos terminales del escritorio):**
+**Lo mismo a mano (terminales del escritorio):**
 
 ```bash
 # Terminal 1: publicar el mapa cada 2 s
@@ -226,12 +226,16 @@ ros2 run pcl_ros pcd_to_pointcloud --ros-args \
     -p file_name:=$HOME/Documentos/LiDAR-RobotHumanoide/mapas/<archivo>.pcd \
     -p tf_frame:=map -p publishing_period_ms:=2000
 
-# Terminal 2 (opcional): trayectoria
+# Terminal 2 (opcional): marco "map" en /tf, para que RViz no muestre "No tf data"
+source /opt/ros/jazzy/setup.bash
+ros2 run tf2_ros static_transform_publisher --frame-id map --child-frame-id mapa_origen
+
+# Terminal 3 (opcional): trayectoria
 source /opt/ros/jazzy/setup.bash
 ~/Documentos/LiDAR-RobotHumanoide/scripts/publicar_trayectoria.py \
     ~/Documentos/LiDAR-RobotHumanoide/mapas/<mapa>_trayectoria.csv
 
-# Terminal 3: RViz
+# Terminal 4: RViz
 source /opt/ros/jazzy/setup.bash
 rviz2 -d ~/Documentos/LiDAR-RobotHumanoide/config/rviz/ver_mapa.rviz
 ```
@@ -342,8 +346,10 @@ Causa probable: el arranque en la mano. También puede influir el error de la IM
 (en reposo mide menos de 9,8 m/s² en su eje Z). Prueba pendiente para separar ambas causas: grabar
 en vertical **empezando con el sensor apoyado y quieto** 10 s (A VERIFICAR).
 
-Para revisar el arranque de cualquier grabación, el script de los primeros segundos de IMU está en
-la bitácora del 2026-11-12; la inclinación del mapa se mide con `analizar_mapa.py` (punto 4.1).
+Para revisar el arranque de cualquier grabación **antes de procesarla**:
+`./scripts/revisar_grabacion.py bags/<carpeta>` (paso 04, punto 2.1) indica si el sensor estaba
+quieto en los primeros 4 s. Después de procesarla, la inclinación del mapa se mide con
+`analizar_mapa.py` (punto 4.1).
 
 ## Verificación final
 
@@ -361,4 +367,5 @@ la bitácora del 2026-11-12; la inclinación del mapa se mide con `analizar_mapa
 | No se crea `scans.pcd` | Point-LIO se cerró de golpe (no con Ctrl+C) o nunca recibió datos | Cerrar siempre con Ctrl+C; revisar el `.log` |
 | El mapa se ve duplicado o torcido | Movimientos bruscos, inicio con el sensor en movimiento o pocas superficies de referencia | Repetir la grabación siguiendo el procedimiento del paso 04 |
 | El `scans.pcd` de una corrida tiene datos de otra | Point-LIO sobrescribe siempre el mismo archivo | Usar el script, que copia el mapa con nombre propio |
+| En RViz, aviso naranja `Fixed Frame: No tf data` (el mapa se ve igual) | Nadie publica el marco `map` en `/tf` (versión anterior de `ver_mapa.sh`, o RViz abierto a mano) | Usar `ver_mapa.sh` actualizado, o la terminal 2 del punto 4 |
 | `PackageNotFoundError: "package 'point_lio' not found` | No se cargó el entorno de Point-LIO | `source ~/lidar_ws/point_lio_ws/install/setup.bash` |
