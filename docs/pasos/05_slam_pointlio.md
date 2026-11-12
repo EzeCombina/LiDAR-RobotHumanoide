@@ -206,8 +206,16 @@ cd ~/Documentos/LiDAR-RobotHumanoide
 ```
 
 El script publica el `.pcd` en `/cloud_pcd` con `pcd_to_pointcloud` (de `pcl_ros`, ya instalado) y
-abre RViz con `config/rviz/ver_mapa.rviz` (marco fijo `map`, colores por altura). Al cerrar RViz
-se detiene todo.
+abre RViz con `config/rviz/ver_mapa.rviz` (marco fijo `map`, colores por altura). Si junto al mapa
+existe su trayectoria (`<mapa>_trayectoria.csv`), también la muestra: **línea blanca** = recorrido
+del sensor, **esfera verde** = partida, **esfera roja** = llegada (la distancia entre ambas es el
+error de cierre). Se puede indicar otra trayectoria como segundo argumento. Al cerrar RViz se
+detiene todo.
+
+> **¿Por qué el mapa aparece "girado" respecto de la grilla?** La grilla de RViz sigue los ejes
+> x e y del mapa, y esos ejes los fija la dirección en que apuntaba el sensor al empezar la
+> grabación. Que las paredes crucen la grilla en diagonal es **normal**. Lo que **no** es normal es
+> que el piso no sea paralelo a la grilla (ver 4.1, planos principales).
 
 **Lo mismo a mano (dos terminales del escritorio):**
 
@@ -218,7 +226,12 @@ ros2 run pcl_ros pcd_to_pointcloud --ros-args \
     -p file_name:=$HOME/Documentos/LiDAR-RobotHumanoide/mapas/<archivo>.pcd \
     -p tf_frame:=map -p publishing_period_ms:=2000
 
-# Terminal 2: RViz
+# Terminal 2 (opcional): trayectoria
+source /opt/ros/jazzy/setup.bash
+~/Documentos/LiDAR-RobotHumanoide/scripts/publicar_trayectoria.py \
+    ~/Documentos/LiDAR-RobotHumanoide/mapas/<mapa>_trayectoria.csv
+
+# Terminal 3: RViz
 source /opt/ros/jazzy/setup.bash
 rviz2 -d ~/Documentos/LiDAR-RobotHumanoide/config/rviz/ver_mapa.rviz
 ```
@@ -259,6 +272,19 @@ Trayectoria: 1335 muestras, 134.4 s
   ...
 ```
 
+La salida incluye también los **planos principales** (ejemplo real del mismo mapa):
+
+```text
+  Planos principales (muestra de 40000 puntos):
+    plano horizontal a z =  1.52 m: inclinación 13.5° (16 % de los puntos)
+    plano horizontal a z = -1.23 m: inclinación 15.4° (4 % de los puntos)
+    pared principal: girada 76.8° respecto del eje X en planta (equivale a -13.2°; ...)
+```
+
+- **Planos horizontales** (techo y piso): su **inclinación** tiene que ser de 1–2° como máximo. En
+  el ejemplo dan 13,5° y 15,4°: **el mapa quedó torcido** (ver el punto 6). La distancia entre
+  ambos planos es la altura del lugar (1,52 − (−1,23) = 2,75 m).
+- **Pared principal:** el ángulo en planta es solo informativo (ver la nota del punto 4).
 - **Extensión útil:** medidas aproximadas del lugar (descarta el 1 % de puntos más alejados en cada
   eje, que suelen ser reflejos por ventanas o puertas). Compararlas con las medidas reales.
 - **El origen (0, 0, 0)** es la posición del sensor al empezar; **z es vertical**.
@@ -301,7 +327,23 @@ cambia es qué parte del lugar ve el sensor:
 | Vertical, cúpula hacia adelante | Lo que está adelante: piso, paredes, obstáculos bajos y techo | Todo lo que está detrás |
 | Inclinado (intermedio) | Parte del piso adelante y casi todo alrededor | Una parte del piso detrás |
 
-Comparación en la práctica: **pendiente de prueba** (A VERIFICAR).
+**Condición crítica: arrancar quieto.** Point-LIO mide la dirección de la gravedad en los primeros
+instantes y con eso fija la orientación de todo el mapa (`gravity_align`). Si en ese momento el
+sensor se mueve, la gravedad se mide mal y **el mapa queda inclinado para siempre**.
+
+Primer resultado (2026-11-12):
+
+| Grabación | Orientación | Movimiento al empezar (desvío del giróscopo, primeros 4 s) | Inclinación del piso/techo en el mapa |
+|---|---|---|---|
+| `sala_quieta` | Horizontal, apoyado en el piso | 0,006–0,09 rad/s (quieto) | 1,3–1,4° (nivelado) |
+| `departamento_vertical` | Vertical, en la mano | **0,24–0,31 rad/s** (en movimiento) | **13,5–15,4°** (torcido) |
+
+Causa probable: el arranque en la mano. También puede influir el error de la IMU de este sensor
+(en reposo mide menos de 9,8 m/s² en su eje Z). Prueba pendiente para separar ambas causas: grabar
+en vertical **empezando con el sensor apoyado y quieto** 10 s (A VERIFICAR).
+
+Para revisar el arranque de cualquier grabación, el script de los primeros segundos de IMU está en
+la bitácora del 2026-11-12; la inclinación del mapa se mide con `analizar_mapa.py` (punto 4.1).
 
 ## Verificación final
 

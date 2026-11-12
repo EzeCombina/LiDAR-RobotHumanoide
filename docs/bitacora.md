@@ -390,3 +390,25 @@ Sensor en el piso, sobre su almohadilla, sin tocar. Driver por Ethernet. Script 
     `pkill -INT -f l2_driver.launch.py`. Verificado: `process has finished cleanly`, código 0.
     (Las dos primeras pruebas fallaron porque `pkill -f` también encontró ese texto en la línea de
     comando del shell de Claude y lo interrumpió; no afecta al uso desde una terminal normal.)
+
+## 2026-11-12 — Mapa del departamento inclinado y trayectoria en el visor
+
+- El usuario revisó el mapa: "bastante bueno", pero la habitación aparece **inclinada respecto de
+  la grilla de RViz** y no se veía el recorrido.
+- **Recorrido:** `ver_mapa.sh` ahora publica también la trayectoria con el nuevo
+  `scripts/publicar_trayectoria.py` (`/trayectoria` como `nav_msgs/Path`, esferas verde/roja de
+  partida/llegada en `/trayectoria_extremos`); `config/rviz/ver_mapa.rviz` tiene las vistas
+  *Trayectoria* y *Extremos*. Primer intento: `rclpy.executors.ExternalShutdownException` al
+  cerrarlo con SIGTERM; se agregó a las excepciones manejadas.
+- **Inclinación:** `analizar_mapa.py` ahora busca los planos principales con RANSAC (muestra de
+  40.000 puntos, ~3 s). El primer intento (RANSAC sobre todos los puntos) tardó más de 2 min y se
+  canceló. Resultados: `sala_quieta` (horizontal, apoyado) 1,3–1,4°; `departamento_vertical`
+  **13,5–15,4°**. Altura de la habitación medida entre planos: 2,75 m (la extensión de 3,90 m se
+  debía a la inclinación).
+- Primeros 4 s de IMU: en el departamento, desvío del giróscopo 0,24–0,31 rad/s (sensor en la
+  mano, moviéndose) contra 0,006–0,09 rad/s con el sensor apoyado; gravedad a 20° del eje x del
+  sensor (no estaba perfectamente vertical, eso Point-LIO lo compensa). La hipótesis del error
+  de la IMU (eje Z ~2 m/s² bajo) no queda confirmada ni descartada.
+- Conclusión provisoria: el mapa quedó torcido porque Point-LIO midió la gravedad con el sensor en
+  movimiento. Se actualizó el procedimiento (paso 06): **arrancar con el sensor apoyado y quieto
+  en la orientación de trabajo**. Prueba pendiente: repetir en vertical arrancando apoyado.

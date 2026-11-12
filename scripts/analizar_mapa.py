@@ -8,7 +8,14 @@
 #      eje y extensión "útil" (percentiles 1 % y 99 %, que descartan puntos
 #      sueltos lejanos). Sirve para comprobar que las medidas del lugar son
 #      razonables.
-#   2. Si se indica el CSV de la trayectoria (lo genera procesar_grabacion.sh),
+#   2. Busca los planos principales (con RANSAC sobre una muestra de puntos):
+#      - planos casi horizontales (piso, techo): cuánto se inclinan respecto
+#        de la horizontal. Point-LIO alinea el mapa con la gravedad, así que
+#        deberían dar menos de 1-2°; si dan más, el mapa quedó "torcido";
+#      - la pared principal: su ángulo en planta respecto del eje X. Que las
+#        paredes no sean paralelas a la grilla de RViz es NORMAL: la dirección
+#        de los ejes x e y la fija hacia dónde apuntaba el sensor al empezar.
+#   3. Si se indica el CSV de la trayectoria (lo genera procesar_grabacion.sh),
 #      muestra el resumen (largo, zona recorrida, error de cierre) y una tabla
 #      con la posición cada 10 segundos.
 #
@@ -55,6 +62,58 @@ def leer_pcd(ruta):
     return enc, xyz[np.isfinite(xyz).all(axis=1)]
 
 
+def ransac_plano(P, condicion, iteraciones=1500, tolerancia=0.03, rng=None):
+    """Plano con más puntos a menos de 'tolerancia' m, cuya normal cumpla 'condicion'.
+    Devuelve (normal, d, máscara de puntos del plano) o None."""
+    rng = rng or np.random.default_rng(0)
+    mejor, mejor_n, mejor_d = None, None, None
+    for _ in range(iteraciones):
+        a, b, c = P[rng.choice(len(P), 3, replace=False)]
+        n = np.cross(b - a, c - a)
+        if np.linalg.norm(n) < 1e-9:
+            continue
+        n /= np.linalg.norm(n)
+        if not condicion(n):
+            continue
+        d = -n @ a
+        dentro = np.abs(P @ n + d) < tolerancia
+        if mejor is None or dentro.sum() > mejor.sum():
+            mejor, mejor_n, mejor_d = dentro, n, d
+    if mejor is None:
+        return None
+    # Ajuste fino por mínimos cuadrados con los puntos del plano.
+    Q = P[mejor]
+    centro = Q.mean(axis=0)
+    n = np.linalg.svd(Q - centro)[2][2]
+    if n[2] < 0:
+        n = -n
+    return n, -n @ centro, mejor
+
+
+def analizar_planos(xyz, muestra=40000):
+    rng = np.random.default_rng(1)
+    P = xyz[rng.choice(len(xyz), min(muestra, len(xyz)), replace=False)]
+    print("\n  Planos principales (muestra de %d puntos):" % len(P))
+    restantes = P
+    for _ in range(2):  # piso y techo
+        r = ransac_plano(restantes, lambda n: abs(n[2]) > np.cos(np.radians(30)), rng=rng)
+        if r is None or r[2].sum() < 0.03 * len(P):
+            break
+        n, d, dentro = r
+        ang = np.degrees(np.arccos(min(1.0, abs(n[2]))))
+        z = restantes[dentro][:, 2].mean()
+        print(f"    plano horizontal a z = {z:5.2f} m: inclinación {ang:4.1f}° "
+              f"({100 * dentro.sum() / len(P):.0f} % de los puntos)")
+        restantes = restantes[~dentro]
+    r = ransac_plano(P, lambda n: abs(n[2]) < np.sin(np.radians(20)), rng=rng)
+    if r is not None:
+        n = r[0]
+        rumbo = np.degrees(np.arctan2(n[1], n[0])) % 90
+        print(f"    pared principal: girada {rumbo:4.1f}° respecto del eje X en planta "
+              f"(equivale a {rumbo - 90:5.1f}°; es normal, depende de la orientación inicial)")
+    print("    Inclinación de piso/techo de más de 1-2°: el mapa no quedó nivelado.")
+
+
 def analizar_trayectoria(ruta):
     d = np.loadtxt(ruta, delimiter=",", skiprows=1, ndmin=2)
     if len(d) < 2:
@@ -90,6 +149,7 @@ def main():
         print(f"   {eje}  {mn[i]:7.2f}  {mx[i]:7.2f}  |  {p1[i]:6.2f} a {p99[i]:6.2f}   {p99[i] - p1[i]:6.2f} m")
     print("\n  El eje z es vertical (Point-LIO alinea el mapa con la gravedad); el origen")
     print("  (0, 0, 0) es la posición del sensor al empezar la grabación.")
+    analizar_planos(xyz)
     if len(sys.argv) > 2:
         analizar_trayectoria(sys.argv[2])
 

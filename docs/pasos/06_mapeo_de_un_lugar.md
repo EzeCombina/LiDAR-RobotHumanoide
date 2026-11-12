@@ -64,8 +64,11 @@ Ejemplo:
 
 ### Cómo hacer el recorrido
 
-1. **Quieto 5 a 10 s** en el punto de partida antes de moverse (Point-LIO mide la gravedad con el
-   sensor en reposo).
+1. **Apoyado y quieto 5 a 10 s** en el punto de partida antes de moverse: dejar el sensor sobre
+   una mesa, un estante o el piso, **en la misma orientación** con la que se lo va a llevar, y
+   recién después levantarlo. Point-LIO mide la gravedad en ese momento y con eso nivela todo el
+   mapa; sostenerlo en la mano no alcanza (el pulso lo mueve y el mapa queda inclinado, ver
+   paso 05, punto 6).
 2. Caminar **despacio** y girar **suave**. Los giros bruscos son la causa más común de mapas
    deformados.
 3. Pasar por todos los ambientes. En las puertas, ir despacio: hay pocas referencias.
@@ -137,6 +140,8 @@ Primero, los números del resumen que muestra `procesar_grabacion.sh` (también 
 
 - [ ] **Zona recorrida** parecida a lo que se caminó.
 - [ ] **Error de cierre** de pocos centímetros (si se terminó en el punto de partida).
+- [ ] **Piso y techo nivelados:** en `analizar_mapa.py`, inclinación de los planos horizontales de
+      1–2° como máximo.
 
 Para ver las medidas del mapa y la trayectoria cada 10 s:
 
@@ -149,7 +154,10 @@ La **extensión útil** de cada eje debe parecerse a las medidas reales del luga
 Después, en RViz:
 
 - [ ] Las paredes se ven **rectas y simples**, no duplicadas ni "fantasmas" corridos.
-- [ ] El piso (o el techo) es **plano** y no está inclinado ni curvado.
+- [ ] El piso (o el techo) es **plano** y paralelo a la grilla. Que las paredes crucen la grilla en
+      diagonal es normal (depende de hacia dónde apuntaba el sensor al empezar).
+- [ ] El recorrido (línea blanca) es coherente con lo que se caminó; la esfera verde (partida) y la
+      roja (llegada) están juntas si se terminó en el punto de partida.
 - [ ] Los ambientes están en la posición correcta entre sí; las medidas son razonables (se pueden
       medir distancias con la herramienta *Measure* de RViz).
 - [ ] La zona de llegada coincide con la de partida.
