@@ -18,9 +18,9 @@
 #     1124 bytes  ~11/s  -> tipo no identificado (A VERIFICAR)
 #
 # Cómo se usa:
-#   ./scripts/verificar_udp_lidar.py                     # 5 s en 192.168.1.2:6201
-#   ./scripts/verificar_udp_lidar.py --segundos 10
-#   ./scripts/verificar_udp_lidar.py --ip 192.168.10.2   # si se cambió la red
+#   ./scripts/red/verificar_udp_lidar.py                     # 5 s en 192.168.1.2:6201
+#   ./scripts/red/verificar_udp_lidar.py --segundos 10
+#   ./scripts/red/verificar_udp_lidar.py --ip 192.168.10.2   # si se cambió la red
 #
 # Importante: cerrar antes el driver o los ejemplos del SDK, porque usan el
 # mismo puerto ("Address already in use").

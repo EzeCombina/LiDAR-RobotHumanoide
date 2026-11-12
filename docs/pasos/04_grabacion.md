@@ -29,14 +29,14 @@ Con el driver corriendo (paso 03), en otra terminal (o en otra ventana de `tmux`
 ```bash
 source /opt/ros/jazzy/setup.bash
 cd ~/Documentos/LiDAR-RobotHumanoide
-./scripts/grabar_lidar.sh <nombre> [segundos] ["descripción"]
+./scripts/grabacion/grabar_lidar.sh <nombre> [segundos] ["descripción"]
 ```
 
 Ejemplos:
 
 ```bash
-./scripts/grabar_lidar.sh sala_quieta 90 "Sensor en el piso sobre la almohadilla, nadie se mueve"
-./scripts/grabar_lidar.sh recorrido_mano            # graba hasta cortar con Ctrl+C
+./scripts/grabacion/grabar_lidar.sh sala_quieta 90 "Sensor en el piso sobre la almohadilla, nadie se mueve"
+./scripts/grabacion/grabar_lidar.sh recorrido_mano            # graba hasta cortar con Ctrl+C
 ```
 
 El script:
@@ -44,7 +44,7 @@ El script:
 1. Verifica que llegan mensajes en `/unilidar/cloud` y `/unilidar/imu` y que quedan al menos 5 GB
    libres.
 2. Graba esos dos tópicos en formato MCAP en `bags/<AAAA-MM-DD_HHMM>_<nombre>/` (carpeta del
-   repositorio excluida de git). Para grabar en otro disco: `BAGS_DIR=/ruta ./scripts/grabar_lidar.sh ...`.
+   repositorio excluida de git). Para grabar en otro disco: `BAGS_DIR=/ruta ./scripts/grabacion/grabar_lidar.sh ...`.
 3. Si se indicó una duración, corta solo; si no, se corta con **Ctrl+C** (también se puede cortar
    antes de tiempo con Ctrl+C). En todos los casos cierra el archivo de forma ordenada. La pausa con
    la barra espaciadora de `ros2 bag record` queda desactivada a propósito.
@@ -113,7 +113,7 @@ Para comprobar que la grabación **no tiene huecos** (por ejemplo, por un corte 
 mientras se grababa):
 
 ```bash
-./scripts/revisar_grabacion.py bags/<carpeta>
+./scripts/grabacion/revisar_grabacion.py bags/<carpeta>
 ```
 
 **Salida obtenida** (recorrido del departamento, 2026-11-12):

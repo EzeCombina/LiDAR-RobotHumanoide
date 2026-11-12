@@ -1,0 +1,12 @@
+Mapa: 2026-11-12_1413_sala_quieta/mapa.pcd
+Generado: 2026-11-12 14:14:46 en eze-laptop
+Grabación de origen: bags/2026-11-12_1016_sala_quieta
+SLAM: Point-LIO (point_lio_ros2), config/unilidar_l2.yaml + mapping_unilidar_l2.launch.py
+Puntos: 1735865
+Tamaño: 53M
+Commit del proyecto: 6f32ac0
+Trayectoria: 886 muestras, 89.1 s
+Largo del recorrido: 7.92 m
+Zona recorrida (x, y, z): 0.09 x 0.08 x 0.03 m
+Error de cierre (final vs. inicio): 0.086 m (horizontal 0.085 m, vertical -0.016 m)
+Trayectoria guardada en: 2026-11-12_1413_sala_quieta/trayectoria.csv

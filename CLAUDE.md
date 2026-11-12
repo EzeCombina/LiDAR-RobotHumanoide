@@ -187,8 +187,14 @@ Fuentes: manual oficial del L2 (v1.1), manual de Unilidar 2 (v1.0), código de l
   contenedor se corren el driver, la grabación y el SLAM juntos**, porque Jazzy y Humble no se
   comunican de forma confiable entre sí. Documentar cuál camino funcionó.
   **Resultado (2026-11-12): el driver y Point-LIO compilan y funcionan nativos en Jazzy; no hizo
-  falta Docker.** Scripts: `grabar_lidar.sh`, `procesar_grabacion.sh` (grabación → mapa en
-  `mapas/`) y `ver_mapa.sh`. Pasos: 04 grabación, 05 SLAM.
+  falta Docker.** Pasos: 04 grabación, 05 SLAM, 06 procedimiento completo de mapeo.
+- **Organización (2026-11-12):** `scripts/` por función (`sistema/`, `red/`, `sensor/`,
+  `grabacion/`, `mapas/`); `mapas/` con **una carpeta por mapa** (`mapa.pcd`, `resumen.txt`,
+  `trayectoria.csv`, `pointlio.log`). Flujo: `scripts/grabacion/grabar_lidar.sh` →
+  `scripts/grabacion/revisar_grabacion.py` → `scripts/mapas/procesar_grabacion.sh` →
+  `scripts/mapas/ver_mapa.sh` / `analizar_mapa.py` (aceptan la carpeta del mapa).
+- **Regla del usuario:** todo lo que Claude hace automáticamente queda documentado en
+  `docs/pasos/` con su procedimiento manual (quien use la guía puede no tener acceso al chat).
 - Volumen de datos estimado: del orden de 1 a 2 GB cada 10 minutos de grabación.
 
 ---
@@ -209,7 +215,7 @@ Cada etapa termina con su documento en `docs/pasos/`, la bitácora actualizada y
 > cómoda para el trabajo diario en la PC; **Ethernet es la de destino para el robot**. Hay un solo
 > modo activo a la vez, guardado en el sensor (work mode 0 = Ethernet, 8 = serie, por bit3). De
 > fábrica viene en Ethernet: para pasar a USB primero hay que comunicarse por Ethernet. Cambio de modo
-> con la herramienta propia `scripts/herramientas_sdk/` (`cambiar_modo_lidar`) (los ejemplos `set_to_*_mode` del SDK
+> con la herramienta propia `scripts/sensor/cambiar_modo_lidar` (los ejemplos `set_to_*_mode` del SDK
 > tienen IPs fijas `192.168.123.110/.120`). **Trampa del driver ROS 2:** al arrancar ejecuta
 > `setLidarWorkMode(work_mode)`; por USB hay que usar `work_mode: 8` o el sensor vuelve a Ethernet.
 > Usar el launch propio `config/unitree_lidar_ros2/l2_driver.launch.py modo:=ethernet|usb`.

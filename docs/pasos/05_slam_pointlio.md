@@ -84,7 +84,7 @@ Se usa la configuración que trae el paquete, sin cambios: `config/unilidar_l2.y
 
 ## 3. Procesar una grabación con el script del proyecto
 
-El script `scripts/procesar_grabacion.sh` hace todo el proceso: verifica que no haya otra fuente de
+El script `scripts/mapas/procesar_grabacion.sh` hace todo el proceso: verifica que no haya otra fuente de
 datos activa, lanza Point-LIO, reproduce la grabación **una vez**, cierra Point-LIO correctamente
 (que es cuando guarda el mapa) y copia el resultado a `mapas/` con un nombre propio.
 
@@ -92,7 +92,7 @@ datos activa, lanza Point-LIO, reproduce la grabación **una vez**, cierra Point
 
 ```bash
 cd ~/Documentos/LiDAR-RobotHumanoide
-./scripts/procesar_grabacion.sh bags/<carpeta> [nombre_del_mapa] [--rviz]
+./scripts/mapas/procesar_grabacion.sh bags/<carpeta> [nombre_del_mapa] [--rviz]
 ```
 
 - `nombre_del_mapa` es opcional (por defecto, el nombre de la grabación).
@@ -100,30 +100,42 @@ cd ~/Documentos/LiDAR-RobotHumanoide
   escritorio).
 - Tarda lo mismo que duró la grabación, más unos segundos.
 
-**Salida obtenida** (grabación `persona_caminando`, 60 s):
+**Salida obtenida** (grabación `persona_caminando`, 60 s, sensor fijo):
 
 ```text
 Grabación: bags/2026-11-12_1028_persona_caminando
-Mapa de salida: .../mapas/2026-11-12_1049_persona_caminando_pointlio.pcd
+Carpeta del mapa: .../mapas/2026-11-12_1412_persona_caminando
 
 Point-LIO en marcha. Reproduciendo la grabación (tarda lo mismo que duró)...
 Reproducción terminada. Deteniendo Point-LIO y guardando el mapa...
 
-Mapa: 2026-11-12_1049_persona_caminando_pointlio.pcd
-Generado: 2026-11-12 10:50:52 en eze-laptop
+Mapa: 2026-11-12_1412_persona_caminando/mapa.pcd
+Generado: 2026-11-12 14:13:10 en eze-laptop
 Grabación de origen: bags/2026-11-12_1028_persona_caminando
 SLAM: Point-LIO (point_lio_ros2), config/unilidar_l2.yaml + mapping_unilidar_l2.launch.py
-Puntos: 1121515
+Puntos: 1128052
 Tamaño: 35M
+Commit del proyecto: 6f32ac0
+Trayectoria: 588 muestras, 59.1 s
+Largo del recorrido: 4.45 m
+Zona recorrida (x, y, z): 0.06 x 0.11 x 0.02 m
+Error de cierre (final vs. inicio): 0.052 m (horizontal 0.052 m, vertical -0.002 m)
+Trayectoria guardada en: 2026-11-12_1412_persona_caminando/trayectoria.csv
 
-Para verlo: ./scripts/ver_mapa.sh .../mapas/2026-11-12_1049_persona_caminando_pointlio.pcd
+Para verlo:    ./scripts/mapas/ver_mapa.sh mapas/2026-11-12_1412_persona_caminando
+Para medirlo:  ./scripts/mapas/analizar_mapa.py mapas/2026-11-12_1412_persona_caminando
 ```
 
-En `mapas/` quedan cuatro archivos por mapa: el `.pcd` (fuera de git), el `.txt` con el resumen (se
-sube a git), el `_trayectoria.csv` con la posición estimada del sensor cada 0,1 s (se sube a git) y
-el `.log` de Point-LIO (fuera de git).
+Cada mapa queda en su **propia carpeta**, `mapas/<fecha>_<nombre>/`, con cuatro archivos:
 
-El resumen incluye datos de la trayectoria (los calcula `scripts/registrar_trayectoria.py`):
+| Archivo | Contenido | ¿Se sube a git? |
+|---|---|---|
+| `mapa.pcd` | El mapa 3D | No (pesa decenas o cientos de MB) |
+| `resumen.txt` | Datos del mapa y de la trayectoria | Sí |
+| `trayectoria.csv` | Posición estimada del sensor cada 0,1 s | Sí |
+| `pointlio.log` | Registro de Point-LIO | No |
+
+El resumen incluye datos de la trayectoria (los calcula `scripts/mapas/registrar_trayectoria.py`):
 
 ```text
 Trayectoria: 1335 muestras, 134.4 s
@@ -136,7 +148,10 @@ Error de cierre (final vs. inicio): 1.059 m (horizontal 1.058 m, vertical -0.055
   recorrieron varios metros y la zona da 1 m, el SLAM no siguió el movimiento.
 - **Error de cierre:** distancia entre la posición final y la inicial. Si el recorrido empezó y
   terminó en el mismo lugar, debería ser de pocos centímetros. Es el indicador más simple de la
-  calidad del mapa.
+  calidad del mapa. Referencia: con el sensor quieto da 5 a 9 cm (`persona_caminando` y
+  `sala_quieta`).
+- **Largo del recorrido:** solo orientativo. Incluye el pequeño temblor de la estimación: con el
+  sensor quieto, `sala_quieta` da 7,9 m en 90 s.
 
 ### Hacerlo a mano (lo mismo que hace el script, paso por paso)
 
@@ -157,7 +172,7 @@ cd ~/Documentos/LiDAR-RobotHumanoide
 2. **Terminal 2 — registrar la trayectoria** (opcional, pero da el error de cierre):
 
    ```bash
-   ./scripts/registrar_trayectoria.py /tmp/trayectoria.csv
+   ./scripts/mapas/registrar_trayectoria.py /tmp/trayectoria.csv
    ```
 
 3. **Terminal 3 — reproducir la grabación una vez.** Tarda lo mismo que duró la grabación:
@@ -174,12 +189,14 @@ cd ~/Documentos/LiDAR-RobotHumanoide
 6. Copiar los resultados con un nombre propio, porque la próxima corrida sobrescribe `scans.pcd`:
 
    ```bash
-   NOMBRE=mapas/$(date +%Y-%m-%d_%H%M)_<nombre>_pointlio
-   cp ~/lidar_ws/point_lio_ws/src/point_lio_ros2/PCD/scans.pcd $NOMBRE.pcd
-   cp /tmp/trayectoria.csv ${NOMBRE}_trayectoria.csv
+   CARPETA=mapas/$(date +%Y-%m-%d_%H%M)_<nombre>
+   mkdir -p $CARPETA
+   cp ~/lidar_ws/point_lio_ws/src/point_lio_ros2/PCD/scans.pcd $CARPETA/mapa.pcd
+   cp /tmp/trayectoria.csv $CARPETA/trayectoria.csv
    ```
 
-7. Anotar el resumen en un `.txt` junto al mapa y en `docs/mapas.md`.
+7. Copiar el resumen que mostró la terminal 2 en `$CARPETA/resumen.txt` y anotar el mapa en
+   `docs/mapas.md`.
 
 **Salida esperada de Point-LIO al recibir los primeros datos:**
 
@@ -202,12 +219,12 @@ Desde una terminal del escritorio de Ubuntu:
 
 ```bash
 cd ~/Documentos/LiDAR-RobotHumanoide
-./scripts/ver_mapa.sh mapas/<archivo>.pcd
+./scripts/mapas/ver_mapa.sh mapas/<carpeta_del_mapa>
 ```
 
 El script publica el `.pcd` en `/cloud_pcd` con `pcd_to_pointcloud` (de `pcl_ros`, ya instalado) y
 abre RViz con `config/rviz/ver_mapa.rviz` (marco fijo `map`, colores por altura). Si junto al mapa
-existe su trayectoria (`<mapa>_trayectoria.csv`), también la muestra: **línea blanca** = recorrido
+existe su trayectoria (`trayectoria.csv` en la carpeta del mapa), también la muestra: **línea blanca** = recorrido
 del sensor, **esfera verde** = partida, **esfera roja** = llegada (la distancia entre ambas es el
 error de cierre). Se puede indicar otra trayectoria como segundo argumento. Al cerrar RViz se
 detiene todo.
@@ -223,7 +240,7 @@ detiene todo.
 # Terminal 1: publicar el mapa cada 2 s
 source /opt/ros/jazzy/setup.bash
 ros2 run pcl_ros pcd_to_pointcloud --ros-args \
-    -p file_name:=$HOME/Documentos/LiDAR-RobotHumanoide/mapas/<archivo>.pcd \
+    -p file_name:=$HOME/Documentos/LiDAR-RobotHumanoide/mapas/<carpeta_del_mapa>/mapa.pcd \
     -p tf_frame:=map -p publishing_period_ms:=2000
 
 # Terminal 2 (opcional): marco "map" en /tf, para que RViz no muestre "No tf data"
@@ -232,8 +249,8 @@ ros2 run tf2_ros static_transform_publisher --frame-id map --child-frame-id mapa
 
 # Terminal 3 (opcional): trayectoria
 source /opt/ros/jazzy/setup.bash
-~/Documentos/LiDAR-RobotHumanoide/scripts/publicar_trayectoria.py \
-    ~/Documentos/LiDAR-RobotHumanoide/mapas/<mapa>_trayectoria.csv
+~/Documentos/LiDAR-RobotHumanoide/scripts/mapas/publicar_trayectoria.py \
+    ~/Documentos/LiDAR-RobotHumanoide/mapas/<carpeta_del_mapa>/trayectoria.csv
 
 # Terminal 4: RViz
 source /opt/ros/jazzy/setup.bash
@@ -248,15 +265,16 @@ Para comprobar con números que el mapa tiene las medidas del lugar y revisar la
 
 ```bash
 cd ~/Documentos/LiDAR-RobotHumanoide
-./scripts/analizar_mapa.py mapas/<mapa>.pcd mapas/<mapa>_trayectoria.csv
+./scripts/mapas/analizar_mapa.py mapas/<carpeta_del_mapa>
 ```
 
-(el segundo archivo es opcional). No necesita ROS 2 cargado ni el sensor.
+(usa `mapa.pcd` y `trayectoria.csv` de la carpeta; también acepta un `.pcd` suelto y, opcionalmente,
+un CSV de trayectoria como segundo argumento). No necesita ROS 2 cargado ni el sensor.
 
 **Salida obtenida** (departamento, sensor vertical, 2026-11-12):
 
 ```text
-Mapa: mapas/2026-11-12_1339_departamento_vertical_pointlio.pcd
+Mapa: mapas/2026-11-12_1339_departamento_vertical/mapa.pcd
   puntos: 2.247.488
   campos: x y z normal_x normal_y normal_z intensity curvature
 
@@ -299,8 +317,8 @@ La salida incluye también los **planos principales** (ejemplo real del mismo ma
 
 | Grabación | Puntos del mapa | Tamaño | Observaciones |
 |---|---|---|---|
-| `sala_quieta` (90 s) | 1.729.416 | 53 MB | Mapa de ~8 × 6 m en planta y 2,85 m de alto (de 0 a 2,85 m: el sensor estaba en el piso y solo ve hacia arriba) |
-| `persona_caminando` (60 s) | 1.121.515 | 35 MB | — |
+| `sala_quieta` (90 s) | 1.735.865 | 53 MB | Mapa de ~8 × 6 m en planta y 2,85 m de alto (de 0 a 2,85 m: el sensor estaba en el piso y solo ve hacia arriba). Piso/techo nivelados (0,7–0,9°). Error de cierre 8,6 cm |
+| `persona_caminando` (60 s) | 1.128.052 | 35 MB | Error de cierre 5,2 cm |
 
 **Prueba de estabilidad con el sensor quieto (`sala_quieta`):** se registró la posición estimada por
 Point-LIO (`/aft_mapped_to_init`) durante toda la grabación. Como el sensor no se movió, debería
@@ -347,7 +365,7 @@ Causa probable: el arranque en la mano. También puede influir el error de la IM
 en vertical **empezando con el sensor apoyado y quieto** 10 s (A VERIFICAR).
 
 Para revisar el arranque de cualquier grabación **antes de procesarla**:
-`./scripts/revisar_grabacion.py bags/<carpeta>` (paso 04, punto 2.1) indica si el sensor estaba
+`./scripts/grabacion/revisar_grabacion.py bags/<carpeta>` (paso 04, punto 2.1) indica si el sensor estaba
 quieto en los primeros 4 s. Después de procesarla, la inclinación del mapa se mide con
 `analizar_mapa.py` (punto 4.1).
 

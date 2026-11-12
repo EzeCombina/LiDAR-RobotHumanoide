@@ -1,7 +1,7 @@
 # Versiones de software, repositorios y firmware
 
 Registrar todo lo que se instale o clone, para que la implementación sea reproducible.
-Los datos de la PC se obtienen con `./scripts/relevar_sistema.sh`.
+Los datos de la PC se obtienen con `./scripts/sistema/relevar_sistema.sh`.
 
 ## PC de implementación
 

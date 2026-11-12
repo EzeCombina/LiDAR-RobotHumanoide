@@ -13,11 +13,11 @@
 #       recorrido empezó y terminó en el mismo lugar, debería ser de pocos cm;
 #       es un buen indicador de la calidad del mapa.
 #
-#   Lo usa scripts/procesar_grabacion.sh; también se puede usar solo.
+#   Lo usa scripts/mapas/procesar_grabacion.sh; también se puede usar solo.
 #
 # Cómo se usa:
 #   source /opt/ros/jazzy/setup.bash
-#   ./scripts/registrar_trayectoria.py <salida.csv>
+#   ./scripts/mapas/registrar_trayectoria.py <salida.csv>
 # =============================================================================
 import math
 import signal

@@ -8,6 +8,9 @@
 #      eje y extensión "útil" (percentiles 1 % y 99 %, que descartan puntos
 #      sueltos lejanos). Sirve para comprobar que las medidas del lugar son
 #      razonables.
+#   Acepta la carpeta de un mapa (la que genera procesar_grabacion.sh, con
+#   mapa.pcd y trayectoria.csv) o un archivo .pcd suelto.
+#
 #   2. Busca los planos principales (con RANSAC sobre una muestra de puntos):
 #      - planos casi horizontales (piso, techo): cuánto se inclinan respecto
 #        de la horizontal. Point-LIO alinea el mapa con la gravedad, así que
@@ -22,9 +25,10 @@
 #   Solo usa NumPy (viene con ROS 2). No necesita el sensor.
 #
 # Cómo se usa:
-#   ./scripts/analizar_mapa.py mapas/<mapa>.pcd
-#   ./scripts/analizar_mapa.py mapas/<mapa>.pcd mapas/<mapa>_trayectoria.csv
+#   ./scripts/mapas/analizar_mapa.py mapas/<carpeta_del_mapa>
+#   ./scripts/mapas/analizar_mapa.py <archivo.pcd> [trayectoria.csv]
 # =============================================================================
+import os
 import sys
 
 import numpy as np
@@ -136,10 +140,22 @@ def analizar_trayectoria(ruta):
 
 def main():
     if len(sys.argv) < 2:
-        print("Uso: analizar_mapa.py <mapa.pcd> [trayectoria.csv]")
+        print("Uso: analizar_mapa.py <carpeta_del_mapa | mapa.pcd> [trayectoria.csv]")
         sys.exit(1)
-    enc, xyz = leer_pcd(sys.argv[1])
-    print(f"Mapa: {sys.argv[1]}")
+    entrada = sys.argv[1]
+    if os.path.isdir(entrada):
+        pcd = os.path.join(entrada, "mapa.pcd")
+        tray = os.path.join(entrada, "trayectoria.csv")
+    else:
+        pcd = entrada
+        tray = os.path.join(os.path.dirname(pcd), "trayectoria.csv")
+    if len(sys.argv) > 2:
+        tray = sys.argv[2]
+    if not os.path.isfile(pcd):
+        print(f"ERROR: no existe {pcd}")
+        sys.exit(1)
+    enc, xyz = leer_pcd(pcd)
+    print(f"Mapa: {pcd}")
     print(f"  puntos: {len(xyz):,}".replace(",", "."))
     print(f"  campos: {' '.join(enc['FIELDS'])}")
     mn, mx = xyz.min(axis=0), xyz.max(axis=0)
@@ -150,8 +166,10 @@ def main():
     print("\n  El eje z es vertical (Point-LIO alinea el mapa con la gravedad); el origen")
     print("  (0, 0, 0) es la posición del sensor al empezar la grabación.")
     analizar_planos(xyz)
-    if len(sys.argv) > 2:
-        analizar_trayectoria(sys.argv[2])
+    if os.path.isfile(tray):
+        analizar_trayectoria(tray)
+    else:
+        print(f"\n(Sin trayectoria: no existe {tray})")
 
 
 if __name__ == "__main__":

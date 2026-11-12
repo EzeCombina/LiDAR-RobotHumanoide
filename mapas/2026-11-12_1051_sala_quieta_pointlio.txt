@@ -1,7 +1,0 @@
-Mapa: 2026-11-12_1051_sala_quieta_pointlio.pcd
-Generado: 2026-11-12 10:52:55 en eze-laptop
-Grabación de origen: bags/2026-11-12_1016_sala_quieta
-SLAM: Point-LIO (point_lio_ros2), config/unilidar_l2.yaml + mapping_unilidar_l2.launch.py
-Puntos: 1729416
-Tamaño: 53M
-Commit del proyecto: cc73e61

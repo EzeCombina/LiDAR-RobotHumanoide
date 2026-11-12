@@ -6,8 +6,8 @@
 #   1. Publica el archivo .pcd en el tópico /cloud_pcd (marco "map") con el
 #      programa pcd_to_pointcloud de pcl_ros (viene con ROS 2, no hay que
 #      instalar nada).
-#   2. Si existe la trayectoria del mapa (<mapa>_trayectoria.csv, la genera
-#      procesar_grabacion.sh) o se indica otra, la publica con
+#   2. Si existe la trayectoria del mapa (trayectoria.csv en la carpeta del
+#      mapa, la genera procesar_grabacion.sh) o se indica otra, la publica con
 #      publicar_trayectoria.py: recorrido en /trayectoria, esfera verde en la
 #      partida y roja en la llegada.
 #   3. Publica el marco "map" en /tf (evita el aviso "No tf data" de RViz).
@@ -19,23 +19,30 @@
 #             desde la terminal integrada de VS Code instalado como snap).
 #
 # Cómo se usa:
-#   ./scripts/ver_mapa.sh <archivo.pcd> [trayectoria.csv]
+#   ./scripts/mapas/ver_mapa.sh <carpeta_del_mapa | archivo.pcd> [trayectoria.csv]
 #
-#   Ejemplo:
-#   ./scripts/ver_mapa.sh mapas/2026-11-12_1339_departamento_vertical_pointlio.pcd
-#   (busca solo mapas/2026-11-12_1339_departamento_vertical_pointlio_trayectoria.csv)
+#   Ejemplos:
+#   ./scripts/mapas/ver_mapa.sh mapas/2026-11-12_1339_departamento_vertical
+#       (usa mapa.pcd y trayectoria.csv de esa carpeta)
+#   ./scripts/mapas/ver_mapa.sh /otra/ruta/nube.pcd
 # =============================================================================
 set -euo pipefail
 
-PCD="${1:-}"
-if [ -z "$PCD" ] || [ ! -f "$PCD" ]; then
-    echo "Uso: $0 <archivo.pcd> [trayectoria.csv]"
-    [ -n "$PCD" ] && echo "ERROR: no existe '$PCD'"
+ENTRADA="${1:-}"
+if [ -d "$ENTRADA" ]; then
+    PCD="$ENTRADA/mapa.pcd"               # carpeta de un mapa (procesar_grabacion.sh)
+else
+    PCD="$ENTRADA"                        # archivo .pcd suelto
+fi
+if [ -z "$ENTRADA" ] || [ ! -f "$PCD" ]; then
+    echo "Uso: $0 <carpeta_del_mapa | archivo.pcd> [trayectoria.csv]"
+    [ -n "$ENTRADA" ] && echo "ERROR: no existe '$PCD'"
     exit 1
 fi
 PCD="$(realpath "$PCD")"
-TRAY="${2:-${PCD%.pcd}_trayectoria.csv}"
-REPO="$(cd "$(dirname "$0")/.." && pwd)"
+TRAY="${2:-$(dirname "$PCD")/trayectoria.csv}"
+# Carpeta del repositorio (este script está en <repo>/scripts/mapas/).
+REPO="$(cd "$(dirname "$0")/../.." && pwd)"
 
 set +u
 source /opt/ros/jazzy/setup.bash
@@ -58,7 +65,7 @@ PIDS+=($!)
 
 if [ -f "$TRAY" ]; then
     echo "Publicando la trayectoria $TRAY (verde = partida, rojo = llegada)..."
-    python3 "$REPO/scripts/publicar_trayectoria.py" "$TRAY" > /dev/null 2>&1 < /dev/null &
+    python3 "$REPO/scripts/mapas/publicar_trayectoria.py" "$TRAY" > /dev/null 2>&1 < /dev/null &
     PIDS+=($!)
 else
     echo "Sin trayectoria (no existe $TRAY)."

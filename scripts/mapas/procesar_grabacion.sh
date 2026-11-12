@@ -9,24 +9,26 @@
 #   3. Reproduce la grabación indicada una sola vez.
 #   4. Detiene Point-LIO con SIGINT (como Ctrl+C), que es cuando guarda el mapa
 #      en <carpeta fuente de point_lio>/PCD/scans.pcd.
-#   5. Copia ese mapa a mapas/<fecha>_<nombre>_pointlio.pcd (Point-LIO lo
-#      sobrescribe en cada corrida) junto con el registro de Point-LIO (.log),
-#      la trayectoria estimada (_trayectoria.csv, con registrar_trayectoria.py)
-#      y un resumen (.txt) que incluye el ERROR DE CIERRE del recorrido.
+#   5. Guarda todo en una carpeta nueva, mapas/<fecha>_<nombre>/ (Point-LIO
+#      sobrescribe scans.pcd en cada corrida):
+#        mapa.pcd         el mapa 3D
+#        resumen.txt      datos del mapa y de la trayectoria, con el ERROR DE CIERRE
+#        trayectoria.csv  posición estimada del sensor (registrar_trayectoria.py)
+#        pointlio.log     registro de Point-LIO
 #
 #   Los mapas .pcd NO se suben a git (pesan decenas o cientos de MB).
 #
 # Requisitos:
 #   - Point-LIO compilado en ~/lidar_ws/point_lio_ws (ver docs/pasos/05_slam_pointlio.md).
-#     Otra ubicación: POINT_LIO_WS=/ruta ./scripts/procesar_grabacion.sh ...
+#     Otra ubicación: POINT_LIO_WS=/ruta ./scripts/mapas/procesar_grabacion.sh ...
 #   - El driver del sensor detenido.
 #
 # Cómo se usa:
-#   ./scripts/procesar_grabacion.sh <carpeta_de_la_grabación> [nombre_del_mapa] [--rviz]
+#   ./scripts/mapas/procesar_grabacion.sh <carpeta_de_la_grabación> [nombre_del_mapa] [--rviz]
 #
 #   Ejemplos:
-#   ./scripts/procesar_grabacion.sh bags/2026-11-12_1016_sala_quieta
-#   ./scripts/procesar_grabacion.sh bags/2026-11-20_1500_departamento departamento --rviz
+#   ./scripts/mapas/procesar_grabacion.sh bags/2026-11-12_1016_sala_quieta
+#   ./scripts/mapas/procesar_grabacion.sh bags/2026-11-20_1500_departamento departamento --rviz
 #
 #   --rviz abre la ventana de RViz de Point-LIO para ver el mapa mientras se arma
 #   (solo desde una terminal del escritorio).
@@ -48,11 +50,12 @@ if [ ! -f "$BAG/metadata.yaml" ]; then
     exit 1
 fi
 
-REPO="$(cd "$(dirname "$0")/.." && pwd)"
+# Carpeta del repositorio (este script está en <repo>/scripts/mapas/).
+REPO="$(cd "$(dirname "$0")/../.." && pwd)"
 POINT_LIO_WS="${POINT_LIO_WS:-$HOME/lidar_ws/point_lio_ws}"
 PCD_ORIGEN="$POINT_LIO_WS/src/point_lio_ros2/PCD/scans.pcd"
 [ -z "$NOMBRE" ] && NOMBRE="$(basename "$BAG" | sed -E 's/^[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{4}_//')"
-DESTINO="$REPO/mapas/$(date +%Y-%m-%d_%H%M)_${NOMBRE}_pointlio"
+DESTINO="$REPO/mapas/$(date +%Y-%m-%d_%H%M)_${NOMBRE}"
 
 # --- Entorno -----------------------------------------------------------------
 if [ ! -f "$POINT_LIO_WS/install/setup.bash" ]; then
@@ -75,12 +78,16 @@ if pgrep -f 'lib/point_lio/pointlio_mapping' >/dev/null; then
     exit 1
 fi
 
-mkdir -p "$REPO/mapas"
+if [ -e "$DESTINO" ]; then
+    echo "ERROR: ya existe $DESTINO"
+    exit 1
+fi
+mkdir -p "$DESTINO"
 # Se renombra el mapa anterior para saber con certeza que el nuevo es de esta corrida.
 [ -f "$PCD_ORIGEN" ] && mv "$PCD_ORIGEN" "$PCD_ORIGEN.anterior"
 
 echo "Grabación: $BAG"
-echo "Mapa de salida: $DESTINO.pcd"
+echo "Carpeta del mapa: $DESTINO"
 echo
 
 # --- Point-LIO -----------------------------------------------------------------
@@ -111,7 +118,7 @@ echo "Point-LIO en marcha. Reproduciendo la grabación (tarda lo mismo que duró
 # --- Registro de la trayectoria -----------------------------------------------
 TRAY_CSV="$(mktemp --suffix=.csv)"
 TRAY_RES="$(mktemp)"
-python3 "$REPO/scripts/registrar_trayectoria.py" "$TRAY_CSV" > "$TRAY_RES" 2>&1 < /dev/null &
+python3 "$REPO/scripts/mapas/registrar_trayectoria.py" "$TRAY_CSV" > "$TRAY_RES" 2>&1 < /dev/null &
 PID_TRAY=$!
 
 # --- Reproducción --------------------------------------------------------------
@@ -134,26 +141,27 @@ if [ ! -f "$PCD_ORIGEN" ]; then
     echo "ERROR: Point-LIO no guardó $PCD_ORIGEN. Registro en $LOG"
     exit 1
 fi
-cp "$PCD_ORIGEN" "$DESTINO.pcd"
-cp "$LOG" "$DESTINO.log"
-cp "$TRAY_CSV" "${DESTINO}_trayectoria.csv"
+cp "$PCD_ORIGEN" "$DESTINO/mapa.pcd"
+cp "$LOG" "$DESTINO/pointlio.log"
+cp "$TRAY_CSV" "$DESTINO/trayectoria.csv"
 rm -f "$LOG" "$TRAY_CSV"
 
-PUNTOS=$(head -c 1000 "$DESTINO.pcd" | grep -a '^POINTS' | awk '{print $2}')
+PUNTOS=$(head -c 1000 "$DESTINO/mapa.pcd" | grep -a '^POINTS' | awk '{print $2}')
 {
-    echo "Mapa: $(basename "$DESTINO").pcd"
+    echo "Mapa: $(basename "$DESTINO")/mapa.pcd"
     echo "Generado: $(date '+%Y-%m-%d %H:%M:%S') en $(hostname)"
     echo "Grabación de origen: $BAG"
     echo "SLAM: Point-LIO (point_lio_ros2), config/unilidar_l2.yaml + mapping_unilidar_l2.launch.py"
     echo "Puntos: $PUNTOS"
-    echo "Tamaño: $(du -h "$DESTINO.pcd" | cut -f1)"
+    echo "Tamaño: $(du -h "$DESTINO/mapa.pcd" | cut -f1)"
     echo "Commit del proyecto: $(git -C "$REPO" rev-parse --short HEAD 2>/dev/null || echo desconocido)"
     cat "$TRAY_RES"
-    echo "Trayectoria guardada en: $(basename "$DESTINO")_trayectoria.csv"
-} > "$DESTINO.txt"
+    echo "Trayectoria guardada en: $(basename "$DESTINO")/trayectoria.csv"
+} > "$DESTINO/resumen.txt"
 rm -f "$TRAY_RES"
 
 echo
-cat "$DESTINO.txt"
+cat "$DESTINO/resumen.txt"
 echo
-echo "Para verlo: ./scripts/ver_mapa.sh $DESTINO.pcd"
+echo "Para verlo:    ./scripts/mapas/ver_mapa.sh mapas/$(basename "$DESTINO")"
+echo "Para medirlo:  ./scripts/mapas/analizar_mapa.py mapas/$(basename "$DESTINO")"

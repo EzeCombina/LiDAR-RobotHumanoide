@@ -421,3 +421,30 @@ Sensor en el piso, sobre su almohadilla, sin tocar. Driver por Ethernet. Script 
   marco `map`. Se agregó a `ver_mapa.sh` un `static_transform_publisher` (`map` → `mapa_origen`);
   verificado en `/tf_static`. Esa ventana no mostraba la trayectoria porque se abrió con la versión
   anterior de `ver_mapa.sh`.
+
+## 2026-11-12 — Reorganización de `scripts/` y `mapas/`
+
+Pedido del usuario: separar los archivos en subcarpetas. Opciones elegidas (de las propuestas):
+
+- **`scripts/` por función:** `sistema/` (`relevar_sistema.sh`), `red/` (`configurar_red_lidar.sh`,
+  `verificar_udp_lidar.py`), `sensor/` (herramientas C++ `cambiar_modo_lidar` y `estado_lidar` con
+  su `CMakeLists.txt`, antes en `scripts/herramientas_sdk/`, y `medir_vibracion_imu.py`),
+  `grabacion/` (`grabar_lidar.sh`, `revisar_grabacion.py`) y `mapas/` (`procesar_grabacion.sh`,
+  `registrar_trayectoria.py`, `ver_mapa.sh`, `publicar_trayectoria.py`, `analizar_mapa.py`).
+  Movidos con `git mv`. Los scripts que calculan la raíz del repositorio pasaron de `..` a `../..`.
+- **`mapas/` con una carpeta por mapa:** `mapas/<fecha>_<nombre>/` con `mapa.pcd`, `resumen.txt`,
+  `trayectoria.csv` y `pointlio.log`. `procesar_grabacion.sh` genera esa estructura;
+  `ver_mapa.sh` y `analizar_mapa.py` aceptan la carpeta (o un `.pcd` suelto). `.gitignore`:
+  `mapas/**/*.log`.
+- Mapas migrados. `sala_quieta` y `persona_caminando` se regeneraron (carpetas `1413` y `1412`)
+  para tener trayectoria: cierre 8,6 cm y 5,2 cm con el sensor quieto; `sala_quieta` nivelado
+  0,7–0,9°. Con el sensor quieto el "largo del recorrido" da 7,9 m en 90 s (temblor de la
+  estimación): solo orientativo. Se incorporó el mapa `1403_departamento_vertical` que generó el
+  usuario con `--rviz` (cierre 0,83 m contra 1,06 m de la corrida `1339`: varía entre corridas).
+- `git rm` de los resúmenes viejos falló con `error: los siguientes archivos tienen contenido en
+  stage diferente a los mismos y a HEAD` (se habían editado después del `git mv`); se resolvió con
+  `git rm --cached`.
+- Referencias actualizadas en todos los documentos (excepto esta bitácora, que conserva las rutas
+  de cada momento), `CLAUDE.md`, `README.md` y `config/rviz/ver_mapa.rviz`. Verificado: ninguna
+  referencia a rutas viejas y todos los scripts mencionados existen. Herramientas C++ recompiladas
+  en `scripts/sensor/build/`.

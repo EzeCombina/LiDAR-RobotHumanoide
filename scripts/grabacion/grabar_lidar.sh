@@ -17,13 +17,13 @@
 #             "source /opt/ros/jazzy/setup.bash" en la terminal.
 #
 # Cómo se usa:
-#   ./scripts/grabar_lidar.sh <nombre> [segundos] ["descripción"]
+#   ./scripts/grabacion/grabar_lidar.sh <nombre> [segundos] ["descripción"]
 #
 #   Ejemplos:
-#   ./scripts/grabar_lidar.sh sala_quieta 90 "Sensor en el piso, nadie se mueve"
-#   ./scripts/grabar_lidar.sh recorrido_mano          # hasta cortar con Ctrl+C
+#   ./scripts/grabacion/grabar_lidar.sh sala_quieta 90 "Sensor en el piso, nadie se mueve"
+#   ./scripts/grabacion/grabar_lidar.sh recorrido_mano          # hasta cortar con Ctrl+C
 #
-#   Otra carpeta de destino:  BAGS_DIR=/media/disco/bags ./scripts/grabar_lidar.sh ...
+#   Otra carpeta de destino:  BAGS_DIR=/media/disco/bags ./scripts/grabacion/grabar_lidar.sh ...
 #
 # Conviene correrlo dentro de tmux si se trabaja por SSH.
 # =============================================================================
@@ -45,8 +45,8 @@ if [ -n "$SEGUNDOS" ] && ! [[ "$SEGUNDOS" =~ ^[0-9]+$ ]]; then
     exit 1
 fi
 
-# Carpeta del repositorio (este script está en <repo>/scripts/).
-REPO="$(cd "$(dirname "$0")/.." && pwd)"
+# Carpeta del repositorio (este script está en <repo>/scripts/grabacion/).
+REPO="$(cd "$(dirname "$0")/../.." && pwd)"
 BAGS_DIR="${BAGS_DIR:-$REPO/bags}"
 DESTINO="$BAGS_DIR/$(date +%Y-%m-%d_%H%M)_${NOMBRE}"
 

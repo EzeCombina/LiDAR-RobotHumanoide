@@ -21,8 +21,8 @@
 #
 # Cómo se usa:
 #   source /opt/ros/jazzy/setup.bash
-#   ./scripts/medir_vibracion_imu.py                       # 15 s
-#   ./scripts/medir_vibracion_imu.py --segundos 30 --csv imu_2026-11-12.csv
+#   ./scripts/sensor/medir_vibracion_imu.py                       # 15 s
+#   ./scripts/sensor/medir_vibracion_imu.py --segundos 30 --csv imu_2026-11-12.csv
 # =============================================================================
 import argparse
 import sys

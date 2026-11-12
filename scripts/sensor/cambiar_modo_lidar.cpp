@@ -24,7 +24,7 @@
  *     ./cambiar_modo_lidar ethernet /dev/ttyACM1
  *
  * Compilación: ver el encabezado de CMakeLists.txt de esta carpeta.
- *   El ejecutable queda en scripts/herramientas_sdk/build/cambiar_modo_lidar.
+ *   El ejecutable queda en scripts/sensor/build/cambiar_modo_lidar.
  * ============================================================================= */
 
 #include <chrono>

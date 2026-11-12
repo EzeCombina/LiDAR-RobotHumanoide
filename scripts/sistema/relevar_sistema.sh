@@ -9,8 +9,8 @@
 #   herramientas auxiliares e interfaces de red.
 #
 # Cómo se usa:
-#   ./scripts/relevar_sistema.sh                 # muestra el informe en pantalla
-#   ./scripts/relevar_sistema.sh > relevamiento.txt   # lo guarda en un archivo
+#   ./scripts/sistema/relevar_sistema.sh                 # muestra el informe en pantalla
+#   ./scripts/sistema/relevar_sistema.sh > relevamiento.txt   # lo guarda en un archivo
 #
 # No requiere sudo. Sirve tanto en la PC con Ubuntu como en la Jetson del robot.
 # =============================================================================

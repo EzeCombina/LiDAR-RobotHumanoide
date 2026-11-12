@@ -33,9 +33,9 @@ del robot.
 | `docs/FORMATO_DOCUMENTO.md` | Formato del PDF final |
 | `docs/referencias/` | Documentación de referencia del proyecto |
 | `docs/pdf/` | Fuente y salida del documento PDF final |
-| `scripts/` | Scripts propios |
+| `scripts/` | Scripts propios, por función: `sistema/`, `red/`, `sensor/` (herramientas C++ del SDK y diagnóstico), `grabacion/`, `mapas/` |
 | `config/` | Configuraciones propias o modificadas |
-| `mapas/` | Mapas generados (los `.pcd` quedan fuera de git; se suben sus resúmenes `.txt`) |
+| `mapas/` | Una carpeta por mapa (`mapa.pcd` fuera de git; `resumen.txt` y `trayectoria.csv` en git) |
 | `bags/` | Grabaciones (fuera de git) |
 | `assets/` | Logo e imágenes |
 
@@ -65,11 +65,11 @@ Con todo instalado (pasos 00 a 05), desde la carpeta del repositorio:
 # 1. Driver del sensor (dentro de tmux)
 ros2 launch config/unitree_lidar_ros2/l2_driver.launch.py modo:=ethernet rviz:=false
 # 2. Grabar el recorrido (Ctrl+C al volver al punto de partida)
-./scripts/grabar_lidar.sh <nombre> "" "<descripción>"
+./scripts/grabacion/grabar_lidar.sh <nombre> "" "<descripción>"
 # 3. Detener el driver y generar el mapa 3D
-./scripts/procesar_grabacion.sh bags/<carpeta>
+./scripts/mapas/procesar_grabacion.sh bags/<carpeta>
 # 4. Ver el mapa en RViz (terminal del escritorio)
-./scripts/ver_mapa.sh mapas/<mapa>.pcd
+./scripts/mapas/ver_mapa.sh mapas/<fecha>_<nombre>
 ```
 
 Detalle en [docs/pasos/06_mapeo_de_un_lugar.md](docs/pasos/06_mapeo_de_un_lugar.md).

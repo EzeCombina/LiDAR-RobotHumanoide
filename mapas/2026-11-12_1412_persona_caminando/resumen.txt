@@ -1,0 +1,12 @@
+Mapa: 2026-11-12_1412_persona_caminando/mapa.pcd
+Generado: 2026-11-12 14:13:10 en eze-laptop
+Grabación de origen: bags/2026-11-12_1028_persona_caminando
+SLAM: Point-LIO (point_lio_ros2), config/unilidar_l2.yaml + mapping_unilidar_l2.launch.py
+Puntos: 1128052
+Tamaño: 35M
+Commit del proyecto: 6f32ac0
+Trayectoria: 588 muestras, 59.1 s
+Largo del recorrido: 4.45 m
+Zona recorrida (x, y, z): 0.06 x 0.11 x 0.02 m
+Error de cierre (final vs. inicio): 0.052 m (horizontal 0.052 m, vertical -0.002 m)
+Trayectoria guardada en: 2026-11-12_1412_persona_caminando/trayectoria.csv

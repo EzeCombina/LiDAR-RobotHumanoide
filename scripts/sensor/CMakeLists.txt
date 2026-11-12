@@ -4,13 +4,13 @@
 #   - estado_lidar:       muestra el estado interno (motores, temperaturas, etc.)
 #
 # Compilación (requiere el SDK clonado en ~/lidar_ws/unilidar_sdk2):
-#   cd scripts/herramientas_sdk && mkdir -p build && cd build
+#   cd scripts/sensor && mkdir -p build && cd build
 #   cmake .. && make
 # Otra ubicación del SDK:
 #   cmake -DUNILIDAR_SDK_DIR=/ruta/unitree_lidar_sdk ..
-# Los ejecutables quedan en scripts/herramientas_sdk/build/.
+# Los ejecutables quedan en scripts/sensor/build/.
 cmake_minimum_required(VERSION 3.10)
-project(herramientas_sdk CXX)
+project(herramientas_sensor CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 if(NOT CMAKE_BUILD_TYPE)

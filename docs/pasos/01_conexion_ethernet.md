@@ -74,7 +74,7 @@ El sensor de fábrica tiene la IP `192.168.1.62` y envía sus datos a la IP `192
 
 ```bash
 cd ~/Documentos/LiDAR-RobotHumanoide
-./scripts/configurar_red_lidar.sh eno1
+./scripts/red/configurar_red_lidar.sh eno1
 ```
 
 El script:
@@ -135,7 +135,7 @@ ping -c 4 192.168.1.62
 puerto 6201. Con el script del proyecto (no necesita `sudo`, no le envía nada al sensor):
 
 ```bash
-./scripts/verificar_udp_lidar.py
+./scripts/red/verificar_udp_lidar.py
 ```
 
 **Salida esperada** (PC del laboratorio, 2026-11-12):
@@ -249,7 +249,7 @@ cada paquete de puntos: velocidad de los dos motores, suciedad, pérdida de paqu
 tensiones. Es útil para verificar que el sensor esté sano y para tener un registro de referencia.
 
 ```bash
-cd ~/Documentos/LiDAR-RobotHumanoide/scripts/herramientas_sdk
+cd ~/Documentos/LiDAR-RobotHumanoide/scripts/sensor
 mkdir -p build && cd build
 cmake .. && make
 ./estado_lidar udp 20        # 20 segundos; cerrar antes el driver o el ejemplo
@@ -305,7 +305,7 @@ corriendo** (paso 03) y el sensor **quieto sobre su almohadilla**, apoyado en el
 ```bash
 source /opt/ros/jazzy/setup.bash
 cd ~/Documentos/LiDAR-RobotHumanoide
-./scripts/medir_vibracion_imu.py --segundos 20 --csv docs/mediciones/imu_reposo_<fecha>.csv
+./scripts/sensor/medir_vibracion_imu.py --segundos 20 --csv docs/mediciones/imu_reposo_<fecha>.csv
 ```
 
 **Salida obtenida** (sensor del laboratorio, 2026-11-12):

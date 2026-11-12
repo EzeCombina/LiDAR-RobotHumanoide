@@ -20,7 +20,7 @@
 #
 # Cómo se usa:
 #   source /opt/ros/jazzy/setup.bash
-#   ./scripts/revisar_grabacion.py bags/<carpeta>
+#   ./scripts/grabacion/revisar_grabacion.py bags/<carpeta>
 # =============================================================================
 import sys
 

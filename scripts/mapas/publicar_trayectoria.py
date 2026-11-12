@@ -4,7 +4,7 @@
 # -----------------------------------------------------------------------------
 # Qué hace:
 #   Lee el CSV de trayectoria que genera procesar_grabacion.sh
-#   (mapas/<mapa>_trayectoria.csv) y lo publica cada 2 segundos:
+#   (mapas/<carpeta_del_mapa>/trayectoria.csv) y lo publica cada 2 segundos:
 #     - /trayectoria          (nav_msgs/Path): el recorrido del sensor;
 #     - /trayectoria_extremos (visualization_msgs/MarkerArray): una esfera
 #       VERDE en el punto de partida y una ROJA en el de llegada. La distancia
@@ -12,11 +12,11 @@
 #   Todo en el marco "map", el mismo que usa ver_mapa.sh para el .pcd (la
 #   trayectoria y el mapa de Point-LIO están en el mismo sistema de coordenadas).
 #
-#   Lo usa scripts/ver_mapa.sh; también se puede usar solo, con RViz abierto.
+#   Lo usa scripts/mapas/ver_mapa.sh; también se puede usar solo, con RViz abierto.
 #
 # Cómo se usa:
 #   source /opt/ros/jazzy/setup.bash
-#   ./scripts/publicar_trayectoria.py mapas/<mapa>_trayectoria.csv
+#   ./scripts/mapas/publicar_trayectoria.py mapas/<carpeta_del_mapa>/trayectoria.csv
 #   (Ctrl+C para terminar)
 # =============================================================================
 import csv

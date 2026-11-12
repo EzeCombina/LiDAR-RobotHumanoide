@@ -15,11 +15,11 @@
 # Ubuntu crea por defecto (prioridad -999).
 #
 # Cómo se usa:
-#   ./scripts/configurar_red_lidar.sh <placa> [ip_de_la_pc/máscara]
+#   ./scripts/red/configurar_red_lidar.sh <placa> [ip_de_la_pc/máscara]
 #
 #   Ejemplos:
-#   ./scripts/configurar_red_lidar.sh eno1                     # red de fábrica: 192.168.1.2/24
-#   ./scripts/configurar_red_lidar.sh eno1 192.168.10.2/24     # si se cambió la red del sensor
+#   ./scripts/red/configurar_red_lidar.sh eno1                     # red de fábrica: 192.168.1.2/24
+#   ./scripts/red/configurar_red_lidar.sh eno1 192.168.10.2/24     # si se cambió la red del sensor
 #
 # Para deshacerlo:
 #   nmcli connection delete lidar-l2

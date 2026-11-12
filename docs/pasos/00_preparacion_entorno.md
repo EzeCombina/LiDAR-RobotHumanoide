@@ -219,11 +219,11 @@ git remote set-url origin git@github.com:EzeCombina/LiDAR-RobotHumanoide.git
 
 ## 6. Verificación final: relevamiento del sistema
 
-El script `scripts/relevar_sistema.sh` muestra todo lo que hay que registrar en `docs/versiones.md`.
+El script `scripts/sistema/relevar_sistema.sh` muestra todo lo que hay que registrar en `docs/versiones.md`.
 No modifica nada y no necesita `sudo`. También sirve en la Jetson del robot.
 
 ```bash
-./scripts/relevar_sistema.sh
+./scripts/sistema/relevar_sistema.sh
 ```
 
 **Salida esperada** (resumida; PC del laboratorio, 2026-11-06):

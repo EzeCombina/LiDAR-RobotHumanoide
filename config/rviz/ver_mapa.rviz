@@ -3,8 +3,8 @@
 # Cambios: se quitó la vista de TF; la nube se llama 'Mapa' y lee /cloud_pcd
 # (lo publica pcl_ros/pcd_to_pointcloud); marco fijo 'map'; puntos de 2 px;
 # se agregaron 'Trayectoria' (/trayectoria) y 'Extremos' (/trayectoria_extremos),
-# que publica scripts/publicar_trayectoria.py.
-# Uso: scripts/ver_mapa.sh <archivo.pcd> [trayectoria.csv]
+# que publica scripts/mapas/publicar_trayectoria.py.
+# Uso: scripts/mapas/ver_mapa.sh <carpeta_del_mapa | archivo.pcd> [trayectoria.csv]
 Panels:
 - Class: rviz_common/Displays
   Help Height: 78

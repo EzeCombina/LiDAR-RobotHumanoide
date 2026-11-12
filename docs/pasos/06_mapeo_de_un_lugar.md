@@ -49,7 +49,7 @@ está en los pasos 01 a 05.
 
 ```bash
 cd ~/Documentos/LiDAR-RobotHumanoide
-./scripts/grabar_lidar.sh <nombre> "" "<descripción del recorrido>"
+./scripts/grabacion/grabar_lidar.sh <nombre> "" "<descripción del recorrido>"
 ```
 
 - `<nombre>`: letras, números y guiones bajos, por ejemplo `departamento_horizontal`.
@@ -59,7 +59,7 @@ cd ~/Documentos/LiDAR-RobotHumanoide
 Ejemplo:
 
 ```bash
-./scripts/grabar_lidar.sh departamento_horizontal "" "Departamento completo, sensor horizontal sobre la cabeza, inicio y fin en la puerta de entrada"
+./scripts/grabacion/grabar_lidar.sh departamento_horizontal "" "Departamento completo, sensor horizontal sobre la cabeza, inicio y fin en la puerta de entrada"
 ```
 
 ### Cómo hacer el recorrido
@@ -113,7 +113,7 @@ filtrado si está a menos de 0,5 m del sensor (`blind`).
 2. (Opcional) Comprobar que la grabación no tiene huecos:
 
    ```bash
-   ./scripts/revisar_grabacion.py bags/<carpeta>
+   ./scripts/grabacion/revisar_grabacion.py bags/<carpeta>
    ```
 
 3. Procesar la grabación:
@@ -121,22 +121,23 @@ filtrado si está a menos de 0,5 m del sensor (`blind`).
    ```bash
    cd ~/Documentos/LiDAR-RobotHumanoide
    ls bags/                                          # buscar la carpeta de la grabación
-   ./scripts/procesar_grabacion.sh bags/<carpeta>    # agregar --rviz para ver cómo se arma
+   ./scripts/mapas/procesar_grabacion.sh bags/<carpeta>    # agregar --rviz para ver cómo se arma
    ```
 
    Tarda lo mismo que duró la grabación. Al final muestra el nombre del mapa, la cantidad de puntos
-   y el tamaño. El mapa queda en `mapas/<fecha>_<nombre>_pointlio.pcd`.
+   y el tamaño. El mapa queda en la carpeta `mapas/<fecha>_<nombre>/` (`mapa.pcd`, `resumen.txt`,
+   `trayectoria.csv` y `pointlio.log`).
 
 ## 4. Ver y revisar el mapa
 
 Desde una terminal del escritorio de Ubuntu:
 
 ```bash
-./scripts/ver_mapa.sh mapas/<fecha>_<nombre>_pointlio.pcd
+./scripts/mapas/ver_mapa.sh mapas/<fecha>_<nombre>
 ```
 
 Primero, los números del resumen que muestra `procesar_grabacion.sh` (también en
-`mapas/<mapa>.txt`):
+`mapas/<fecha>_<nombre>/resumen.txt`):
 
 - [ ] **Zona recorrida** parecida a lo que se caminó.
 - [ ] **Error de cierre** de pocos centímetros (si se terminó en el punto de partida).
@@ -146,7 +147,7 @@ Primero, los números del resumen que muestra `procesar_grabacion.sh` (también 
 Para ver las medidas del mapa y la trayectoria cada 10 s:
 
 ```bash
-./scripts/analizar_mapa.py mapas/<mapa>.pcd mapas/<mapa>_trayectoria.csv
+./scripts/mapas/analizar_mapa.py mapas/<fecha>_<nombre>
 ```
 
 La **extensión útil** de cada eje debe parecerse a las medidas reales del lugar.
@@ -168,7 +169,8 @@ Si algo falla, repetir la grabación más despacio, con giros más suaves y empe
 
 - Anotar la grabación en `docs/grabaciones.md` y el mapa en `docs/mapas.md`.
 - Agregar una entrada en `docs/bitacora.md` con el resultado y los problemas.
-- `git add` de los `.txt` de `mapas/` y de los documentos; commit y push. Los `.pcd` y las
+- `git add` de la carpeta del mapa (solo se suben `resumen.txt` y `trayectoria.csv`) y de los
+  documentos; commit y push. Los `.pcd` y las
   grabaciones **no** se suben (están en `.gitignore`).
 
 ## Resumen de comandos
@@ -177,11 +179,11 @@ Si algo falla, repetir la grabación más despacio, con giros más suaves y empe
 # 1. Driver (en tmux)
 ros2 launch config/unitree_lidar_ros2/l2_driver.launch.py modo:=ethernet rviz:=false
 # 2. Grabar (Ctrl+C al terminar)
-./scripts/grabar_lidar.sh <nombre> "" "<descripción>"
+./scripts/grabacion/grabar_lidar.sh <nombre> "" "<descripción>"
 # 3. Detener el driver y generar el mapa
-./scripts/procesar_grabacion.sh bags/<carpeta>
+./scripts/mapas/procesar_grabacion.sh bags/<carpeta>
 # 4. Ver el mapa (terminal del escritorio)
-./scripts/ver_mapa.sh mapas/<mapa>.pcd
+./scripts/mapas/ver_mapa.sh mapas/<fecha>_<nombre>
 ```
 
 ## Problemas frecuentes
