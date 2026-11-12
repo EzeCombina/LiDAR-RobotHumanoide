@@ -354,7 +354,18 @@ cat /sys/class/net/eno1/carrier            # 1 = hay enlace; 0 = no hay enlace f
 journalctl -u NetworkManager --since "-30 min" --no-pager | grep -i "eno1.*carrier"
 ```
 
-El último comando muestra cuándo se cortó y volvió el enlace. Ejemplo real (2026-11-12):
+El último comando muestra cuándo se cortó y volvió el enlace. NetworkManager reacciona unos
+**6 segundos después** del corte real; la hora exacta la registra el kernel:
+
+```bash
+journalctl -k --since "-30 min" --no-pager | grep -i "eno1"
+```
+
+```text
+nov 12 14:32:48 eze-laptop kernel: r8169 0000:03:00.0 eno1: Link is Down
+```
+
+Ejemplo real de NetworkManager (2026-11-12):
 
 ```text
 ... device (eno1): state change: activated -> unavailable (reason 'carrier-changed', ...)

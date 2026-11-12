@@ -45,11 +45,15 @@ El script:
    libres.
 2. Graba esos dos tópicos en formato MCAP en `bags/<AAAA-MM-DD_HHMM>_<nombre>/` (carpeta del
    repositorio excluida de git). Para grabar en otro disco: `BAGS_DIR=/ruta ./scripts/grabacion/grabar_lidar.sh ...`.
-3. Si se indicó una duración, corta solo; si no, se corta con **Ctrl+C** (también se puede cortar
+3. Mientras graba, `scripts/grabacion/vigilar_datos.py` controla que sigan llegando nubes: si pasan
+   más de 1,5 s sin datos, muestra un aviso y hace sonar la campana de la terminal cada 2 s
+   (ver 1.1).
+4. Si se indicó una duración, corta solo; si no, se corta con **Ctrl+C** (también se puede cortar
    antes de tiempo con Ctrl+C). En todos los casos cierra el archivo de forma ordenada. La pausa con
    la barra espaciadora de `ros2 bag record` queda desactivada a propósito.
-4. Guarda `descripcion.txt` (nombre, horario, descripción, equipo y commit del proyecto) y muestra
-   el resumen.
+5. Guarda `descripcion.txt` (nombre, horario, descripción, equipo y commit del proyecto) y muestra
+   el resumen. **La grabación terminó recién cuando aparece este resumen**: no desconectar el
+   sensor antes.
 
 **Salida obtenida** (prueba de 15 s, 2026-11-12):
 
@@ -73,6 +77,25 @@ Tamaño en disco: 29M
 **Verificación:** `Count` dividido `Duration` debe dar unos 12 mensajes/s para la nube y unos
 250/s para la IMU. En la prueba: 173 / 14,44 = 11,98 y 3619 / 14,44 = 250,6 → no se perdieron
 mensajes.
+
+### 1.1 Aviso de corte de datos
+
+Si durante la grabación se desconecta un cable, o se desconecta el sensor creyendo que la grabación
+ya se había cortado, aparece en la terminal (con un pitido, cada 2 s):
+
+```text
+*** ATENCIÓN: NO LLEGAN DATOS DEL LiDAR desde hace 2 s. Revisar el cable Ethernet y la alimentación.
+*** Si ya terminaste: la grabación SIGUE ABIERTA, cortala con Ctrl+C y esperá el resumen antes de desconectar el sensor. ***
+```
+
+y, si los datos vuelven:
+
+```text
+*** Los datos del LiDAR VOLVIERON después de 6 s sin datos. ***
+```
+
+El vigilante también se puede usar solo, con el driver corriendo:
+`./scripts/grabacion/vigilar_datos.py`.
 
 ### Comando equivalente, sin el script
 
@@ -148,6 +171,18 @@ Arranque (primeros 4 s de IMU, 1001 muestras):
 ```
 
 Con el sensor apoyado (`sala_quieta`) da `0.087 / 0.081 / 0.006 rad/s -> QUIETO`.
+
+El script también compara el último dato con la hora de fin de la grabación (de `descripcion.txt`).
+Si el sensor dejó de enviar datos antes de cortar la grabación, lo informa. Ejemplo real
+(2026-11-12: se desconectó el sensor a los 16 s creyendo que la grabación ya se había cortado):
+
+```text
+Duración de la grabación (descripcion.txt): 271 s | último dato a los 16 s (14:32:48)
+  ATENCIÓN: no llegaron datos durante los últimos 255 s. El sensor dejó de enviar datos (¿cable desconectado o sin alimentación?).
+  Solo sirve la parte grabada antes del corte.
+
+Resultado: GRABACIÓN INCOMPLETA: revisar los avisos de arriba
+```
 
 Se considera hueco un intervalo mayor a 3 veces el normal. Si aparecen huecos, conviene repetir la
 grabación: el SLAM puede perderse en esos momentos.
@@ -261,6 +296,7 @@ mano (etapa 3). Nunca conectar el sensor a 24 V o 36 V directamente.
 | `ERROR: la grabación no se cerró correctamente (falta metadata.yaml)` | La grabación se interrumpió de golpe (corte de luz, terminal cerrada) | Intentar `ros2 bag reindex bags/<carpeta>` (A VERIFICAR con MCAP); para evitarlo, grabar dentro de `tmux` |
 | La grabación con duración no termina nunca y no se crea la carpeta en `bags/` (versión del script anterior al 2026-11-12 10:15) | `timeout` deja a `ros2 bag record` en segundo plano; al intentar leer el teclado, el sistema lo congela (estado `T` en `ps`) | Actualizar el script (usa `timeout --foreground` y `< /dev/null`). Para destrabar: Ctrl+C no alcanza; cerrar la terminal o `kill` del proceso |
 | `ERROR: no llegan mensajes en /unilidar/cloud` aunque el driver esté corriendo | Se cortó el enlace Ethernet (cable flojo o sensor sin alimentación) | Ver el paso 01, problemas frecuentes: diagnóstico de cortes de red |
+| `revisar_grabacion.py` dice `GRABACIÓN INCOMPLETA` con "no llegaron datos durante los últimos N s" | Se desconectó el sensor (o un cable) antes de cortar la grabación | Cortar siempre con Ctrl+C y **esperar el resumen** antes de desconectar; repetir la grabación |
 | `revisar_grabacion.py` informa huecos | Corte de red o PC sobrecargada durante la grabación | Revisar cables y repetir la grabación |
 | La grabación tiene menos mensajes de los esperados | Disco lento o PC muy cargada | Cerrar RViz y otros programas mientras se graba |
 | `ERROR: no llegan mensajes en /unilidar/cloud` justo después de ver una grabación | Se detuvo el driver para reproducir la grabación | Relanzar el driver (paso 03) y cerrar antes cualquier `ros2 bag play` |

@@ -7,6 +7,8 @@
 #      publicando y que haya espacio en disco.
 #   2. Graba /unilidar/cloud y /unilidar/imu con "ros2 bag record" en formato
 #      MCAP, en una carpeta nueva: <carpeta de grabaciones>/<fecha>_<nombre>/
+#   Durante la grabación, vigilar_datos.py avisa en pantalla (con un pitido) si
+#   el sensor deja de enviar datos, por ejemplo si se desconecta un cable.
 #   3. Al terminar, guarda un archivo descripcion.txt (qué, cuándo, con qué
 #      versión del proyecto) y muestra el resumen de "ros2 bag info".
 #
@@ -81,7 +83,8 @@ if [ -n "$SEGUNDOS" ]; then
 else
     echo "Duración: hasta cortar con Ctrl+C"
 fi
-echo "Recordatorio: quedarse quieto 5 a 10 s al empezar y al terminar."
+echo "Recordatorio: sensor APOYADO y quieto 5 a 10 s al empezar y al terminar."
+echo "Si dejan de llegar datos (cable o alimentación), se avisa en pantalla con un pitido."
 echo
 
 INICIO=$(date '+%Y-%m-%d %H:%M:%S')
@@ -95,6 +98,9 @@ INICIO=$(date '+%Y-%m-%d %H:%M:%S')
 # barra espaciadora). Así no se pausa por accidente y, sobre todo, no queda
 # congelado al intentar leer la terminal (ver docs/pasos/04_grabacion.md).
 trap ':' INT
+# Vigilante: avisa si dejan de llegar datos durante la grabación.
+python3 "$REPO/scripts/grabacion/vigilar_datos.py" < /dev/null &
+PID_VIGILANTE=$!
 if [ -n "$SEGUNDOS" ]; then
     # timeout envía SIGINT (como Ctrl+C) al cumplirse la duración, para que el
     # archivo se cierre bien. --foreground mantiene la grabación en primer plano,
@@ -104,6 +110,8 @@ if [ -n "$SEGUNDOS" ]; then
 else
     ros2 bag record -s mcap -o "$DESTINO" --topics "${TOPICOS[@]}" < /dev/null || true
 fi
+kill -INT "$PID_VIGILANTE" 2>/dev/null || true
+wait "$PID_VIGILANTE" 2>/dev/null || true
 trap - INT
 
 if [ ! -f "$DESTINO/metadata.yaml" ]; then

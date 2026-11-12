@@ -9,6 +9,10 @@
 #     - intervalo medio y máximo entre mensajes;
 #     - "huecos": intervalos mayores a 3 veces el intervalo medio (por ejemplo,
 #       si se cortó el cable de red durante la grabación).
+#   Además compara el último dato recibido con la hora de fin de la grabación
+#   (descripcion.txt, lo escribe grabar_lidar.sh): si el sensor dejó de enviar
+#   datos antes del final (cable desconectado o sin alimentación hasta que se
+#   cortó la grabación), lo informa. Ese corte no aparece como "hueco".
 #   Valores esperados para el L2: /unilidar/cloud ~12 Hz (83 ms) y
 #   /unilidar/imu ~250 Hz (4 ms).
 #   Además revisa el ARRANQUE: en los primeros 4 s de IMU calcula cuánto se
@@ -22,7 +26,9 @@
 #   source /opt/ros/jazzy/setup.bash
 #   ./scripts/grabacion/revisar_grabacion.py bags/<carpeta>
 # =============================================================================
+import os
 import sys
+from datetime import datetime
 
 import numpy as np
 import rosbag2_py
@@ -31,6 +37,7 @@ from rclpy.serialization import deserialize_message
 from sensor_msgs.msg import Imu
 
 SEGUNDOS_ARRANQUE = 4.0
+MARGEN_FINAL = 5.0  # s: tolerancia entre el último dato y el fin de la grabación
 GIRO_QUIETO = 0.1  # rad/s: desvío del giróscopo por debajo del cual se considera "quieto"
 
 
@@ -79,7 +86,30 @@ def main():
         else:
             print("  sin huecos")
 
-    print("\nResultado:", "HAY HUECOS: revisar la grabación" if hay_huecos else "grabación completa")
+    # ¿Siguieron llegando datos hasta el final? (hora de fin según descripcion.txt)
+    cortada = False
+    ruta_desc = os.path.join(carpeta, "descripcion.txt")
+    if os.path.isfile(ruta_desc) and "/unilidar/cloud" in tiempos:
+        horas = {}
+        for linea in open(ruta_desc):
+            if linea.startswith(("Inicio:", "Fin:")):
+                clave, valor = linea.split(":", 1)
+                horas[clave] = datetime.strptime(valor.strip(), "%Y-%m-%d %H:%M:%S").timestamp()
+        if "Inicio" in horas and "Fin" in horas:
+            ultimo = tiempos["/unilidar/cloud"][-1]
+            print(f"\nDuración de la grabación (descripcion.txt): {horas['Fin'] - horas['Inicio']:.0f} s"
+                  f" | último dato a los {ultimo - horas['Inicio']:.0f} s"
+                  f" ({datetime.fromtimestamp(ultimo).strftime('%H:%M:%S')})")
+            if horas["Fin"] - ultimo > MARGEN_FINAL:
+                cortada = True
+                print(f"  ATENCIÓN: no llegaron datos durante los últimos {horas['Fin'] - ultimo:.0f} s."
+                      " El sensor dejó de enviar datos (¿cable desconectado o sin alimentación?).")
+                print("  Solo sirve la parte grabada antes del corte.")
+
+    if hay_huecos or cortada:
+        print("\nResultado: GRABACIÓN INCOMPLETA: revisar los avisos de arriba")
+    else:
+        print("\nResultado: grabación completa")
 
     if len(acel) > 10:
         a, g = np.array(acel).mean(axis=0), np.array(giro).std(axis=0)

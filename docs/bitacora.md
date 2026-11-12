@@ -448,3 +448,26 @@ Pedido del usuario: separar los archivos en subcarpetas. Opciones elegidas (de l
   de cada momento), `CLAUDE.md`, `README.md` y `config/rviz/ver_mapa.rviz`. Verificado: ninguna
   referencia a rutas viejas y todos los scripts mencionados existen. Herramientas C++ recompiladas
   en `scripts/sensor/build/`.
+
+## 2026-11-12 — Grabación `habitacion_vertical_rapido` incompleta y vigilante de datos
+
+- El usuario grabó `2026-11-12_1432_habitacion_vertical_rapido` y quedó trabado en el paso 3. Estado
+  encontrado: `ros2 bag record` seguía corriendo (~4 min) y `eno1` sin enlace. El kernel registró
+  `eno1: Link is Down` a las 14:32:48, el mismo instante del último dato (nube e IMU);
+  NetworkManager lo informó 6 s después (14:32:54). El usuario explicó que probablemente apretó
+  mal Ctrl+C y desconectó el sensor creyendo que la grabación ya estaba cortada. Claude cerró la
+  grabación con SIGINT.
+- Resultado: 15 s útiles (181 nubes, sin huecos internos). Arranque EN MOVIMIENTO (giróscopo
+  0,47–0,92 rad/s, gravedad a 42,5° del eje x): no se apoyó el sensor al empezar. Grabación marcada
+  como incompleta en `docs/grabaciones.md`.
+- **Falla detectada:** `revisar_grabacion.py` decía "sin huecos / grabación completa", porque un
+  corte que dura hasta el final no deja intervalos largos entre mensajes. Se agregó la comparación
+  del último dato con la hora de fin de `descripcion.txt` → ahora informa
+  `GRABACIÓN INCOMPLETA` ("no llegaron datos durante los últimos 255 s"). Sin falsos avisos en la
+  grabación buena del departamento.
+- **Mejora:** `scripts/grabacion/vigilar_datos.py` (nuevo), lanzado por `grabar_lidar.sh` durante
+  la grabación: si pasan más de 1,5 s sin nubes, aviso en pantalla con pitido cada 2 s (incluye
+  "si ya terminaste, la grabación sigue abierta"); informa cuando vuelven los datos. Probado con
+  el sensor desconectado y simulando datos con `ros2 bag play`.
+- Documentado en los pasos 01 (hora exacta del corte con `journalctl -k`), 04 (aviso y grabación
+  incompleta) y 06 (esperar el resumen antes de desconectar).

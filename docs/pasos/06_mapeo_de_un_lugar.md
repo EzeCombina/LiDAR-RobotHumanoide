@@ -74,7 +74,10 @@ Ejemplo:
 3. Pasar por todos los ambientes. En las puertas, ir despacio: hay pocas referencias.
 4. **Volver al punto de partida** y quedarse quieto otros 5 a 10 s. Si el mapa "cierra" (la
    llegada coincide con la partida), el recorrido salió bien.
-5. **Ctrl+C** para terminar. El script muestra el resumen y guarda `descripcion.txt`.
+5. **Ctrl+C** para terminar y **esperar a que aparezca el resumen** (`Files:`, `Duration:`,
+   `Messages:` …) antes de desconectar el sensor. Si se desconecta antes, la grabación queda
+   abierta sin datos; en ese caso la terminal empieza a pitar con el aviso
+   `NO LLEGAN DATOS DEL LiDAR` (paso 04, punto 1.1).
 
 ### Cómo llevar el sensor
 
@@ -194,5 +197,7 @@ ros2 launch config/unitree_lidar_ros2/l2_driver.launch.py modo:=ethernet rviz:=f
 | `ERROR: ya hay algo publicando /unilidar/cloud` al procesar | El driver sigue corriendo | Detenerlo (punto 3) |
 | Paredes duplicadas o mapa torcido | Giros bruscos, inicio en movimiento, ambiente con pocas referencias | Repetir más despacio; empezar y terminar quieto |
 | El mapa no tiene piso ni muebles bajos | Sensor horizontal: no ve por debajo de su base | Probar con el sensor vertical o inclinado |
+| `revisar_grabacion.py`: `GRABACIÓN INCOMPLETA` (no llegaron datos durante los últimos N s) | Se desconectó el sensor o un cable antes de cortar la grabación | Repetir; cortar con Ctrl+C y esperar el resumen antes de desconectar |
+| Pitidos y `NO LLEGAN DATOS DEL LiDAR` durante la grabación | Cable Ethernet o alimentación sueltos | Revisar las conexiones; dejar el cable con juego para que no se tense al levantar el sensor |
 | Se corta la alimentación al caminar | El cable de la fuente no alcanza | Alargue o fuente portátil de 12 V |
 | Más problemas | — | Ver los pasos 01 a 05 |
