@@ -179,8 +179,16 @@ el comportamiento del sensor:
    inicializa con el sensor en reposo).
 2. Caminar **despacio** y hacer los giros **suaves**. Los giros bruscos son la causa más común de
    mapas deformados.
-3. Llevar el sensor **con la cúpula hacia arriba** y por encima del cuerpo en lo posible: el L2 mide
-   la semiesfera superior, y el cuerpo tapa parte de la vista hacia abajo.
+3. Llevar el sensor **horizontal, con la cúpula hacia arriba**, a la altura de la cabeza o un poco
+   más arriba (brazo levantado o un palo corto). El L2 mide solo la **semiesfera que está por encima
+   de su base** (360° × 90°): no ve el piso ni lo que está más abajo que él. Si se lo lleva a la
+   altura del pecho, la cabeza de quien lo lleva tapa una parte de la vista.
+
+   > **Limitación para mapas de robots:** con el sensor horizontal, los obstáculos que estén por
+   > debajo de su altura (sillas, mesas bajas, cajas) no quedan en el mapa: solo se ven paredes,
+   > objetos altos y techo. Alcanza para probar el SLAM. Para el mapa que va a usar el robot habrá
+   > que decidir la altura e inclinación del sensor junto con el diseño del soporte (etapa 3):
+   > A VERIFICAR.
 4. No tapar el sensor con la mano ni con cables.
 5. **Terminar en el mismo punto de partida** y quedarse quieto otros 5 a 10 s. Volver al inicio
    permite comprobar si el mapa "cierra".

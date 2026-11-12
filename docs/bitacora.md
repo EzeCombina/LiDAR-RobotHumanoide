@@ -311,3 +311,12 @@ Sensor en el piso, sobre su almohadilla, sin tocar. Driver por Ethernet. Script 
 - Paso 04, sección 2, reescrita con comandos genéricos (cualquier grabación y usuario): la
   configuración de RViz se ubica con `$(ros2 pkg prefix unitree_lidar_ros2)`, en lugar de una ruta
   absoluta con el nombre de usuario. Se agregó el uso de *Decay Time* para acumular puntos.
+
+## 2026-11-12 — Grabación `persona_caminando` y corrección sobre cómo llevar el sensor
+
+- Grabación de referencia 2 `2026-11-12_1028_persona_caminando`: 59,47 s, 712 nubes (11,97/s),
+  14882 IMU (250,2/s), 123 MB. Sin pérdidas. El usuario la revisó: bien. Registrada.
+- Se corrigió el paso 04, punto 4.2: decía que el cuerpo tapa la vista "hacia abajo", pero el L2
+  con la cúpula hacia arriba **no ve nada por debajo de su base** (semiesfera superior). Se agregó
+  la limitación: los obstáculos bajos no quedan en el mapa con el sensor horizontal; la altura e
+  inclinación para el robot se definen con el soporte (A VERIFICAR).
