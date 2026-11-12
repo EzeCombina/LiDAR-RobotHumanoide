@@ -285,3 +285,19 @@ Sensor en el piso, sobre su almohadilla, sin tocar. Driver por Ethernet. Script 
   `docs/grabaciones.md` para anotar cada grabación útil y dónde está.
 - Documento del paso: `docs/pasos/04_grabacion.md`, con el procedimiento de las tres grabaciones de
   referencia (`sala_quieta`, `persona_caminando`, `recorrido_mano`).
+
+### Falla del script de grabación desde la terminal del usuario (2026-11-12)
+
+- El usuario corrió `./scripts/grabar_lidar.sh sala_quieta 90 ...` en su terminal: pasados los
+  90 s no terminaba y no se había creado la carpeta de la grabación. `ps` mostró
+  `ros2 bag record` en estado **`Tl` (detenido)** desde el inicio, en un grupo de procesos distinto
+  del de primer plano de la terminal.
+- Causa: `timeout` (sin `--foreground`) ejecuta el comando en segundo plano; `ros2 bag record`
+  intenta leer el teclado (pausa con la barra espaciadora) y el sistema lo congela (SIGTTIN). En las
+  pruebas de Claude no apareció porque no había terminal ("stdin is not a terminal device. Keyboard
+  handling disabled.").
+- Solución: `timeout --foreground -s INT`, entrada `< /dev/null` para `ros2 bag record` y
+  `trap ':' INT` en lugar de `trap '' INT` (una señal ignorada se hereda a los procesos hijos).
+- Verificado con una terminal simulada (`script -qec`): la versión anterior se cuelga (código 124);
+  la nueva termina sola con duración, se corta con Ctrl+C sin duración y también se corta antes de
+  tiempo con Ctrl+C. Los procesos trabados se cerraron; las grabaciones de prueba se borraron.

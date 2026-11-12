@@ -87,14 +87,22 @@ echo
 INICIO=$(date '+%Y-%m-%d %H:%M:%S')
 
 # --- Grabación ---------------------------------------------------------------
-# Se ignora Ctrl+C en este script para que lo reciba solo "ros2 bag record"
-# y el script pueda seguir y escribir la descripción.
-trap '' INT
+# Ctrl+C: el script lo atrapa con un manejador vacío (':') para no terminar y
+# poder escribir la descripción; "ros2 bag record" lo recibe y cierra el archivo.
+# (No usar trap '' INT: una señal ignorada se hereda y el grabador la ignoraría.)
+#
+# "< /dev/null": desactiva el manejo de teclado de ros2 bag record (pausa con la
+# barra espaciadora). Así no se pausa por accidente y, sobre todo, no queda
+# congelado al intentar leer la terminal (ver docs/pasos/04_grabacion.md).
+trap ':' INT
 if [ -n "$SEGUNDOS" ]; then
-    # timeout envía SIGINT (como Ctrl+C) para que el archivo se cierre bien.
-    timeout -s INT "$SEGUNDOS" ros2 bag record -s mcap -o "$DESTINO" --topics "${TOPICOS[@]}" || true
+    # timeout envía SIGINT (como Ctrl+C) al cumplirse la duración, para que el
+    # archivo se cierre bien. --foreground mantiene la grabación en primer plano,
+    # así un Ctrl+C del usuario también la corta antes de tiempo.
+    timeout --foreground -s INT "$SEGUNDOS" \
+        ros2 bag record -s mcap -o "$DESTINO" --topics "${TOPICOS[@]}" < /dev/null || true
 else
-    ros2 bag record -s mcap -o "$DESTINO" --topics "${TOPICOS[@]}" || true
+    ros2 bag record -s mcap -o "$DESTINO" --topics "${TOPICOS[@]}" < /dev/null || true
 fi
 trap - INT
 

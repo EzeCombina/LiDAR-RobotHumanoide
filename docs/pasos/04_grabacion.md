@@ -45,8 +45,9 @@ El script:
    libres.
 2. Graba esos dos tópicos en formato MCAP en `bags/<AAAA-MM-DD_HHMM>_<nombre>/` (carpeta del
    repositorio excluida de git). Para grabar en otro disco: `BAGS_DIR=/ruta ./scripts/grabar_lidar.sh ...`.
-3. Si se indicó una duración, corta solo; si no, se corta con **Ctrl+C**. En ambos casos cierra el
-   archivo de forma ordenada.
+3. Si se indicó una duración, corta solo; si no, se corta con **Ctrl+C** (también se puede cortar
+   antes de tiempo con Ctrl+C). En todos los casos cierra el archivo de forma ordenada. La pausa con
+   la barra espaciadora de `ros2 bag record` queda desactivada a propósito.
 4. Guarda `descripcion.txt` (nombre, horario, descripción, equipo y commit del proyecto) y muestra
    el resumen.
 
@@ -162,5 +163,6 @@ mano (etapa 3). Nunca conectar el sensor a 24 V o 36 V directamente.
 | `ERROR: no llegan mensajes en /unilidar/cloud. ¿Está corriendo el driver?` | El driver no está en marcha o no recibe datos | Paso 03 |
 | `ERROR: no se encuentra 'ros2'` | No se cargó el entorno de ROS 2 | `source /opt/ros/jazzy/setup.bash` |
 | `ERROR: la grabación no se cerró correctamente (falta metadata.yaml)` | La grabación se interrumpió de golpe (corte de luz, terminal cerrada) | Intentar `ros2 bag reindex bags/<carpeta>` (A VERIFICAR con MCAP); para evitarlo, grabar dentro de `tmux` |
+| La grabación con duración no termina nunca y no se crea la carpeta en `bags/` (versión del script anterior al 2026-11-12 10:15) | `timeout` deja a `ros2 bag record` en segundo plano; al intentar leer el teclado, el sistema lo congela (estado `T` en `ps`) | Actualizar el script (usa `timeout --foreground` y `< /dev/null`). Para destrabar: Ctrl+C no alcanza; cerrar la terminal o `kill` del proceso |
 | La grabación tiene menos mensajes de los esperados | Disco lento o PC muy cargada | Cerrar RViz y otros programas mientras se graba |
 | En RViz se ven dos nubes superpuestas al reproducir | El driver sigue corriendo | Detener el driver antes de `ros2 bag play` |
