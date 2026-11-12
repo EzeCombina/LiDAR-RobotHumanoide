@@ -141,3 +141,18 @@ literal) y cómo se resolvió.
 **Pendiente**
 
 - Polaridad medida del plug, comportamiento de los LEDs y verificación visual en RViz (usuario).
+
+## 2026-11-12 — Observación: ruido fuerte del sensor al girar
+
+- El usuario informa que el L2 hace un **ruido raro y bastante fuerte al girar**, que no parece
+  normal.
+- No existe una calibración a cargo del usuario: la API del SDK no tiene ninguna función de
+  calibración (solo modo, IP/MAC, rotación, reinicio, sincronización de tiempo y suciedad). Si
+  Unilidar 2 ofrece algo así: A VERIFICAR.
+- Medición de 10 s con la IMU del sensor (driver por Ethernet, 251 Hz): desvío de la aceleración
+  [1,47; 1,13; 2,37] m/s², pico a pico [9,9; 9,1; 13,8] m/s², desvío del giróscopo
+  [0,43; 0,35; 0,24] rad/s, |g| medio 8,35 m/s². Frecuencias dominantes: X e Y por debajo de
+  0,5 Hz (indica que el sensor se estaba moviendo o manipulando), Z en 8,7 Hz con 4,4 y 17,5 Hz.
+  **No concluyente**: no se sabe si estaba quieto y no hay un valor de referencia de un L2 sano.
+- Driver detenido. Se recomienda dejar el sensor sin alimentación hasta caracterizar el ruido.
+  No se pasa a modo USB hasta resolverlo.
