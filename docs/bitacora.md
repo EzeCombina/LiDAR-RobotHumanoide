@@ -115,6 +115,29 @@ literal) y cómo se resolvió.
   ejemplo imprime mucho texto y no sirve para medir tasas: **A VERIFICAR** con `ros2 topic hz` en el
   driver (paso 03).
 
+
+## 2026-11-12 — Etapa 1: driver ROS 2 en Jazzy (prueba por Ethernet)
+
+**Qué se hizo**
+
+- `rosdep check --from-paths src --ignore-src` → `All system dependencies have been satisfied`.
+- `colcon build` en `~/lidar_ws/unilidar_sdk2/unitree_lidar_ros2`: **compila de forma nativa en
+  Jazzy** (25 s), 0 advertencias del compilador. Solo avisos de CMake que vienen de los módulos de PCL
+  (`Policy CMP0144 is not set` / `Policy CMP0074 is not set`), sin efecto.
+- Se lanzó con el launch propio, dentro de `tmux` (sesión `lidar`):
+  `ros2 launch config/unitree_lidar_ros2/l2_driver.launch.py modo:=ethernet rviz:=false`.
+
+**Resultados**
+
+- Tópicos: `/unilidar/cloud`, `/unilidar/imu`, `/tf`.
+- `ros2 topic hz /unilidar/cloud` → **11,99 Hz** (período 83–84 ms).
+  `ros2 topic hz /unilidar/imu` → **251 Hz**.
+- Nube `sensor_msgs/PointCloud2`, frame `unilidar_lidar`, campos `x y z intensity` (float32),
+  `ring` (uint16), `time` (float32), `point_step` 32; ~4.400 puntos por mensaje en el laboratorio.
+- `/tf`: `unilidar_imu_initial` → `unilidar_imu` (orientación estimada por la IMU).
+- Conclusión: las 2 nubes del ejemplo del SDK eran un problema del ejemplo, no del sensor.
+  **No hace falta el contenedor Humble para el driver.**
+
 **Pendiente**
 
-- Polaridad medida del plug y comportamiento de los LEDs (datos del usuario).
+- Polaridad medida del plug, comportamiento de los LEDs y verificación visual en RViz (usuario).
