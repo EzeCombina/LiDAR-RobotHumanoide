@@ -180,3 +180,23 @@ Sensor en el piso, sobre su almohadilla, sin tocar. Driver por Ethernet. Script 
   escucha el usuario. Si no se corrige, podría afectar al SLAM (Point-LIO usa la IMU): A VERIFICAR.
 - Recomendación: consultar al vendedor o al soporte de Unitree con un video con sonido y esta
   medición antes de seguir usando el sensor por períodos largos.
+
+## 2026-11-12 — Software Unilidar 2 y manuales oficiales
+
+- Se descargaron de `https://www.unitree.com/download/L2` el manual del L2 (v1.1, 2024.10) y el de
+  Unilidar 2 (v1.0, 2024.11). Quedan en `docs/referencias/`.
+- **Unilidar 2 solo funciona en Windows de 64 bits** (lo dicen los dos manuales). Se ejecuta como
+  administrador. En la página de descargas, leída de forma automática, no aparece el instalador:
+  el usuario tiene que verificarlo desde el navegador.
+- La página también ofrece dos grabaciones de ejemplo (`L2 Indoor/Park Point Cloud Data.bag`,
+  formato ROS 1) y el SLAM oficial `unitreerobotics/point_lio_unilidar` v2.0.2. Sirven para probar
+  el SLAM sin el sensor.
+- Datos del manual útiles para el diagnóstico del ruido: el L2 tiene **dos motores**, uno de alta
+  velocidad (espejo, barrido vertical, **216 Hz**) y uno de baja velocidad (cabezal, barrido
+  horizontal, **5,55 Hz**). Unilidar 2 muestra sus velocidades (`sys_rotation_period`,
+  `com_rotation_period`), las temperaturas del APD y de la IMU, las tensiones del APD y del láser y
+  la pérdida de paquetes.
+- El SDK recibe esos mismos datos de estado dentro de cada paquete de puntos (`LidarInsideState`
+  en `unitree_lidar_protocol.h`), así que también se pueden leer desde Ubuntu.
+- Diferencia entre manuales: el de Unilidar 2 dice que el modo de ángulo negativo (NEGA) viene
+  activado de fábrica; el del L2 y el README del SDK dicen que no. A VERIFICAR en Unilidar 2.
