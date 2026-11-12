@@ -138,23 +138,48 @@ Error de cierre (final vs. inicio): 1.059 m (horizontal 1.058 m, vertical -0.055
   terminó en el mismo lugar, debería ser de pocos centímetros. Es el indicador más simple de la
   calidad del mapa.
 
-### Hacerlo a mano (dos terminales)
+### Hacerlo a mano (lo mismo que hace el script, paso por paso)
+
+Con el driver detenido, abrir **tres terminales** y cargar en todas el entorno:
 
 ```bash
-# Terminal 1: Point-LIO
 source /opt/ros/jazzy/setup.bash
 source ~/lidar_ws/point_lio_ws/install/setup.bash
-ros2 launch point_lio mapping_unilidar_l2.launch.py rviz:=false   # o rviz:=true
-
-# Terminal 2: reproducir la grabación
-source /opt/ros/jazzy/setup.bash
 cd ~/Documentos/LiDAR-RobotHumanoide
-ros2 bag play bags/<carpeta>
 ```
 
-Cuando termina la reproducción, **Ctrl+C en la terminal 1**: Point-LIO guarda
-`~/lidar_ws/point_lio_ws/src/point_lio_ros2/PCD/scans.pcd`. Copiarlo con un nombre descriptivo
-antes de la próxima corrida.
+1. **Terminal 1 — Point-LIO.** Esperar a que muestre `... file opened`:
+
+   ```bash
+   ros2 launch point_lio mapping_unilidar_l2.launch.py rviz:=false   # o rviz:=true
+   ```
+
+2. **Terminal 2 — registrar la trayectoria** (opcional, pero da el error de cierre):
+
+   ```bash
+   ./scripts/registrar_trayectoria.py /tmp/trayectoria.csv
+   ```
+
+3. **Terminal 3 — reproducir la grabación una vez.** Tarda lo mismo que duró la grabación:
+
+   ```bash
+   ros2 bag play bags/<carpeta>
+   ```
+
+4. Cuando la terminal 3 termina, esperar unos 3 segundos y hacer **Ctrl+C en la terminal 2**:
+   muestra el resumen de la trayectoria (largo, zona recorrida, error de cierre).
+5. **Ctrl+C en la terminal 1**: Point-LIO guarda el mapa en
+   `~/lidar_ws/point_lio_ws/src/point_lio_ros2/PCD/scans.pcd` (puede tardar unos segundos con
+   mapas grandes; esperar a que la terminal vuelva al *prompt*).
+6. Copiar los resultados con un nombre propio, porque la próxima corrida sobrescribe `scans.pcd`:
+
+   ```bash
+   NOMBRE=mapas/$(date +%Y-%m-%d_%H%M)_<nombre>_pointlio
+   cp ~/lidar_ws/point_lio_ws/src/point_lio_ros2/PCD/scans.pcd $NOMBRE.pcd
+   cp /tmp/trayectoria.csv ${NOMBRE}_trayectoria.csv
+   ```
+
+7. Anotar el resumen en un `.txt` junto al mapa y en `docs/mapas.md`.
 
 **Salida esperada de Point-LIO al recibir los primeros datos:**
 
@@ -183,6 +208,62 @@ cd ~/Documentos/LiDAR-RobotHumanoide
 El script publica el `.pcd` en `/cloud_pcd` con `pcd_to_pointcloud` (de `pcl_ros`, ya instalado) y
 abre RViz con `config/rviz/ver_mapa.rviz` (marco fijo `map`, colores por altura). Al cerrar RViz
 se detiene todo.
+
+**Lo mismo a mano (dos terminales del escritorio):**
+
+```bash
+# Terminal 1: publicar el mapa cada 2 s
+source /opt/ros/jazzy/setup.bash
+ros2 run pcl_ros pcd_to_pointcloud --ros-args \
+    -p file_name:=$HOME/Documentos/LiDAR-RobotHumanoide/mapas/<archivo>.pcd \
+    -p tf_frame:=map -p publishing_period_ms:=2000
+
+# Terminal 2: RViz
+source /opt/ros/jazzy/setup.bash
+rviz2 -d ~/Documentos/LiDAR-RobotHumanoide/config/rviz/ver_mapa.rviz
+```
+
+`file_name` tiene que ser la **ruta completa** del archivo.
+
+### 4.1 Medidas del mapa y de la trayectoria
+
+Para comprobar con números que el mapa tiene las medidas del lugar y revisar la trayectoria:
+
+```bash
+cd ~/Documentos/LiDAR-RobotHumanoide
+./scripts/analizar_mapa.py mapas/<mapa>.pcd mapas/<mapa>_trayectoria.csv
+```
+
+(el segundo archivo es opcional). No necesita ROS 2 cargado ni el sensor.
+
+**Salida obtenida** (departamento, sensor vertical, 2026-11-12):
+
+```text
+Mapa: mapas/2026-11-12_1339_departamento_vertical_pointlio.pcd
+  puntos: 2.247.488
+  campos: x y z normal_x normal_y normal_z intensity curvature
+
+  eje   mínimo   máximo  |  útil (1 %-99 %)   extensión útil
+   x    -5.99     3.33  |   -4.88 a   3.09     7.97 m
+   y    -2.46     3.63  |   -2.24 a   2.14     4.38 m
+   z    -1.89     2.52  |   -1.65 a   2.25     3.90 m
+
+Trayectoria: 1335 muestras, 134.4 s
+  largo del recorrido: 12.44 m
+  zona recorrida (x, y, z): 1.11 x 0.65 x 0.31 m
+  error de cierre: 1.059 m (horizontal 1.058 m, vertical -0.055 m)
+
+  t [s]       x       y       z   [m]
+      0    0.01   -0.00    0.03
+     10    0.03   -0.09   -0.03
+  ...
+```
+
+- **Extensión útil:** medidas aproximadas del lugar (descarta el 1 % de puntos más alejados en cada
+  eje, que suelen ser reflejos por ventanas o puertas). Compararlas con las medidas reales.
+- **El origen (0, 0, 0)** es la posición del sensor al empezar; **z es vertical**.
+- **Tabla cada 10 s:** dónde estaba el sensor según Point-LIO; sirve para ver en qué momento del
+  recorrido aparece un salto o una deriva.
 
 ## 5. Resultados de las grabaciones de referencia (2026-11-12)
 

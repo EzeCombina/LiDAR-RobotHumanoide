@@ -90,7 +90,8 @@ ros2 launch config/unitree_lidar_ros2/l2_driver.launch.py modo:=ethernet rviz:=f
 
 - Salir de la sesión dejándola en marcha: **Ctrl+b**, soltar, y después **d**.
 - Volver a la sesión: `tmux attach -t lidar`.
-- Detener el driver: dentro de la sesión, **Ctrl+C**.
+- Detener el driver: dentro de la sesión, **Ctrl+C**. Si se lanzó en otra terminal y no se sabe
+  en cuál: `pkill -INT -f l2_driver.launch.py` (equivale a Ctrl+C).
 
 **Salida esperada:**
 

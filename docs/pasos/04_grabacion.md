@@ -109,6 +109,34 @@ ros2 bag info bags/<carpeta>               # duración, cantidad de mensajes, ta
 
 `<carpeta>` es el nombre que aparece en `ls bags/`, por ejemplo `2026-11-12_1016_sala_quieta`.
 
+Para comprobar que la grabación **no tiene huecos** (por ejemplo, por un corte del cable de red
+mientras se grababa):
+
+```bash
+./scripts/revisar_grabacion.py bags/<carpeta>
+```
+
+**Salida obtenida** (recorrido del departamento, 2026-11-12):
+
+```text
+Grabación: bags/2026-11-12_1333_departamento_vertical (formato mcap)
+
+/unilidar/cloud
+  mensajes: 1621 en 135.04 s -> 12.00 por segundo
+  intervalo medio: 83.4 ms | máximo: 84.5 ms
+  sin huecos
+
+/unilidar/imu
+  mensajes: 33884 en 135.10 s -> 250.81 por segundo
+  intervalo medio: 4.0 ms | máximo: 9.8 ms
+  sin huecos
+
+Resultado: grabación completa
+```
+
+Se considera hueco un intervalo mayor a 3 veces el normal. Si aparecen huecos, conviene repetir la
+grabación: el SLAM puede perderse en esos momentos.
+
 ### 2.2 Verla en RViz
 
 1. **Detener el driver** si está corriendo (Ctrl+C en su terminal, o `tmux attach -t lidar` y
@@ -217,6 +245,8 @@ mano (etapa 3). Nunca conectar el sensor a 24 V o 36 V directamente.
 | `ERROR: no se encuentra 'ros2'` | No se cargó el entorno de ROS 2 | `source /opt/ros/jazzy/setup.bash` |
 | `ERROR: la grabación no se cerró correctamente (falta metadata.yaml)` | La grabación se interrumpió de golpe (corte de luz, terminal cerrada) | Intentar `ros2 bag reindex bags/<carpeta>` (A VERIFICAR con MCAP); para evitarlo, grabar dentro de `tmux` |
 | La grabación con duración no termina nunca y no se crea la carpeta en `bags/` (versión del script anterior al 2026-11-12 10:15) | `timeout` deja a `ros2 bag record` en segundo plano; al intentar leer el teclado, el sistema lo congela (estado `T` en `ps`) | Actualizar el script (usa `timeout --foreground` y `< /dev/null`). Para destrabar: Ctrl+C no alcanza; cerrar la terminal o `kill` del proceso |
+| `ERROR: no llegan mensajes en /unilidar/cloud` aunque el driver esté corriendo | Se cortó el enlace Ethernet (cable flojo o sensor sin alimentación) | Ver el paso 01, problemas frecuentes: diagnóstico de cortes de red |
+| `revisar_grabacion.py` informa huecos | Corte de red o PC sobrecargada durante la grabación | Revisar cables y repetir la grabación |
 | La grabación tiene menos mensajes de los esperados | Disco lento o PC muy cargada | Cerrar RViz y otros programas mientras se graba |
 | `ERROR: no llegan mensajes en /unilidar/cloud` justo después de ver una grabación | Se detuvo el driver para reproducir la grabación | Relanzar el driver (paso 03) y cerrar antes cualquier `ros2 bag play` |
 | La grabación nueva es idéntica a una anterior | Quedó abierto un `ros2 bag play` y el script grabó la reproducción en lugar del sensor | Cerrar el `ros2 bag play` (Ctrl+C) antes de grabar; con el driver detenido, el script avisa que no llegan mensajes |

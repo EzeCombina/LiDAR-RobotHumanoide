@@ -297,6 +297,43 @@ Cómo interpretarla:
 Lo importante para el diagnóstico es que los períodos sean **estables**: en el sensor del laboratorio
 varían menos de ±0,2 % (espejo) y ±0,7 % (cabezal).
 
+### 5.1 Vibración del sensor (medición con la IMU)
+
+Si el sensor hace ruido al girar, la IMU interna permite medir la vibración. Requiere el **driver
+corriendo** (paso 03) y el sensor **quieto sobre su almohadilla**, apoyado en el piso:
+
+```bash
+source /opt/ros/jazzy/setup.bash
+cd ~/Documentos/LiDAR-RobotHumanoide
+./scripts/medir_vibracion_imu.py --segundos 20 --csv docs/mediciones/imu_reposo_<fecha>.csv
+```
+
+**Salida obtenida** (sensor del laboratorio, 2026-11-12):
+
+```text
+Midiendo 20 s en /unilidar/imu... (no mover el sensor)
+Muestras: 5017  |  frecuencia de muestreo: 251 Hz
+Aceleración media [m/s²] (x, y, z): [0.012 0.119 7.818]  |  módulo: 7.819
+Aceleración, desvío [m/s²]:         [0.336 0.416 1.706]
+Aceleración, pico a pico [m/s²]:    [2.611 3.041 9.184]
+Velocidad angular, media [rad/s]:   [-0.     0.     0.009]
+Velocidad angular, desvío [rad/s]:  [0.064 0.036 0.04 ]
+Eje x, frecuencias dominantes [Hz]: 23.3, 14.5, 78.6
+Eje y, frecuencias dominantes [Hz]: 23.3, 14.5, 23.2
+Eje z, frecuencias dominantes [Hz]: 8.7, 8.7, 13.1
+```
+
+Cómo leerla:
+
+- **Velocidad angular, desvío** cercano a 0: confirma que el sensor estaba quieto y que la medición
+  es válida.
+- **Módulo de la aceleración media:** en reposo debería dar unos 9,8 m/s². En este sensor da
+  7,8 m/s² (A VERIFICAR).
+- **Frecuencias dominantes:** compararlas con la rotación del cabezal que da `estado_lidar`
+  (1 / `com_rotation_period`, unos 4,35 Hz). En este sensor la vibración vertical está en 8,7 Hz,
+  exactamente el doble de la rotación del cabezal: la vibración está ligada a la parte que gira.
+  No hay un valor de referencia de un L2 sano.
+
 ## Verificación final
 
 - [ ] `ping 192.168.1.62` sin pérdidas.
@@ -305,6 +342,28 @@ varían menos de ±0,2 % (espejo) y ±0,7 % (cabezal).
 - [ ] Versiones registradas en `docs/versiones.md`.
 
 ## Problemas frecuentes
+
+### Diagnóstico de un corte de red
+
+Si en algún momento dejan de llegar datos (el script de grabación dice que no llegan mensajes, o
+`ros2 topic hz` no muestra nada), revisar en este orden:
+
+```bash
+ip -br addr show eno1                      # debe decir UP y 192.168.1.2/24
+cat /sys/class/net/eno1/carrier            # 1 = hay enlace; 0 = no hay enlace físico
+journalctl -u NetworkManager --since "-30 min" --no-pager | grep -i "eno1.*carrier"
+```
+
+El último comando muestra cuándo se cortó y volvió el enlace. Ejemplo real (2026-11-12):
+
+```text
+... device (eno1): state change: activated -> unavailable (reason 'carrier-changed', ...)
+... device (eno1): carrier: link connected
+```
+
+`unavailable (reason 'carrier-changed')` = se perdió el enlace físico: cable desenchufado o flojo,
+o el sensor se quedó sin alimentación. Al reconectar, el perfil `lidar-l2` se reactiva solo y el
+driver vuelve a recibir datos sin reiniciarlo (verificado).
 
 | Síntoma | Causa | Solución |
 |---|---|---|

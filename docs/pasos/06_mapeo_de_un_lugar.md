@@ -98,8 +98,22 @@ filtrado si está a menos de 0,5 m del sensor (`blind`).
    tmux attach -t lidar     # y Ctrl+C
    ```
 
+   Si el driver se lanzó en otra terminal y no se sabe en cuál:
+
+   ```bash
+   pkill -INT -f l2_driver.launch.py     # equivale a Ctrl+C en esa terminal
+   source /opt/ros/jazzy/setup.bash
+   ros2 topic hz /unilidar/cloud         # no debe mostrar datos (cortar con Ctrl+C)
+   ```
+
    Desde acá ya no hace falta el sensor: se puede desconectar.
-2. Procesar la grabación:
+2. (Opcional) Comprobar que la grabación no tiene huecos:
+
+   ```bash
+   ./scripts/revisar_grabacion.py bags/<carpeta>
+   ```
+
+3. Procesar la grabación:
 
    ```bash
    cd ~/Documentos/LiDAR-RobotHumanoide
@@ -123,6 +137,14 @@ Primero, los números del resumen que muestra `procesar_grabacion.sh` (también 
 
 - [ ] **Zona recorrida** parecida a lo que se caminó.
 - [ ] **Error de cierre** de pocos centímetros (si se terminó en el punto de partida).
+
+Para ver las medidas del mapa y la trayectoria cada 10 s:
+
+```bash
+./scripts/analizar_mapa.py mapas/<mapa>.pcd mapas/<mapa>_trayectoria.csv
+```
+
+La **extensión útil** de cada eje debe parecerse a las medidas reales del lugar.
 
 Después, en RViz:
 

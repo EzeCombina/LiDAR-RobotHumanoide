@@ -369,3 +369,24 @@ Sensor en el piso, sobre su almohadilla, sin tocar. Driver por Ethernet. Script 
   Trayectoria estimada: zona de solo 1,11 × 0,65 m, largo 12,4 m, **error de cierre 1,06 m**.
   Sin errores en el registro de Point-LIO. Pendiente: confirmar con el usuario el recorrido real y
   revisar el mapa en RViz para saber si el SLAM siguió el movimiento.
+
+## 2026-11-12 — Documentación de todo lo automático
+
+- El usuario confirmó que la trayectoria corta del recorrido vertical es correcta: no se salió de
+  una habitación. Quedan por confirmar si se volvió al punto de partida (error de cierre 1,06 m) y
+  las medidas reales (el mapa da 7,97 × 4,38 m y 3,90 m de alto).
+- **Criterio del usuario:** todo lo que Claude hace automáticamente tiene que quedar documentado
+  con su procedimiento manual (quien use la guía puede no tener acceso al chat). Se revisó la
+  sesión y se documentó lo que faltaba:
+  - `scripts/revisar_grabacion.py` (nuevo): mensajes, frecuencia, intervalos y huecos de una
+    grabación → paso 04 y paso 06.
+  - `scripts/analizar_mapa.py` (nuevo): puntos, extensión de cada eje y trayectoria cada 10 s →
+    paso 05 (4.1) y paso 06.
+  - Paso 05: el modo manual ahora reproduce todo lo que hace `procesar_grabacion.sh` (tres
+    terminales, trayectoria, copia de resultados) y cómo ver un mapa sin `ver_mapa.sh`.
+  - Paso 01: medición de vibración con `medir_vibracion_imu.py` (5.1) y diagnóstico de cortes de
+    red con `ip`, `/sys/class/net/eno1/carrier` y `journalctl -u NetworkManager`.
+  - Pasos 03 y 06: detener un driver lanzado en otra terminal con
+    `pkill -INT -f l2_driver.launch.py`. Verificado: `process has finished cleanly`, código 0.
+    (Las dos primeras pruebas fallaron porque `pkill -f` también encontró ese texto en la línea de
+    comando del shell de Claude y lo interrumpió; no afecta al uso desde una terminal normal.)
