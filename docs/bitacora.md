@@ -351,3 +351,21 @@ Sensor en el piso, sobre su almohadilla, sin tocar. Driver por Ethernet. Script 
   (mismo recorrido horizontal y vertical). Falta el recorrido real (el usuario lo hará en su
   departamento).
 - `README.md`: tabla de pasos con su estado y "uso rápido" de cuatro comandos.
+
+## 2026-11-12 — Primer recorrido: departamento con el sensor vertical
+
+- Antes de grabar: `grabar_lidar.sh` dio `ERROR: no llegan mensajes en /unilidar/cloud`. El
+  registro de NetworkManager mostró un corte de enlace a las 13:26:10
+  (`device (eno1): state change: activated -> unavailable (reason 'carrier-changed')`): cable o
+  alimentación desconectados al acomodar el equipo. Al reconectar, el perfil `lidar-l2` se
+  reactivó solo y el driver retomó sin reiniciarlo.
+- Grabación `2026-11-12_1333_departamento_vertical`: 135,1 s, 1621 nubes, 33884 IMU, 243 MB.
+  Sin cortes de enlace durante la grabación; intervalo máximo entre nubes 84,5 ms (sin huecos).
+- Mejora: `scripts/registrar_trayectoria.py` (nuevo) guarda la trayectoria de Point-LIO a 10 Hz y
+  calcula largo, zona recorrida y **error de cierre**. `procesar_grabacion.sh` lo usa y agrega
+  esos datos al `.txt` del mapa y un `_trayectoria.csv`. (El primer intento de medirlo falló porque
+  el script temporal de Claude estaba en una carpeta que se borró al cambiar de sesión.)
+- Mapa `2026-11-12_1339_departamento_vertical_pointlio.pcd`: 2,25 M puntos, 69 MB, ~8 × 4,4 m.
+  Trayectoria estimada: zona de solo 1,11 × 0,65 m, largo 12,4 m, **error de cierre 1,06 m**.
+  Sin errores en el registro de Point-LIO. Pendiente: confirmar con el usuario el recorrido real y
+  revisar el mapa en RViz para saber si el SLAM siguió el movimiento.

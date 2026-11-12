@@ -119,8 +119,24 @@ Tamaño: 35M
 Para verlo: ./scripts/ver_mapa.sh .../mapas/2026-11-12_1049_persona_caminando_pointlio.pcd
 ```
 
-En `mapas/` quedan tres archivos por mapa: el `.pcd` (fuera de git), el `.txt` con el resumen (se
-sube a git) y el `.log` de Point-LIO (fuera de git).
+En `mapas/` quedan cuatro archivos por mapa: el `.pcd` (fuera de git), el `.txt` con el resumen (se
+sube a git), el `_trayectoria.csv` con la posición estimada del sensor cada 0,1 s (se sube a git) y
+el `.log` de Point-LIO (fuera de git).
+
+El resumen incluye datos de la trayectoria (los calcula `scripts/registrar_trayectoria.py`):
+
+```text
+Trayectoria: 1335 muestras, 134.4 s
+Largo del recorrido: 12.44 m
+Zona recorrida (x, y, z): 1.11 x 0.65 x 0.31 m
+Error de cierre (final vs. inicio): 1.059 m (horizontal 1.058 m, vertical -0.055 m)
+```
+
+- **Zona recorrida:** tiene que coincidir, a grandes rasgos, con lo que realmente se caminó. Si se
+  recorrieron varios metros y la zona da 1 m, el SLAM no siguió el movimiento.
+- **Error de cierre:** distancia entre la posición final y la inicial. Si el recorrido empezó y
+  terminó en el mismo lugar, debería ser de pocos centímetros. Es el indicador más simple de la
+  calidad del mapa.
 
 ### Hacerlo a mano (dos terminales)
 

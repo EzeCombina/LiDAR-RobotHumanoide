@@ -10,8 +10,9 @@
 #   4. Detiene Point-LIO con SIGINT (como Ctrl+C), que es cuando guarda el mapa
 #      en <carpeta fuente de point_lio>/PCD/scans.pcd.
 #   5. Copia ese mapa a mapas/<fecha>_<nombre>_pointlio.pcd (Point-LIO lo
-#      sobrescribe en cada corrida) junto con el registro de Point-LIO (.log)
-#      y un resumen (.txt).
+#      sobrescribe en cada corrida) junto con el registro de Point-LIO (.log),
+#      la trayectoria estimada (_trayectoria.csv, con registrar_trayectoria.py)
+#      y un resumen (.txt) que incluye el ERROR DE CIERRE del recorrido.
 #
 #   Los mapas .pcd NO se suben a git (pesan decenas o cientos de MB).
 #
@@ -107,10 +108,18 @@ if ! grep -q "file opened" "$LOG"; then
 fi
 echo "Point-LIO en marcha. Reproduciendo la grabación (tarda lo mismo que duró)..."
 
+# --- Registro de la trayectoria -----------------------------------------------
+TRAY_CSV="$(mktemp --suffix=.csv)"
+TRAY_RES="$(mktemp)"
+python3 "$REPO/scripts/registrar_trayectoria.py" "$TRAY_CSV" > "$TRAY_RES" 2>&1 < /dev/null &
+PID_TRAY=$!
+
 # --- Reproducción --------------------------------------------------------------
 # "< /dev/null": ros2 bag play no intenta leer el teclado (ver grabar_lidar.sh).
 ros2 bag play "$BAG" < /dev/null > /dev/null 2>&1
 sleep 3   # deja que Point-LIO procese los últimos mensajes
+kill -INT "$PID_TRAY" 2>/dev/null || true
+wait "$PID_TRAY" 2>/dev/null || true
 
 # --- Cierre y guardado ---------------------------------------------------------
 echo "Reproducción terminada. Deteniendo Point-LIO y guardando el mapa..."
@@ -127,7 +136,8 @@ if [ ! -f "$PCD_ORIGEN" ]; then
 fi
 cp "$PCD_ORIGEN" "$DESTINO.pcd"
 cp "$LOG" "$DESTINO.log"
-rm -f "$LOG"
+cp "$TRAY_CSV" "${DESTINO}_trayectoria.csv"
+rm -f "$LOG" "$TRAY_CSV"
 
 PUNTOS=$(head -c 1000 "$DESTINO.pcd" | grep -a '^POINTS' | awk '{print $2}')
 {
@@ -138,7 +148,10 @@ PUNTOS=$(head -c 1000 "$DESTINO.pcd" | grep -a '^POINTS' | awk '{print $2}')
     echo "Puntos: $PUNTOS"
     echo "Tamaño: $(du -h "$DESTINO.pcd" | cut -f1)"
     echo "Commit del proyecto: $(git -C "$REPO" rev-parse --short HEAD 2>/dev/null || echo desconocido)"
+    cat "$TRAY_RES"
+    echo "Trayectoria guardada en: $(basename "$DESTINO")_trayectoria.csv"
 } > "$DESTINO.txt"
+rm -f "$TRAY_RES"
 
 echo
 cat "$DESTINO.txt"

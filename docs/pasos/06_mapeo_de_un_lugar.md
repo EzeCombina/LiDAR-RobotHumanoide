@@ -118,7 +118,13 @@ Desde una terminal del escritorio de Ubuntu:
 ./scripts/ver_mapa.sh mapas/<fecha>_<nombre>_pointlio.pcd
 ```
 
-Qué revisar:
+Primero, los números del resumen que muestra `procesar_grabacion.sh` (también en
+`mapas/<mapa>.txt`):
+
+- [ ] **Zona recorrida** parecida a lo que se caminó.
+- [ ] **Error de cierre** de pocos centímetros (si se terminó en el punto de partida).
+
+Después, en RViz:
 
 - [ ] Las paredes se ven **rectas y simples**, no duplicadas ni "fantasmas" corridos.
 - [ ] El piso (o el techo) es **plano** y no está inclinado ni curvado.

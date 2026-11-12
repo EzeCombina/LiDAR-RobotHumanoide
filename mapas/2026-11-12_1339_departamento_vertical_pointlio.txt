@@ -1,0 +1,12 @@
+Mapa: 2026-11-12_1339_departamento_vertical_pointlio.pcd
+Generado: 2026-11-12 13:42:19 en eze-laptop
+Grabación de origen: bags/2026-11-12_1333_departamento_vertical
+SLAM: Point-LIO (point_lio_ros2), config/unilidar_l2.yaml + mapping_unilidar_l2.launch.py
+Puntos: 2247488
+Tamaño: 69M
+Commit del proyecto: 5188d76
+Trayectoria: 1335 muestras, 134.4 s
+Largo del recorrido: 12.44 m
+Zona recorrida (x, y, z): 1.11 x 0.65 x 0.31 m
+Error de cierre (final vs. inicio): 1.059 m (horizontal 1.058 m, vertical -0.055 m)
+Trayectoria guardada en: 2026-11-12_1339_departamento_vertical_pointlio_trayectoria.csv
