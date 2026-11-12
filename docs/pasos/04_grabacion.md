@@ -93,18 +93,63 @@ ros2 bag record -s mcap -o bags/mi_grabacion --topics /unilidar/cloud /unilidar/
 
 ## 2. Revisar y reproducir una grabación
 
+Los comandos de esta sección sirven para **cualquier grabación y cualquier usuario**. Se asume que
+el repositorio está en `~/Documentos/LiDAR-RobotHumanoide` (paso 00) y el SDK en
+`~/lidar_ws/unilidar_sdk2` (paso 01); si están en otro lugar, cambiar esas rutas.
+
+### 2.1 Ver qué grabaciones hay y su resumen
+
 ```bash
-ros2 bag info bags/<carpeta>
+source /opt/ros/jazzy/setup.bash
+cd ~/Documentos/LiDAR-RobotHumanoide
+ls bags/                                   # lista las grabaciones
+cat bags/<carpeta>/descripcion.txt         # qué es cada una
+ros2 bag info bags/<carpeta>               # duración, cantidad de mensajes, tamaño
 ```
 
-Para verla en RViz, **primero detener el driver** (si no, se mezclan los datos en vivo con los
-grabados) y después:
+`<carpeta>` es el nombre que aparece en `ls bags/`, por ejemplo `2026-11-12_1016_sala_quieta`.
+
+### 2.2 Verla en RViz
+
+1. **Detener el driver** si está corriendo (Ctrl+C en su terminal, o `tmux attach -t lidar` y
+   Ctrl+C). Si no, se mezclan los datos en vivo con los grabados. Para ver una grabación **no hace
+   falta tener el sensor conectado**.
+2. Abrir **dos terminales del escritorio de Ubuntu** (no la terminal integrada de VS Code, ver el
+   paso 03, problemas frecuentes).
+
+**Terminal 1 — reproducir la grabación:**
 
 ```bash
-ros2 bag play bags/<carpeta>
+source /opt/ros/jazzy/setup.bash
+cd ~/Documentos/LiDAR-RobotHumanoide
+ros2 bag play bags/<carpeta> --loop
 ```
 
-y abrir RViz como en el paso 03, punto 4.
+`--loop` repite la grabación en bucle hasta cortarla con **Ctrl+C**. Sin `--loop`, se reproduce una
+sola vez. Para reproducir más lento o más rápido: `--rate 0.5` (mitad de velocidad) o `--rate 2`.
+
+**Terminal 2 — RViz:**
+
+```bash
+source /opt/ros/jazzy/setup.bash
+source ~/lidar_ws/unilidar_sdk2/unitree_lidar_ros2/install/setup.bash
+rviz2 -d "$(ros2 pkg prefix unitree_lidar_ros2)/share/unitree_lidar_ros2/view.rviz"
+```
+
+`ros2 pkg prefix unitree_lidar_ros2` devuelve la carpeta donde quedó instalado el driver, así el
+comando funciona en cualquier PC sin escribir la ruta completa. Se usa la misma configuración de
+RViz del driver (paso 03): marco fijo `unilidar_lidar` y nube de `/unilidar/cloud`.
+
+**Resultado esperado:** se ve la nube igual que en vivo. En `sala_quieta`, la nube no se mueve.
+
+> **Ver la habitación más completa:** cada mensaje de la nube cubre solo una parte del barrido. En el
+> panel *Displays* de RViz, dentro de *PointCloud2*, subir **Decay Time** de `1` a `10`: RViz
+> acumula los últimos 10 segundos de puntos y la habitación se ve mucho más densa. Esto sirve
+> **solo con el sensor quieto**; si se movió, los puntos acumulados quedan "corridos" (para eso está
+> el SLAM, etapa siguiente).
+
+3. Al terminar, Ctrl+C en ambas terminales. Para volver a usar el sensor en vivo, relanzar el driver
+   (paso 03).
 
 ## 3. Registro de las grabaciones
 

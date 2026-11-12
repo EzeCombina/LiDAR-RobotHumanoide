@@ -301,3 +301,13 @@ Sensor en el piso, sobre su almohadilla, sin tocar. Driver por Ethernet. Script 
 - Verificado con una terminal simulada (`script -qec`): la versión anterior se cuelga (código 124);
   la nueva termina sola con duración, se corta con Ctrl+C sin duración y también se corta antes de
   tiempo con Ctrl+C. Los procesos trabados se cerraron; las grabaciones de prueba se borraron.
+
+## 2026-11-12 — Grabación de referencia `sala_quieta` y reproducción en RViz
+
+- Con el script corregido, el usuario grabó `2026-11-12_1016_sala_quieta`: 89,45 s, 1071 nubes
+  (11,97/s), 22409 IMU (250,5/s), 184 MB. Sin pérdidas. Anotada en `docs/grabaciones.md`.
+- Se detuvo el driver y el usuario la reprodujo con `ros2 bag play ... --loop` y RViz en dos
+  terminales de Ubuntu: **funciona correctamente**.
+- Paso 04, sección 2, reescrita con comandos genéricos (cualquier grabación y usuario): la
+  configuración de RViz se ubica con `$(ros2 pkg prefix unitree_lidar_ros2)`, en lugar de una ruta
+  absoluta con el nombre de usuario. Se agregó el uso de *Decay Time* para acumular puntos.
