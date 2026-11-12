@@ -156,3 +156,27 @@ literal) y cómo se resolvió.
   **No concluyente**: no se sabe si estaba quieto y no hay un valor de referencia de un L2 sano.
 - Driver detenido. Se recomienda dejar el sensor sin alimentación hasta caracterizar el ruido.
   No se pasa a modo USB hasta resolverlo.
+
+### Segunda medición, con el sensor quieto (2026-11-12)
+
+Sensor en el piso, sobre su almohadilla, sin tocar. Driver por Ethernet. Script nuevo
+`scripts/medir_vibracion_imu.py`, 20 s, 5017 muestras a 251 Hz. Datos crudos en
+`docs/mediciones/imu_reposo_2026-11-12.csv`.
+
+| Magnitud | x | y | z |
+|---|---|---|---|
+| Aceleración media [m/s²] | 0,012 | 0,119 | 7,818 |
+| Aceleración, desvío [m/s²] | 0,336 | 0,416 | **1,706** |
+| Aceleración, pico a pico [m/s²] | 2,61 | 3,04 | **9,18** |
+| Velocidad angular, desvío [rad/s] | 0,064 | 0,036 | 0,040 |
+| Frecuencias dominantes [Hz] | 23,3 / 14,5 / 78,6 | 23,3 / 14,5 | **8,7** / 13,1 |
+
+- El giróscopo casi en cero confirma que el sensor estaba quieto: la medición es válida.
+- **Vibración vertical fuerte**: 9,2 m/s² pico a pico en Z, dominante en 8,7 Hz. El módulo
+  instantáneo de la aceleración va de 2,66 a 11,59 m/s² (mediana 8,00).
+- **Módulo medio de la aceleración 7,82 m/s²**, cuando en reposo debería ser ≈ 9,81 m/s²
+  (≈ 20 % menos). Puede ser un error de la IMU o un efecto de la vibración: A VERIFICAR.
+- No hay una medición de un L2 sano para comparar. Los datos son coherentes con el ruido que
+  escucha el usuario. Si no se corrige, podría afectar al SLAM (Point-LIO usa la IMU): A VERIFICAR.
+- Recomendación: consultar al vendedor o al soporte de Unitree con un video con sonido y esta
+  medición antes de seguir usando el sensor por períodos largos.
