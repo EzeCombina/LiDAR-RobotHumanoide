@@ -117,7 +117,7 @@ con la UTN Facultad Regional San Francisco** e incluir el logo de la UTN.
 |---|---|
 | PC de implementación | Ubuntu 24.04 + ROS 2 Jazzy, con un puerto Ethernet libre para el LiDAR |
 | LiDAR | Unitree L2 con su caja: fuente, módulo adaptador USB-C, cable de datos, almohadilla |
-| PC con Windows | Disponible, para el software **Unilidar 2** (solo Windows 64 bits) |
+| PC con Windows | Disponible. El software **Unilidar 2** (solo Windows 64 bits) **ya no se puede descargar** de la página de Unitree (2026-11-12): todo se hace con el SDK en Ubuntu |
 | Raspberry Pi 5 (8 GB) | Disponibilidad no asegurada. Opción para un kit de mapeo portátil |
 | Robot Unitree R1 EDU | **No disponible todavía** |
 
@@ -152,7 +152,7 @@ Fuentes: manual oficial del L2 (v1.1), manual de Unilidar 2 (v1.0), código de l
 
 > **Posible choque de redes:** muchos routers usan `192.168.1.x`. Si la red local de la PC también es
 > `192.168.1.x`, hay conflicto de rutas. Revisar con `ip -br addr`. Si coinciden, cambiar la red del
-> sensor con Unilidar 2 en Windows (por ejemplo, sensor `192.168.10.62` → destino `192.168.10.2`) y
+> sensor con el SDK (`setLidarIpAddressConfig`; por ejemplo, sensor `192.168.10.62` → destino `192.168.10.2`) y
 > ajustar `lidar_ip` y `local_ip` en el `launch.py` del driver. Documentarlo.
 
 ### Software
@@ -210,8 +210,8 @@ Cada etapa termina con su documento en `docs/pasos/`, la bitácora actualizada y
 > tienen IPs fijas `192.168.123.110/.120`). **Trampa del driver ROS 2:** al arrancar ejecuta
 > `setLidarWorkMode(work_mode)`; por USB hay que usar `work_mode: 8` o el sensor vuelve a Ethernet.
 > Usar el launch propio `config/unitree_lidar_ros2/l2_driver.launch.py modo:=ethernet|usb`.
-> Antes de llevar el sensor al robot, **dejarlo en modo Ethernet**. Pasos: 01 prueba con Unilidar 2
-> (Windows), 02 Ethernet, 03 USB, 04 driver ROS 2 (ambos modos). Herramienta de diagnóstico
+> Antes de llevar el sensor al robot, **dejarlo en modo Ethernet**. Pasos: 01 Ethernet, 02 USB,
+> 03 driver ROS 2 (ambos modos). Herramienta de diagnóstico
 > `estado_lidar` (motores, temperaturas, tensiones) en la misma carpeta.
 1. Verificación del contenido de la caja y de la **polaridad** del plug de la fuente.
 2. Configuración de red: IP fija `192.168.1.2/24` en la placa libre, con `nmcli` (sin puerta de
@@ -249,7 +249,7 @@ Marcar toda esta sección como **"pendiente de validar con el robot"**.
   está verificado justamente en 20.04 + Foxy, y el SDK trae la librería para aarch64.
 - **Conexión física:** RJ45 del panel del robot. Alimentación desde el XT30 de 24 V con un conversor
   DC-DC a 12 V (≥ 2 A) y un cable al plug DC 3,5 × 1,35.
-- **Red:** reconfigurar el L2 con Unilidar 2 a una IP libre de `192.168.123.x` y destino
+- **Red:** reconfigurar el L2 con el SDK (`setLidarIpAddressConfig`) a una IP libre de `192.168.123.x` y destino
   `192.168.123.164`. Evitar .161, .164 y los bloques .1–.30 y .120–.170. Antes, mapear la red con
   `nmap -sn 192.168.123.0/24`.
 - Alternativa sin tocar el robot: kit independiente (L2 + RPi 5 + batería) que solo graba, con el

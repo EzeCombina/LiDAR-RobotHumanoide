@@ -13,8 +13,8 @@
  *   y, además, cuántos paquetes de cada tipo llegaron (puntos, IMU, etc.).
  *   Al final imprime un resumen con mínimo, promedio y máximo.
  *
- *   Son los mismos datos que muestra el panel "Lidar Info" de Unilidar 2
- *   (Windows), pero desde Ubuntu. Sirve para diagnosticar el sensor (por
+ *   Son los mismos datos que mostraba el panel "Lidar Info" de Unilidar 2
+ *   (programa de Windows que Unitree ya no ofrece para descargar). Sirve para diagnosticar el sensor (por
  *   ejemplo, si hace ruido: ver si los motores giran estables).
  *
  *   El programa SOLO ESCUCHA: no envía ningún comando de configuración, ni de

@@ -40,7 +40,7 @@ sudo apt install -y build-essential cmake git curl tcpdump tmux software-propert
 | `cmake` | Sistema de compilación que usan el SDK del LiDAR y los paquetes ROS 2 |
 | `git` | Descargar repositorios y versionar este proyecto |
 | `curl` | Descargar archivos desde la terminal |
-| `tcpdump` | Ver si llegan los paquetes de red del LiDAR (paso 02) |
+| `tcpdump` | Ver si llegan los paquetes de red del LiDAR (paso 01) |
 | `tmux` | Mantener vivos los procesos largos (driver, grabaciones) aunque se corte la sesión SSH |
 | `software-properties-common` | Provee `add-apt-repository`, usado al instalar ROS 2 |
 
@@ -250,10 +250,10 @@ Ningún paquete de los puntos 1 a 4 debe figurar como `NO INSTALADO` o `NO ENCON
 ### Qué mirar en la sección de red
 
 - **Placa Ethernet libre:** es la que se va a usar para el LiDAR (en esta PC, `eno1`). Anotar su
-  nombre: se usa en el paso 02.
+  nombre: se usa en el paso 01.
 - **Choque de redes:** el LiDAR viene de fábrica en la red `192.168.1.x`. Si alguna placa de la PC
   ya tiene una dirección `192.168.1.x` (por ejemplo, la del Wi-Fi de la casa), hay conflicto y habrá
-  que cambiar la red del sensor (ver paso 02). En la PC del laboratorio el Wi-Fi está en
+  que cambiar la red del sensor (ver paso 01). En la PC del laboratorio el Wi-Fi está en
   `192.168.20.x`: **no hay choque**.
 
 ## Problemas frecuentes

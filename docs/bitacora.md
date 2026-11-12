@@ -217,3 +217,16 @@ Sensor en el piso, sobre su almohadilla, sin tocar. Driver por Ethernet. Script 
   velocidades de los dos motores, suciedad, pérdida de paquetes, temperaturas y tensiones, más un
   conteo de paquetes por tipo. Solo escucha, no envía comandos. Compila sin advertencias; falta
   probarla con el sensor conectado.
+
+## 2026-11-12 — Se descarta Unilidar 2; se vuelve a la numeración anterior
+
+- El usuario verificó que **Unilidar 2 ya no se puede descargar** de la página de Unitree. Se
+  elimina el paso de prueba en Windows y se vuelve a la numeración anterior: **01 Ethernet**
+  (`01_conexion_ethernet.md`), **02 USB**, **03 driver ROS 2**. Referencias actualizadas en
+  `CLAUDE.md`, paso 00, `versiones.md` y `configurar_red_lidar.sh`.
+- Todo lo que dependía de Unilidar 2 pasa al SDK en Ubuntu: cambio de modo con
+  `cambiar_modo_lidar`, diagnóstico con `estado_lidar` y, si hiciera falta, cambio de IP con
+  `setLidarIpAddressConfig` (procedimiento A VERIFICAR; se usa para el choque de redes y para la red
+  del robot).
+- El manual de Unilidar 2 se conserva en `docs/referencias/` porque describe los campos de estado
+  del sensor (unidades de los motores, temperaturas, tensiones).

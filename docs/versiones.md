@@ -28,7 +28,7 @@ Relevada el 2026-11-06 (host `eze-laptop`).
 | `eno1` | Ethernet libre → **LiDAR** | sin configurar, sin cable |
 | `wlp4s0` | Wi-Fi (internet) | `192.168.20.161/24` → **no choca** con la red de fábrica del L2 (`192.168.1.x`) |
 
-Firewall `ufw`: **activo** (habrá que abrir el puerto UDP 6201 en el paso 02).
+Firewall `ufw`: **activo** (habrá que abrir el puerto UDP 6201 en el paso 01).
 
 ## Sensor
 
