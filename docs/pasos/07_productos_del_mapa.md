@@ -323,11 +323,14 @@ valores" tiene que dar 0 %. Si no, los umbrales del `.yaml` están mal.
 | `trayectoria_limpia.csv`, `transformacion.txt`, `limpieza.txt` | Sí |
 | `mapa_2d.pgm`, `mapa_2d.yaml`, `mapa_2d.png` | Sí (pesan pocos kB) |
 
-## 5. Pendiente (opcional)
+## 5. Pendiente (próximo documento, junto con la Jetson y la navegación)
 
-- **Gemelo digital para Gazebo** (malla 3D de la habitación para simulación): requiere Open3D u
-  otra herramienta de reconstrucción de mallas. No es necesario para el objetivo de corto plazo.
-- **Altura del robot** para `--altura-max`, cuando se defina el montaje del sensor en el R1.
+- **Gemelo digital para Gazebo:** una copia virtual de la habitación (malla 3D) para **simular**
+  el robot y probar la navegación en la computadora antes de usar el robot real. No es lo que
+  ubica al robot en el mapa: eso se hace con el mapa 2D (AMCL de Nav2) o el 3D. Requiere Open3D u
+  otra herramienta de reconstrucción de mallas.
+- **Altura del robot** para `--altura-max`: con el sensor montado sería algo menos de 1,8 m
+  (estimación del usuario, A VERIFICAR); se mantiene 1,80 m como margen para evitar choques.
 
 ## Verificación final
 

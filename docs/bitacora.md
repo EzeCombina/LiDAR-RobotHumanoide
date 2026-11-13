@@ -534,3 +534,7 @@ Paso 02 (USB) para otro día.
   grabación con datos simulados: termina bien.
 - Dos pruebas se interrumpieron porque `pkill -f` encontró el patrón en la línea de comando del
   propio shell de Claude (no afecta al uso normal).
+- El usuario revisó el mapa 2D: "para cómo se realizó el escaneo, está bastante bien"; queda así.
+  Altura del robot con el sensor: algo menos de 1,8 m, se mantiene 1,80 m como margen. Gemelo de
+  Gazebo y altura definitiva pasan al documento siguiente (con la Jetson y la etapa 5). Se aclaró
+  que Gazebo es para simulación; la localización usa el mapa 2D (AMCL) o el 3D.

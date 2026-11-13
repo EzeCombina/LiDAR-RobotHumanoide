@@ -200,6 +200,8 @@ Fuentes: manual oficial del L2 (v1.1), manual de Unilidar 2 (v1.0), código de l
 - **Decisión del usuario (2026-11-13):** la Jetson (etapa 4) se documenta **junto con la etapa 5**
   en el documento siguiente. El PDF actual cubre el objetivo de corto plazo: implementación en
   Ubuntu (pasos 00–06) + productos del mapa (paso 07). El paso 02 (USB) queda para otro día.
+  También pasan al documento siguiente: el gemelo de Gazebo (simulación) y la altura del robot con
+  el sensor montado (algo menos de 1,8 m; se mantiene 1,80 m en `generar_mapa_2d.py`).
 - **Regla del usuario:** todo lo que Claude hace automáticamente queda documentado en
   `docs/pasos/` con su procedimiento manual (quien use la guía puede no tener acceso al chat).
 - Volumen de datos estimado: del orden de 1 a 2 GB cada 10 minutos de grabación.
