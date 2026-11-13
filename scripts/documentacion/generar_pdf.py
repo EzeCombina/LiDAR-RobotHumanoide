@@ -40,8 +40,10 @@ import yaml
 REPO = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 FUENTE = os.path.join(REPO, "docs", "pdf", "fuente")
 SALIDA = os.path.join(REPO, "docs", "pdf", "salida")
-LOGO = os.path.join(REPO, "assets", "logo_utn_frsf.png")
-EMBLEMA = os.path.join(REPO, "assets", "logo_utn_emblema.png")
+# Documento de DataPyme (logo e ícono, como la referencia), en colaboración con la UTN FRSF.
+LOGO = os.path.join(REPO, "assets", "logo_datapyme.png")
+ICONO = os.path.join(REPO, "assets", "logo_datapyme_icono.png")
+LOGO_UTN = os.path.join(REPO, "assets", "logo_utn_frsf.png")
 
 
 def slug(texto, usados):
@@ -80,7 +82,7 @@ def portada(d):
     return f"""
 <section class="portada">
   <div class="banda">
-    <div class="logo"><img src="file://{LOGO}" alt="UTN Facultad Regional San Francisco"/></div>
+    <div class="logo"><img src="file://{LOGO}" alt="DataPyme"/></div>
     <h1 class="titulo-portada">{html.escape(d['titulo'])}</h1>
     <div class="subtitulo">{html.escape(d['subtitulo'])}</div>
     <hr/>
@@ -88,7 +90,10 @@ def portada(d):
     <div class="version">Versión {html.escape(str(d['version']))}</div>
   </div>
   <table class="metadatos">{filas}</table>
-  <div class="pie"><b>UTN · Facultad Regional San Francisco</b><span>Documentación técnica · Laboratorio</span></div>
+  <div class="colaboracion"><span>Proyecto realizado en colaboración con la<br/>
+    <b>UTN Facultad Regional San Francisco</b></span>
+    <img src="file://{LOGO_UTN}" alt="UTN Facultad Regional San Francisco"/></div>
+  <div class="pie"><b>DataPyme</b><span>Documentación técnica · En colaboración con la UTN FRSF</span></div>
 </section>"""
 
 
@@ -113,7 +118,7 @@ def main():
         sys.exit(1)
 
     def encabezado(tema):
-        return (f'<div class="encabezado"><img src="file://{EMBLEMA}" alt=""/>'
+        return (f'<div class="encabezado"><img src="file://{ICONO}" alt=""/>'
                 f'<span>{html.escape(d["titulo_corto"])} · {html.escape(tema)} · v{d["version"]}</span></div>')
 
     usados, todos, secciones = set(), [], []

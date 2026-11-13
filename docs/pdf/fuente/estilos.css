@@ -1,12 +1,13 @@
 /* =============================================================================
    estilos.css — Diseño del documento PDF (formato de docs/FORMATO_DOCUMENTO.md)
-   Identidad UTN FRSF: azul marino #2A4470 (principal), celeste #61A5D8 (secundario).
+   Identidad DataPyme (como el documento de referencia): verde #108550 (principal),
+   verde claro #4FB585 (secundario). La UTN FRSF figura como colaboradora (portada y pie).
    Lo usa scripts/documentacion/generar_pdf.py con WeasyPrint.
    ============================================================================= */
 
 :root {
-  --principal: #2A4470;
-  --secundario: #61A5D8;
+  --principal: #108550;
+  --secundario: #4FB585;
   --texto: #24242B;
   --gris-fila: #F4F6F9;
   --gris-linea: #D9DEE5;
@@ -18,8 +19,12 @@
   margin: 26mm 18mm 20mm 18mm;
   @top-left { content: element(encabezado); vertical-align: bottom; padding-bottom: 3mm; }
   @bottom-left {
-    content: "UTN FRSF"; font: 700 8pt "Open Sans"; color: var(--principal);
+    content: "DataPyme"; font: 700 8pt "Open Sans"; color: var(--principal);
     border-top: 0.5pt solid var(--gris-linea); vertical-align: top; padding-top: 2.5mm;
+  }
+  @bottom-center {
+    content: "En colaboración con la UTN Facultad Regional San Francisco"; font: 7.5pt "Open Sans";
+    color: #8A9099; border-top: 0.5pt solid var(--gris-linea); vertical-align: top; padding-top: 2.5mm;
   }
   @bottom-right {
     content: "Página " counter(page); font: 8pt "Open Sans"; color: #6B7280;
@@ -30,6 +35,7 @@
   margin: 0;
   @top-left { content: none; }
   @bottom-left { content: none; border: none; }
+  @bottom-center { content: none; border: none; }
   @bottom-right { content: none; border: none; }
 }
 
@@ -43,7 +49,7 @@ body { margin: 0; }
   width: 174mm; border-bottom: 1.2pt solid var(--principal); padding-bottom: 2mm;
   font-size: 7.6pt; color: #6B7280;
 }
-.encabezado img { width: 9mm; height: 9mm; background: white; }
+.encabezado img { width: 8mm; height: 8mm; margin-right: 3mm; }  /* "gap" no se aplica en WeasyPrint */
 
 /* ---------- Portada ---------- */
 .portada { page: portada; position: relative; width: 210mm; height: 297mm; break-after: page; }
@@ -51,14 +57,12 @@ body { margin: 0; }
   position: absolute; top: 0; left: 0; width: 210mm; height: 192mm;
   background: var(--principal); color: white; text-align: center;
 }
-.portada .logo {
-  margin: 34mm auto 0 auto; width: 118mm; background: white; padding: 7mm 9mm; border-radius: 2mm;
-}
+.portada .logo { margin: 30mm auto 0 auto; width: 62mm; }
 .portada .logo img { width: 100%; display: block; }
 .portada h1.titulo-portada {
-  font-size: 25pt; font-weight: 700; margin: 17mm 0 0 0; color: white; string-set: none;
+  font-size: 25pt; font-weight: 700; margin: 12mm 0 0 0; color: white; string-set: none;
 }
-.portada .subtitulo { font-size: 14pt; font-weight: 300; margin-top: 3mm; color: #E6ECF5; }
+.portada .subtitulo { font-size: 14pt; font-weight: 300; margin-top: 3mm; color: #E3F2EA; }
 .portada hr { width: 120mm; border: none; border-top: 0.6pt solid rgba(255, 255, 255, 0.6); margin: 9mm auto 6mm auto; }
 .portada .descripcion { font-size: 11pt; }
 .portada .version { font-size: 11pt; font-weight: 700; margin-top: 3mm; }
@@ -73,6 +77,12 @@ body { margin: 0; }
   padding: 0 22mm; box-sizing: border-box;
 }
 .portada .pie b { font-weight: 700; }
+.portada .colaboracion {
+  position: absolute; top: 253mm; left: 22mm; width: 166mm; display: flex; align-items: center; gap: 8mm;
+  border-top: 0.5pt solid var(--gris-linea); padding-top: 5mm;
+}
+.portada .colaboracion span { font-size: 8.5pt; color: #555B66; width: 70mm; margin-right: 10mm; line-height: 1.45; }  /* WeasyPrint no aplica "gap" en flex: se usa margin */
+.portada .colaboracion img { height: 13mm; }
 
 /* ---------- Índice ---------- */
 .indice { break-after: page; }
@@ -116,7 +126,7 @@ td code { font-size: 7.6pt; }
 
 /* ---------- Recuadros de aviso (extensión "admonition" de Markdown) ---------- */
 .admonition {
-  border-left: 1.4mm solid var(--principal); background: #EEF3FA; padding: 2.4mm 3.5mm;
+  border-left: 1.4mm solid var(--principal); background: #EDF6F1; padding: 2.4mm 3.5mm;
   margin: 1mm 0 3.5mm 0; border-radius: 0 1.2mm 1.2mm 0; break-inside: avoid; font-size: 9pt;
 }
 .admonition p:last-child { margin-bottom: 0; }
@@ -125,8 +135,8 @@ td code { font-size: 7.6pt; }
 .admonition.importante .admonition-title { color: #9A5B00; }
 .admonition.peligro { background: #FDECEE; border-left-color: #C62828; }
 .admonition.peligro .admonition-title { color: #A51C1C; }
-.admonition.concepto { background: #EDF6FC; border-left-color: var(--secundario); }
-.admonition.concepto .admonition-title { color: #2F6F9F; }
+.admonition.concepto { background: #EFF8F3; border-left-color: var(--secundario); }
+.admonition.concepto .admonition-title { color: #2E8A5E; }
 
 /* ---------- Figuras ---------- */
 figure { margin: 2mm 0 4mm 0; text-align: center; break-inside: avoid; }

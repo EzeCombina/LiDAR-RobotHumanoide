@@ -5,8 +5,8 @@ computadora con **Ubuntu 24.04 y ROS 2 Jazzy**, desde el sensor recién sacado d
 obtener el **mapa de una habitación**: un mapa 3D (nube de puntos) y un mapa 2D listo para el
 sistema de navegación del robot.
 
-Es parte del proyecto de programación del robot humanoide **Unitree R1 EDU**, desarrollado en
-colaboración con la **UTN Facultad Regional San Francisco**. El LiDAR se va a montar sobre el
+Es parte del proyecto de **DataPyme** de programación del robot humanoide **Unitree R1 EDU**,
+que se desarrolla en conjunto con la **UTN Facultad Regional San Francisco**. El LiDAR se va a montar sobre el
 robot para que pueda mapear el lugar donde trabaja y, más adelante, navegar solo. Este documento
 cubre la primera parte: aprender a usar el sensor y a generar mapas, llevándolo en la mano.
 

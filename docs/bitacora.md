@@ -557,3 +557,20 @@ Paso 02 (USB) para otro día.
   página siguiente: no entra en los 72 mm que quedan (medido con el *layout* de WeasyPrint); se deja
   así. Un intento con `max-height` no cambiaba la paginación; se usa `height: 80mm`.
 - Documento del paso: `docs/pasos/08_documento_pdf.md`.
+
+## 2026-11-13 — PDF con la marca DataPyme y la colaboración de la UTN
+
+- **Decisión del usuario:** el documento es **de DataPyme**, con sus colores y su logo como en el
+  documento de referencia; la UTN FRSF figura como institución colaboradora, con su logo. Esto
+  reemplaza la indicación anterior de CLAUDE.md y `docs/FORMATO_DOCUMENTO.md` (que prohibía la marca
+  DataPyme); ambos actualizados.
+- Logos extraídos del PDF de referencia con `pdfimages`: `assets/logo_datapyme.png` (portada, 717 ×
+  717, con su máscara) y `assets/logo_datapyme_icono.png` (encabezado). Verde medido: `#108550`. Se
+  quitó `assets/logo_utn_emblema.png` (ya no se usa).
+- Portada: logo de DataPyme en la banda verde; debajo de la tabla, "Proyecto realizado en
+  colaboración con la UTN Facultad Regional San Francisco" y el logo de la UTN; pie "DataPyme ·
+  Documentación técnica · En colaboración con la UTN FRSF". Páginas interiores: ícono de DataPyme en
+  el encabezado; pie "DataPyme · En colaboración con la UTN Facultad Regional San Francisco ·
+  Página N". Resumen: "proyecto de DataPyme … en conjunto con la UTN FRSF".
+- Detalle: WeasyPrint no aplica `gap` en *flex* (el texto quedaba pegado al logo de la UTN y al
+  ícono): se usa `margin-right`.

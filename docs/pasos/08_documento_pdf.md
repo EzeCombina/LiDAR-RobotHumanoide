@@ -3,7 +3,9 @@
 ## Objetivo
 
 Generar (y regenerar después de cada cambio) el documento PDF con la guía completa del proyecto,
-con el formato de `docs/FORMATO_DOCUMENTO.md`: portada con el logo de la UTN FRSF, índice con
+con el formato de `docs/FORMATO_DOCUMENTO.md`: documento de **DataPyme** (colores y logo del
+documento de referencia) en colaboración con la **UTN FRSF** (logo en la portada y mención en el pie
+de cada página), índice con
 números de página, encabezado y pie en cada página, tablas y recuadros de aviso.
 
 ## Requisitos
@@ -46,8 +48,9 @@ Tarda unos segundos. Con `--html` guarda además el HTML intermedio
 | `docs/pdf/fuente/documento.yaml` | Título, subtítulo, **versión**, fecha, tabla de la portada y nombre del PDF |
 | `docs/pdf/fuente/capitulos/*.md` | Un archivo por capítulo o anexo, en el orden de su nombre (`01_…`, `02_…`) |
 | `docs/pdf/fuente/estilos.css` | Diseño (colores, tipografías, portada, tablas, recuadros) |
-| `assets/logo_utn_frsf.png` | Logo de la portada |
-| `assets/logo_utn_emblema.png` | Emblema de la UTN para el encabezado: recorte del logo (columnas 0–72, filas 7–90) ampliado y centrado en un cuadrado |
+| `assets/logo_datapyme.png` | Logo de DataPyme de la portada (717 × 717 px), extraído del PDF de referencia con `pdfimages` (imagen 0 de la página 1 más su máscara) |
+| `assets/logo_datapyme_icono.png` | Ícono de DataPyme del encabezado (588 × 616 px), extraído del PDF de referencia (imagen de la página 2) |
+| `assets/logo_utn_frsf.png` | Logo de la UTN FRSF, en la zona blanca de la portada |
 | `scripts/documentacion/generar_pdf.py` | Arma portada + índice + capítulos y genera el PDF |
 | `docs/pdf/salida/` | El PDF generado (se sube a git) |
 
@@ -56,9 +59,30 @@ El script:
 1. Lee `documento.yaml`.
 2. Convierte cada capítulo de Markdown a HTML, numera los títulos `#` y `##` para el índice y
    convierte cada imagen sola en una figura con epígrafe.
-3. Arma la portada, el índice ("Contenido") y el encabezado de cada capítulo
+3. Arma la portada (logo de DataPyme en la banda verde; colaboración y logo de la UTN en la zona
+   blanca), el índice ("Contenido") y el encabezado de cada capítulo
    ("LiDAR Unitree L2 · <capítulo> · v<versión>").
 4. Aplica `estilos.css` y genera el PDF con WeasyPrint.
+
+### 2.1 Cómo se extrajeron los logos de DataPyme
+
+```bash
+R=docs/referencias/formato/Referencia_formato_Documentacion_Firmware_PLC14_v0.0.5.pdf
+pdfimages -list $R | head        # lista las imágenes del PDF
+pdfimages -png -f 1 -l 2 $R /tmp/img
+# /tmp/img-000.png = logo de portada, /tmp/img-001.png = su máscara (transparencia),
+# /tmp/img-002.png = ícono del encabezado
+python3 -c "
+from PIL import Image
+a = Image.open('/tmp/img-000.png').convert('RGB'); a.putalpha(Image.open('/tmp/img-001.png').convert('L'))
+a.save('assets/logo_datapyme.png')
+Image.open('/tmp/img-002.png').convert('RGB').save('assets/logo_datapyme_icono.png')"
+```
+
+El verde (`#108550`, RGB 16, 133, 80) se midió sobre la banda de la portada de la referencia.
+
+> WeasyPrint no aplica la propiedad `gap` de CSS en contenedores *flex*: para separar el ícono del
+> texto (encabezado) y el texto del logo de la UTN (portada) se usa `margin-right`.
 
 ## 3. Cómo editar el contenido
 

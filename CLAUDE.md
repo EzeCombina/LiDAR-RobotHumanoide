@@ -27,9 +27,11 @@ lenguaje profesional.
 
 ## 2. Contexto del proyecto
 
-- **Proyecto colaborativo con la UTN Facultad Regional San Francisco.** La documentación final queda
-  en el laboratorio de la facultad, para estudiantes con conocimientos básicos, medios o avanzados.
-  Usar el logo `assets/logo_utn_frsf.png`.
+- **Proyecto de DataPyme en colaboración con la UTN Facultad Regional San Francisco.** La
+  documentación final queda en el laboratorio de la facultad, para estudiantes con conocimientos
+  básicos, medios o avanzados. Los documentos son **de DataPyme** (logo `assets/logo_datapyme.png`,
+  ícono `assets/logo_datapyme_icono.png`, verde `#108550`) y llevan la colaboración con la UTN y su
+  logo `assets/logo_utn_frsf.png` (decisión del usuario, 2026-11-13).
 - **Robot:** Unitree R1 EDU. La computadora de desarrollo del robot (PC2) es una **NVIDIA Jetson Orin
   NX**, IP `192.168.123.164`, usuario `unitree` (detalles en
   `docs/referencias/Unitree_R1_Conexiones_y_Acceso_Terminales.pdf`). **El robot no está disponible
@@ -59,8 +61,9 @@ lenguaje profesional.
 ### Entregable final
 
 Un **PDF** que detalle cada paso para implementar el LiDAR **desde cero hasta tener el archivo de la
-habitación**. Formato en `docs/FORMATO_DOCUMENTO.md`. Debe indicar que es un **proyecto colaborativo
-con la UTN Facultad Regional San Francisco** e incluir el logo de la UTN.
+habitación**. Formato en `docs/FORMATO_DOCUMENTO.md`: **documento de DataPyme** (marca y colores del
+documento de referencia) que indica que el trabajo se hace **en colaboración con la UTN Facultad
+Regional San Francisco**, con el logo de la UTN (portada) y la mención en el pie de cada página.
 
 ---
 
@@ -293,8 +296,8 @@ Dejar un documento `docs/pasos/futuro_navegacion.md` con:
 
 ### Etapa 6 — Documento PDF final
 - Seguir `docs/FORMATO_DOCUMENTO.md`. Como referencia visual, abrir
-  `docs/referencias/formato/Referencia_formato_Documentacion_Firmware_PLC14_v0.0.5.pdf`: copiar solo
-  el diseño, nunca su contenido ni la marca DataPyme.
+  `docs/referencias/formato/Referencia_formato_Documentacion_Firmware_PLC14_v0.0.5.pdf`: copiar el
+  diseño y la marca DataPyme (logo y colores), nunca su contenido.
 - Contenido: guía desde cero hasta el archivo de la habitación (etapas 1 a 3), más los capítulos de la
   Jetson (etapa 4) y del trabajo futuro (etapa 5).
 - Público: estudiantes de nivel básico, medio y avanzado. Explicar los conceptos (qué es una nube de
