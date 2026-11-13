@@ -71,7 +71,8 @@ Regional San Francisco**, con el logo de la UTN (portada) y la mención en el pi
 
 ### Documentación y repositorio
 
-1. **Todo queda en este repositorio** (GitHub `EzeCombina/LiDAR-RobotHumanoide`, privado).
+1. **Todo queda en este repositorio** (GitHub `EzeCombina/LiDAR-RobotHumanoide`, **público** desde el
+   2026-11-13: no subir credenciales, datos personales ni documentos internos).
 2. **Bitácora:** cada sesión de trabajo agrega una entrada en `docs/bitacora.md` con la fecha, qué se
    hizo, qué funcionó, qué falló (con el error literal) y cómo se resolvió.
 3. **Un archivo por paso** en `docs/pasos/` (por ejemplo `01_red_y_conexion.md`). Cada uno contiene:

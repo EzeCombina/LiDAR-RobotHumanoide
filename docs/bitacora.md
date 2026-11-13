@@ -582,3 +582,9 @@ Paso 02 (USB) para otro día.
   `docs/pasos/01_conexion_ethernet.md`.
 - El usuario va a hacer público el repositorio: se quitó "(privado)" de la portada del PDF
   (`documento.yaml`) y de `docs/FORMATO_DOCUMENTO.md`. PDF regenerado (40 páginas).
+- El repositorio pasó a ser **público** (2026-11-13). Claude advirtió que el historial incluye el
+  PDF de referencia interno de DataPyme, el PDF del R1 con las credenciales de fábrica del robot
+  (`unitree` / `123`), los manuales de Unitree y el correo del autor en los commits, y propuso
+  reescribir el historial y publicar en un repositorio nuevo. El usuario decidió dejarlo como está
+  por ahora. CLAUDE.md actualizado: repositorio público, no subir credenciales ni documentos
+  internos.
