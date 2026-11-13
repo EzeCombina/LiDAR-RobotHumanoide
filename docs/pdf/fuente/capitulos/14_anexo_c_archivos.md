@@ -5,7 +5,7 @@ Repositorio: `github.com/EzeCombina/LiDAR-RobotHumanoide`.
 | Carpeta o archivo | Contenido |
 |---|---|
 | `README.md` | Presentación del proyecto, tabla de pasos y uso rápido |
-| `docs/pasos/` | Un documento por paso (00 a 07), con comandos, salidas y problemas frecuentes |
+| `docs/pasos/` | Un documento por paso (00 a 08), con comandos, salidas y problemas frecuentes |
 | `docs/bitacora.md` | Registro de cada sesión de trabajo: qué se hizo, qué falló y cómo se resolvió |
 | `docs/versiones.md` | Versiones exactas de todo lo instalado o descargado |
 | `docs/grabaciones.md`, `docs/mapas.md` | Registro de grabaciones y mapas, y dónde están guardados |
