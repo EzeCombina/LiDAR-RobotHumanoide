@@ -57,6 +57,7 @@ del robot.
 | 05 | [SLAM con Point-LIO](docs/pasos/05_slam_pointlio.md) | Completo |
 | 06 | [Mapear un lugar: procedimiento completo](docs/pasos/06_mapeo_de_un_lugar.md) | Validado con una habitación (2026-11-12) |
 | 07 | [Productos del mapa: 3D limpio y 2D para Nav2](docs/pasos/07_productos_del_mapa.md) | Validado con la misma habitación (2026-11-13) |
+| 08 | [Documento PDF de la guía](docs/pasos/08_documento_pdf.md) | Versión 0.1.0 generada: [`docs/pdf/salida/Guia_LiDAR_L2_v0.1.0.pdf`](docs/pdf/salida/Guia_LiDAR_L2_v0.1.0.pdf) |
 
 ## Uso rápido: de un recorrido a un mapa
 

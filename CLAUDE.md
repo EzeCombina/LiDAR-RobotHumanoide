@@ -202,6 +202,10 @@ Fuentes: manual oficial del L2 (v1.1), manual de Unilidar 2 (v1.0), código de l
   Ubuntu (pasos 00–06) + productos del mapa (paso 07). El paso 02 (USB) queda para otro día.
   También pasan al documento siguiente: el gemelo de Gazebo (simulación) y la altura del robot con
   el sensor montado (algo menos de 1,8 m; se mantiene 1,80 m en `generar_mapa_2d.py`).
+- **PDF (2026-11-13):** versión 0.1.0, 40 páginas, generado con `scripts/documentacion/generar_pdf.py`
+  (WeasyPrint + Markdown) desde `docs/pdf/fuente/` (`documento.yaml`, `capitulos/*.md`,
+  `estilos.css`); salida en `docs/pdf/salida/`. Paso 08. Para una versión nueva: editar los
+  capítulos y `documento.yaml`, regenerar y revisar página por página.
 - **Regla del usuario:** todo lo que Claude hace automáticamente queda documentado en
   `docs/pasos/` con su procedimiento manual (quien use la guía puede no tener acceso al chat).
 - Volumen de datos estimado: del orden de 1 a 2 GB cada 10 minutos de grabación.

@@ -538,3 +538,22 @@ Paso 02 (USB) para otro día.
   Altura del robot con el sensor: algo menos de 1,8 m, se mantiene 1,80 m como margen. Gemelo de
   Gazebo y altura definitiva pasan al documento siguiente (con la Jetson y la etapa 5). Se aclaró
   que Gazebo es para simulación; la localización usa el mapa 2D (AMCL) o el 3D.
+
+## 2026-11-13 — Etapa 6: documento PDF v0.1.0 (paso 08)
+
+- El usuario instaló `weasyprint` 61.1 y `python3-markdown` 3.5.2. Fuentes Open Sans y DejaVu Sans
+  Mono ya disponibles.
+- Se armó la generación: `docs/pdf/fuente/documento.yaml` (datos y versión), `estilos.css`
+  (formato de `docs/FORMATO_DOCUMENTO.md`: portada con banda azul y logo en recuadro blanco, índice
+  con líneas de puntos y números de página, encabezado con el emblema de la UTN, pie, tablas,
+  recuadros concepto/nota/importante/peligro) y `scripts/documentacion/generar_pdf.py`. Emblema
+  para el encabezado: `assets/logo_utn_emblema.png`, recortado del logo.
+- Contenido (15 archivos en `docs/pdf/fuente/capitulos/`): 1 Resumen, 2 Conceptos, 3 Materiales,
+  4 Instalación, 5 Sensor, 6 Driver, 7 Grabación, 8 SLAM, 9 Mapeo, 10 Procesamiento del mapa,
+  11 Problemas frecuentes, anexos A Parámetros, B Versiones, C Archivos, D Referencias. Sin la
+  Jetson ni el trabajo futuro (próximo documento). Resultado: 40 páginas, 0,7 MB.
+- Revisión página por página: se corrigió una página casi vacía (recuadro de 7.3 movido antes de
+  los comandos) y se limitó la altura de las figuras a 80 mm. La captura de RViz sigue pasando a la
+  página siguiente: no entra en los 72 mm que quedan (medido con el *layout* de WeasyPrint); se deja
+  así. Un intento con `max-height` no cambiaba la paginación; se usa `height: 80mm`.
+- Documento del paso: `docs/pasos/08_documento_pdf.md`.

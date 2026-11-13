@@ -89,3 +89,6 @@ el futuro una versión nueva rompe algo.
 | `python3-pil` | 10.2.0-1ubuntu1.4 | PNG del mapa 2D | 07 |
 | `ros-jazzy-nav2-map-server` | 1.3.13-1noble.20260921.024942 | Cargar el mapa 2D (`map_server`) | 07 |
 | `ros-jazzy-nav2-util` | 1.3.13-1noble.20260921.024419 | `lifecycle_bringup` (activar el servidor de mapas) | 07 |
+| `weasyprint` | 61.1-1 (instalado 2026-11-13) | Generar el PDF | 08 |
+| `python3-markdown` | 3.5.2-1 (instalado 2026-11-13) | Capítulos del PDF en Markdown | 08 |
+| `fonts-open-sans` | 1.11-2 | Tipografía del PDF | 08 |

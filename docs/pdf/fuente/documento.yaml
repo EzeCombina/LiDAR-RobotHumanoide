@@ -1,0 +1,16 @@
+# Datos del documento PDF (los usa scripts/documentacion/generar_pdf.py).
+# Para una nueva versión: cambiar "version" y "fecha" y volver a generar.
+titulo: Implementación del LiDAR Unitree L2
+titulo_corto: LiDAR Unitree L2
+subtitulo: Del sensor nuevo al mapa de una habitación
+descripcion: Guía de implementación para el robot humanoide Unitree R1 EDU
+version: 0.1.0
+fecha: Noviembre de 2026
+archivo_salida: Guia_LiDAR_L2_v0.1.0.pdf
+metadatos:
+  - [Proyecto, Programación del robot humanoide Unitree R1 EDU]
+  - [Colaboración, UTN Facultad Regional San Francisco]
+  - [Equipo, Unitree 4D LiDAR L2 · PC con Ubuntu 24.04 + ROS 2 Jazzy]
+  - [Repositorio, github.com/EzeCombina/LiDAR-RobotHumanoide (privado)]
+  - [Autor, Ezequiel Combina]
+  - [Fecha, Noviembre de 2026]

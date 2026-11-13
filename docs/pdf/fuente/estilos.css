@@ -1,0 +1,137 @@
+/* =============================================================================
+   estilos.css — Diseño del documento PDF (formato de docs/FORMATO_DOCUMENTO.md)
+   Identidad UTN FRSF: azul marino #2A4470 (principal), celeste #61A5D8 (secundario).
+   Lo usa scripts/documentacion/generar_pdf.py con WeasyPrint.
+   ============================================================================= */
+
+:root {
+  --principal: #2A4470;
+  --secundario: #61A5D8;
+  --texto: #24242B;
+  --gris-fila: #F4F6F9;
+  --gris-linea: #D9DEE5;
+}
+
+/* ---------- Página ---------- */
+@page {
+  size: A4;
+  margin: 26mm 18mm 20mm 18mm;
+  @top-left { content: element(encabezado); vertical-align: bottom; padding-bottom: 3mm; }
+  @bottom-left {
+    content: "UTN FRSF"; font: 700 8pt "Open Sans"; color: var(--principal);
+    border-top: 0.5pt solid var(--gris-linea); vertical-align: top; padding-top: 2.5mm;
+  }
+  @bottom-right {
+    content: "Página " counter(page); font: 8pt "Open Sans"; color: #6B7280;
+    border-top: 0.5pt solid var(--gris-linea); vertical-align: top; padding-top: 2.5mm;
+  }
+}
+@page portada {
+  margin: 0;
+  @top-left { content: none; }
+  @bottom-left { content: none; border: none; }
+  @bottom-right { content: none; border: none; }
+}
+
+html { font-family: "Open Sans", "Noto Sans", sans-serif; font-size: 9.6pt; color: var(--texto); line-height: 1.5; }
+body { margin: 0; }
+
+/* ---------- Encabezado (elemento "running") ---------- */
+.encabezado {
+  position: running(encabezado);
+  display: flex; align-items: center; gap: 3mm;
+  width: 174mm; border-bottom: 1.2pt solid var(--principal); padding-bottom: 2mm;
+  font-size: 7.6pt; color: #6B7280;
+}
+.encabezado img { width: 9mm; height: 9mm; background: white; }
+
+/* ---------- Portada ---------- */
+.portada { page: portada; position: relative; width: 210mm; height: 297mm; break-after: page; }
+.portada .banda {
+  position: absolute; top: 0; left: 0; width: 210mm; height: 192mm;
+  background: var(--principal); color: white; text-align: center;
+}
+.portada .logo {
+  margin: 34mm auto 0 auto; width: 118mm; background: white; padding: 7mm 9mm; border-radius: 2mm;
+}
+.portada .logo img { width: 100%; display: block; }
+.portada h1.titulo-portada {
+  font-size: 25pt; font-weight: 700; margin: 17mm 0 0 0; color: white; string-set: none;
+}
+.portada .subtitulo { font-size: 14pt; font-weight: 300; margin-top: 3mm; color: #E6ECF5; }
+.portada hr { width: 120mm; border: none; border-top: 0.6pt solid rgba(255, 255, 255, 0.6); margin: 9mm auto 6mm auto; }
+.portada .descripcion { font-size: 11pt; }
+.portada .version { font-size: 11pt; font-weight: 700; margin-top: 3mm; }
+.portada table.metadatos {
+  position: absolute; top: 204mm; left: 22mm; width: 166mm; border: none; font-size: 9pt;
+}
+.portada table.metadatos td { border: none; background: none; padding: 1.3mm 0; }
+.portada table.metadatos td:first-child { width: 36mm; font-weight: 700; color: var(--principal); }
+.portada .pie {
+  position: absolute; bottom: 0; left: 0; width: 210mm; height: 11mm; background: var(--principal);
+  color: white; font-size: 8.5pt; display: flex; justify-content: space-between; align-items: center;
+  padding: 0 22mm; box-sizing: border-box;
+}
+.portada .pie b { font-weight: 700; }
+
+/* ---------- Índice ---------- */
+.indice { break-after: page; }
+.indice h1 { margin-top: 0; }
+.indice ul { list-style: none; padding: 0; margin: 0; }
+.indice li.cap { margin-top: 3.2mm; font-weight: 700; font-size: 9.6pt; }
+.indice li.sub { margin-left: 6mm; font-size: 8.4pt; color: #3B3F48; margin-top: 0.6mm; }
+.indice a { color: inherit; text-decoration: none; }
+.indice a::after { content: leader(". ") target-counter(attr(href), page); }
+
+/* ---------- Títulos ---------- */
+section.capitulo { break-before: page; }
+h1 { font-size: 19pt; font-weight: 700; color: var(--principal); margin: 0 0 5mm 0; string-set: capitulo content(text); }
+h2 { font-size: 13pt; font-weight: 700; color: var(--principal); margin: 7mm 0 2.5mm 0; break-after: avoid; }
+h3 { font-size: 10.5pt; font-weight: 700; color: var(--principal); margin: 5mm 0 2mm 0; break-after: avoid; }
+p { margin: 0 0 2.6mm 0; text-align: left; orphans: 2; widows: 2; }
+
+/* ---------- Listas ---------- */
+ul, ol { margin: 0 0 2.6mm 0; padding-left: 5.5mm; }
+li { margin-bottom: 1mm; }
+ul > li::marker { color: var(--secundario); }
+
+/* ---------- Código ---------- */
+code { font-family: "DejaVu Sans Mono", monospace; font-size: 8pt; color: var(--principal); }
+pre {
+  background: #F6F7F9; border: 0.5pt solid var(--gris-linea); border-radius: 1.2mm;
+  padding: 2.4mm 3mm; margin: 0 0 3mm 0; white-space: pre-wrap; word-break: break-all;
+  font-size: 7.4pt; line-height: 1.38; break-inside: avoid;
+}
+pre code { color: #1F2937; font-size: 7.4pt; }
+
+/* ---------- Tablas ---------- */
+table { border-collapse: collapse; width: 100%; margin: 1mm 0 3.5mm 0; font-size: 8.3pt; break-inside: auto; }
+thead { display: table-header-group; }
+th { background: var(--principal); color: white; font-weight: 700; text-align: left; padding: 1.6mm 2mm; }
+td { padding: 1.4mm 2mm; border-bottom: 0.5pt solid var(--gris-linea); vertical-align: top; }
+tbody tr:nth-child(even) td { background: var(--gris-fila); }
+tbody td:first-child { font-weight: 600; }
+tr { break-inside: avoid; }
+td code { font-size: 7.6pt; }
+
+/* ---------- Recuadros de aviso (extensión "admonition" de Markdown) ---------- */
+.admonition {
+  border-left: 1.4mm solid var(--principal); background: #EEF3FA; padding: 2.4mm 3.5mm;
+  margin: 1mm 0 3.5mm 0; border-radius: 0 1.2mm 1.2mm 0; break-inside: avoid; font-size: 9pt;
+}
+.admonition p:last-child { margin-bottom: 0; }
+.admonition .admonition-title { font-weight: 700; color: var(--principal); margin-bottom: 1.2mm; }
+.admonition.importante { background: #FFF6E5; border-left-color: #C77A00; }
+.admonition.importante .admonition-title { color: #9A5B00; }
+.admonition.peligro { background: #FDECEE; border-left-color: #C62828; }
+.admonition.peligro .admonition-title { color: #A51C1C; }
+.admonition.concepto { background: #EDF6FC; border-left-color: var(--secundario); }
+.admonition.concepto .admonition-title { color: #2F6F9F; }
+
+/* ---------- Figuras ---------- */
+figure { margin: 2mm 0 4mm 0; text-align: center; break-inside: avoid; }
+figure img { height: 80mm; width: auto; max-width: 100%; border: 0.5pt solid var(--gris-linea); }
+figcaption { font-size: 8pt; color: #555B66; margin-top: 1.5mm; }
+
+a { color: var(--principal); text-decoration: none; }
+strong { font-weight: 700; }
