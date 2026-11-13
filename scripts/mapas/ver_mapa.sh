@@ -49,23 +49,30 @@ source /opt/ros/jazzy/setup.bash
 set -u
 
 PIDS=()
-trap 'for p in "${PIDS[@]}"; do kill -INT "$p" 2>/dev/null || true; done' EXIT
+# Al salir (normalmente, con Ctrl+C o con SIGTERM) se detienen los procesos lanzados.
+# - Cada programa se lanza con "setsid", en su propio grupo de procesos, y al salir
+#   se termina el grupo entero con SIGTERM (envoltorio "ros2 run" + programa real).
+# - No se usa SIGINT: en un script, los procesos en segundo plano lo ignoran.
+# - Sin el "trap ... INT TERM", bash no limpia si lo terminan con una señal.
+limpiar() { for p in "${PIDS[@]}"; do kill -TERM -- "-$p" 2>/dev/null || true; done; }
+trap limpiar EXIT
+trap 'exit 1' INT TERM
 
 # Publica el marco "map" en /tf (transformada fija, vacía). Sin esto RViz muestra
 # el aviso "Fixed Frame: No tf data" aunque el mapa se vea bien.
-ros2 run tf2_ros static_transform_publisher --frame-id map --child-frame-id mapa_origen \
+setsid ros2 run tf2_ros static_transform_publisher --frame-id map --child-frame-id mapa_origen \
     > /dev/null 2>&1 < /dev/null &
 PIDS+=($!)
 
 echo "Publicando $PCD en /cloud_pcd (cada 2 s)..."
-ros2 run pcl_ros pcd_to_pointcloud --ros-args \
+setsid ros2 run pcl_ros pcd_to_pointcloud --ros-args \
     -p file_name:="$PCD" -p tf_frame:=map -p publishing_period_ms:=2000 \
     > /dev/null 2>&1 < /dev/null &
 PIDS+=($!)
 
 if [ -f "$TRAY" ]; then
     echo "Publicando la trayectoria $TRAY (verde = partida, rojo = llegada)..."
-    python3 "$REPO/scripts/mapas/publicar_trayectoria.py" "$TRAY" > /dev/null 2>&1 < /dev/null &
+    setsid python3 "$REPO/scripts/mapas/publicar_trayectoria.py" "$TRAY" > /dev/null 2>&1 < /dev/null &
     PIDS+=($!)
 else
     echo "Sin trayectoria (no existe $TRAY)."

@@ -1,0 +1,14 @@
+Mapa de entrada: mapas/2026-11-12_1445_habitacion_vertical_rapido/mapa.pcd
+1. Reducción a celdas de 3 cm: 1.102.546 -> 350.797 puntos
+2. Puntos sueltos quitados: 11.446 (vecinos=10, sigma=2.0) -> quedan 339.351
+   plano horizontal a z =   1.96 m, inclinación  1.3°,  8.9 % de los puntos
+   plano horizontal a z =   1.86 m, inclinación  3.8°,  3.8 % de los puntos
+   plano horizontal a z =  -0.89 m, inclinación  1.9°,  4.7 % de los puntos
+   plano horizontal a z =   0.00 m, inclinación  0.6°,  3.4 % de los puntos
+   plano horizontal a z =   1.90 m, inclinación  1.9°,  2.9 % de los puntos
+3. Nivelación con el piso: inclinación corregida 1.9°; piso llevado a z = 0 (desplazamiento +0.88 m)
+   Refinamiento con la franja del piso (12.395 puntos): 0.35° adicionales
+4. Alineación de paredes: giro de +40.0° alrededor del eje vertical
+5. Guardado /home/eze/Documentos/LiDAR-RobotHumanoide/mapas/2026-11-12_1445_habitacion_vertical_rapido/mapa_limpio.pcd: 339.351 puntos, 5.4 MB
+   trayectoria_limpia.csv: trayectoria con la misma transformación
+   Extensión útil (1 %-99 %): x 3.21 m, y 7.88 m, z -0.06 a 2.85 m

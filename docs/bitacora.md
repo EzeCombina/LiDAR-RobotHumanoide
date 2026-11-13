@@ -487,3 +487,50 @@ Pedido del usuario: separar los archivos en subcarpetas. Opciones elegidas (de l
 - El usuario revisó el mapa `2026-11-12_1445_habitacion_vertical_rapido` en RViz: "se ve genial".
   **Objetivo de corto plazo cumplido: mapa 3D de una habitación recorriéndola con el LiDAR en la
   mano.** Paso 06 marcado como validado en el README.
+
+## 2026-11-13 — Etapa 3: productos del mapa (paso 07)
+
+Sin el sensor. Decisiones del usuario: la Jetson (etapa 4) pasa al documento siguiente, junto con
+la etapa 5; ahora se hacen los productos de la etapa 3 y después el PDF del objetivo de corto plazo.
+Paso 02 (USB) para otro día.
+
+**Qué se hizo**
+
+- `scripts/mapas/limpiar_mapa.py` (nuevo): voxel 3 cm, filtro estadístico de puntos sueltos,
+  nivelación con el piso (RANSAC + segunda pasada con la franja del piso) llevando el piso a z = 0,
+  alineación de paredes con los ejes; guarda `mapa_limpio.pcd`, `trayectoria_limpia.csv`,
+  `transformacion.txt` y `limpieza.txt`. Universal para cualquier `.pcd` si se ve el piso; con
+  control de seguridad (si hay más de 5 % de puntos debajo del "piso", no nivela) y opciones
+  `--referencia techo`, `--sin-nivelar`, `--sin-alinear`. Habitación: 34 MB → 5,4 MB, piso/techo
+  0,3–0,8°. `sala_quieta` (sin piso): no nivela y lo avisa; con `--referencia techo`, 0,5°.
+- `scripts/mapas/generar_mapa_2d.py` (nuevo): grilla de 5 cm, ocupadas = ≥ 2 puntos entre 0,10 y
+  1,80 m; libres = piso visto o ±20 cm de la trayectoria, con cierre morfológico; desconocidas el
+  resto; `mapa_2d.pgm/.yaml/.png`. Habitación: 85 × 180 celdas (4,25 × 9,00 m), 41,7 % ocupadas
+  (muebles: ~5 m² de superficies a 0,7–1,0 m de altura), 14,7 % libres, 43,6 % desconocidas.
+- `scripts/mapas/ver_mapa_2d.sh` y `verificar_mapa_2d.py` (nuevos), `config/rviz/ver_mapa_2d.rviz`.
+  `nav2_map_server` carga el mapa (`Read map ...: 85 X 180 map @ 0.05 m/cell`) y Nav2 recibe los
+  mismos porcentajes, 0 % de otros valores.
+- Documento `docs/pasos/07_productos_del_mapa.md`; paquetes agregados al paso 00 y a
+  `versiones.md`; pasos 05 y 06, README, CLAUDE.md y `docs/mapas.md` actualizados.
+
+**Qué falló y cómo se resolvió**
+
+- Un ajuste de planos se colgó (más de 60 s): `np.linalg.svd` con `full_matrices=True` (valor por
+  defecto) arma una matriz N × N. El mismo error estaba en `ransac_plano` de `analizar_mapa.py`.
+  Corregido con `full_matrices=False` (0,3 s).
+- `analizar_mapa.py` daba inclinaciones inconsistentes entre piso y techo de un mismo mapa (0,8° y
+  3,3° en el mapa limpio, cuando un ajuste directo daba 0,1° y 0,3°): RANSAC sobre una muestra
+  mezclaba bordes de muebles. Se agregó un reajuste iterativo con todos los puntos cercanos.
+  Valores actualizados: sala 0,7°, departamento 13,5°, habitación 1,9° (antes 0,7–0,9°,
+  13,5–15,4°, 2,1–2,9°).
+- `free_thresh: 0.25` en el `.yaml` hacía que Nav2 interpretara las celdas desconocidas (205, p =
+  0,196) como **libres**. Corregido a `0.196` (estándar de ROS) y verificado con
+  `verificar_mapa_2d.py`.
+- Los visores dejaban procesos huérfanos (`map_server`, `static_transform_publisher`,
+  `pcd_to_pointcloud`) al terminarlos con SIGTERM, y `kill -INT` no los cerraba: en un script, los
+  procesos en segundo plano **ignoran SIGINT**. Solución: `setsid` + `kill -TERM` al grupo, y
+  `trap` de EXIT/INT/TERM. Probado en tres casos (cierre de RViz, Ctrl+C, SIGTERM): 0 procesos
+  restantes. El vigilante de `grabar_lidar.sh` también pasa a cerrarse con SIGTERM; prueba de
+  grabación con datos simulados: termina bien.
+- Dos pruebas se interrumpieron porque `pkill -f` encontró el patrón en la línea de comando del
+  propio shell de Claude (no afecta al uso normal).

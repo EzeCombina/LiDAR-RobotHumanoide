@@ -110,7 +110,7 @@ if [ -n "$SEGUNDOS" ]; then
 else
     ros2 bag record -s mcap -o "$DESTINO" --topics "${TOPICOS[@]}" < /dev/null || true
 fi
-kill -INT "$PID_VIGILANTE" 2>/dev/null || true
+kill -TERM "$PID_VIGILANTE" 2>/dev/null || true   # SIGTERM: en segundo plano, SIGINT puede estar ignorada
 wait "$PID_VIGILANTE" 2>/dev/null || true
 trap - INT
 

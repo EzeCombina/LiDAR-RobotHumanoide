@@ -84,3 +84,8 @@ el futuro una versión nueva rompe algo.
 | `libpcl-dev` | 1.14.0+dfsg-1 | Driver del L2 / Point-LIO | 00 |
 | `libeigen3-dev` | 3.4.0-4build0.1 | Driver del L2 / Point-LIO | 00 |
 | `gh` | 2.45.0-1ubuntu0.3 (instalado 2026-11-06) | Autenticación con GitHub (opcional) | 00 |
+| `python3-numpy` | 1:1.26.4+ds-6ubuntu1 | Scripts de Python (nubes, grillas) | 00, 07 |
+| `python3-scipy` | 1.11.4-6build1 | Vecinos más cercanos y morfología (limpieza y mapa 2D) | 07 |
+| `python3-pil` | 10.2.0-1ubuntu1.4 | PNG del mapa 2D | 07 |
+| `ros-jazzy-nav2-map-server` | 1.3.13-1noble.20260921.024942 | Cargar el mapa 2D (`map_server`) | 07 |
+| `ros-jazzy-nav2-util` | 1.3.13-1noble.20260921.024419 | `lifecycle_bringup` (activar el servidor de mapas) | 07 |

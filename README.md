@@ -56,6 +56,7 @@ del robot.
 | 04 | [Grabación de datos](docs/pasos/04_grabacion.md) | Completo |
 | 05 | [SLAM con Point-LIO](docs/pasos/05_slam_pointlio.md) | Completo |
 | 06 | [Mapear un lugar: procedimiento completo](docs/pasos/06_mapeo_de_un_lugar.md) | Validado con una habitación (2026-11-12) |
+| 07 | [Productos del mapa: 3D limpio y 2D para Nav2](docs/pasos/07_productos_del_mapa.md) | Validado con la misma habitación (2026-11-13) |
 
 ## Uso rápido: de un recorrido a un mapa
 
@@ -70,6 +71,10 @@ ros2 launch config/unitree_lidar_ros2/l2_driver.launch.py modo:=ethernet rviz:=f
 ./scripts/mapas/procesar_grabacion.sh bags/<carpeta>
 # 4. Ver el mapa en RViz (terminal del escritorio)
 ./scripts/mapas/ver_mapa.sh mapas/<fecha>_<nombre>
+# 5. Mapa 3D limpio y mapa 2D para Nav2
+./scripts/mapas/limpiar_mapa.py mapas/<fecha>_<nombre>
+./scripts/mapas/generar_mapa_2d.py mapas/<fecha>_<nombre>
+./scripts/mapas/ver_mapa_2d.sh mapas/<fecha>_<nombre>
 ```
 
 Detalle en [docs/pasos/06_mapeo_de_un_lugar.md](docs/pasos/06_mapeo_de_un_lugar.md).

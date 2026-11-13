@@ -148,6 +148,19 @@ sudo apt install -y ros-jazzy-pcl-ros ros-jazzy-pcl-conversions libpcl-dev libei
 | `ros-jazzy-pcl-ros`, `ros-jazzy-pcl-conversions` | Conversión entre los mensajes de ROS 2 y las nubes de PCL |
 | `libeigen3-dev` | **Eigen**: álgebra lineal (matrices, rotaciones), usada por el driver y por Point-LIO |
 
+Herramientas para los productos del mapa (paso 07: mapa 3D limpio y mapa 2D para Nav2):
+
+```bash
+sudo apt install -y python3-numpy python3-scipy python3-pil \
+    ros-jazzy-nav2-map-server ros-jazzy-nav2-util
+```
+
+| Paquete | Para qué se usa |
+|---|---|
+| `python3-numpy`, `python3-scipy` | Cálculos sobre nubes de puntos en los scripts de Python del proyecto |
+| `python3-pil` | Guardar imágenes PNG del mapa 2D |
+| `ros-jazzy-nav2-map-server`, `ros-jazzy-nav2-util` | Cargar y activar el mapa 2D como lo hace Nav2 |
+
 ## 4. Inicializar rosdep
 
 `rosdep` lee los archivos `package.xml` de los paquetes de terceros e instala lo que les falta. Se

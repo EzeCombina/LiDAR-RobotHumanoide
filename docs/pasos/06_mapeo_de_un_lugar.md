@@ -173,6 +173,16 @@ Después, en RViz:
 
 Si algo falla, repetir la grabación más despacio, con giros más suaves y empezando bien quieto.
 
+### 4.1 Productos para el robot (opcional)
+
+Mapa 3D limpio y nivelado, y mapa 2D de ocupación para Nav2 (detalle en el paso 07):
+
+```bash
+./scripts/mapas/limpiar_mapa.py mapas/<fecha>_<nombre>
+./scripts/mapas/generar_mapa_2d.py mapas/<fecha>_<nombre>
+./scripts/mapas/ver_mapa_2d.sh mapas/<fecha>_<nombre>       # terminal del escritorio
+```
+
 ## 5. Registrar
 
 - Anotar la grabación en `docs/grabaciones.md` y el mapa en `docs/mapas.md`.

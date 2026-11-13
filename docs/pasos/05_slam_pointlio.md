@@ -299,14 +299,18 @@ La salida incluye también los **planos principales** (ejemplo real del mismo ma
 ```text
   Planos principales (muestra de 40000 puntos):
     plano horizontal a z =  1.52 m: inclinación 13.5° (16 % de los puntos)
-    plano horizontal a z = -1.23 m: inclinación 15.4° (4 % de los puntos)
+    plano horizontal a z = -1.23 m: inclinación 13.5° (4 % de los puntos)
     pared principal: girada 76.8° respecto del eje X en planta (equivale a -13.2°; ...)
 ```
 
 - **Planos horizontales** (techo y piso): su **inclinación** tiene que ser de 1–2° como máximo. En
-  el ejemplo dan 13,5° y 15,4°: **el mapa quedó torcido** (ver el punto 6). La distancia entre
+  el ejemplo dan 13,5°: **el mapa quedó torcido** (ver el punto 6). La distancia entre
   ambos planos es la altura del lugar (1,52 − (−1,23) = 2,75 m).
 - **Pared principal:** el ángulo en planta es solo informativo (ver la nota del punto 4).
+- Cómo se miden los planos: RANSAC sobre una muestra de 40.000 puntos encuentra cada plano y
+  después se **reajusta con todos los puntos cercanos del mapa**, repitiendo hasta que no cambia
+  (versión del 2026-11-13; la anterior, sin reajuste, podía dar valores hasta 3° distintos entre
+  el piso y el techo de un mismo mapa).
 - **Extensión útil:** medidas aproximadas del lugar (descarta el 1 % de puntos más alejados en cada
   eje, que suelen ser reflejos por ventanas o puertas). Compararlas con las medidas reales.
 - **El origen (0, 0, 0)** es la posición del sensor al empezar; **z es vertical**.
@@ -317,7 +321,7 @@ La salida incluye también los **planos principales** (ejemplo real del mismo ma
 
 | Grabación | Puntos del mapa | Tamaño | Observaciones |
 |---|---|---|---|
-| `sala_quieta` (90 s) | 1.735.865 | 53 MB | Mapa de ~8 × 6 m en planta y 2,85 m de alto (de 0 a 2,85 m: el sensor estaba en el piso y solo ve hacia arriba). Piso/techo nivelados (0,7–0,9°). Error de cierre 8,6 cm |
+| `sala_quieta` (90 s) | 1.735.865 | 53 MB | Mapa de ~8 × 6 m en planta y 2,85 m de alto (de 0 a 2,85 m: el sensor estaba en el piso y solo ve hacia arriba). Piso/techo nivelados (0,7°). Error de cierre 8,6 cm |
 | `persona_caminando` (60 s) | 1.128.052 | 35 MB | Error de cierre 5,2 cm |
 
 **Prueba de estabilidad con el sensor quieto (`sala_quieta`):** se registró la posición estimada por
@@ -357,15 +361,17 @@ Primer resultado (2026-11-12):
 
 | Grabación | Orientación | Movimiento al empezar (desvío del giróscopo, primeros 4 s) | Inclinación del piso/techo en el mapa |
 |---|---|---|---|
-| `sala_quieta` | Horizontal, apoyado en el piso | 0,006–0,09 rad/s (quieto) | 1,3–1,4° (nivelado) |
-| `departamento_vertical` | Vertical, en la mano | **0,24–0,31 rad/s** (en movimiento) | **13,5–15,4°** (torcido) |
-| `habitacion_vertical_rapido` | Arranque apoyado (horizontal) y recorrido en vertical | 0,04–0,05 rad/s (quieto) | 2,1–2,9° (casi nivelado) |
+| `sala_quieta` | Horizontal, apoyado en el piso | 0,006–0,09 rad/s (quieto) | 0,7° (nivelado) |
+| `departamento_vertical` | Vertical, en la mano | **0,24–0,31 rad/s** (en movimiento) | **13,5°** (torcido) |
+| `habitacion_vertical_rapido` | Arranque apoyado (horizontal) y recorrido en vertical | 0,04–0,05 rad/s (quieto) | 1,9° (casi nivelado) |
+
+(Inclinaciones medidas con `analizar_mapa.py` del 2026-11-13, con reajuste de planos.)
 
 **Confirmado (2026-11-12):** arrancando con el sensor apoyado y quieto, la inclinación bajó de
-13,5–15,4° a 2,1–2,9° y el error de cierre de 1,06 m a 10,5 cm. El sensor puede estar apoyado en
+13,5° a 1,9° y el error de cierre de 1,06 m a 10,5 cm. El sensor puede estar apoyado en
 otra orientación que la de trabajo (en la prueba estuvo horizontal y después se lo llevó vertical):
-lo importante es que esté **quieto**. Los 2–3° que quedan pueden deberse al error de la IMU de este
-sensor o al giro al levantarlo (A VERIFICAR).
+lo importante es que esté **quieto**. Los ~2° que quedan pueden deberse al error de la IMU de este
+sensor o al giro al levantarlo (A VERIFICAR); se corrigen con `limpiar_mapa.py` (paso 07).
 
 Para revisar el arranque de cualquier grabación **antes de procesarla**:
 `./scripts/grabacion/revisar_grabacion.py bags/<carpeta>` (paso 04, punto 2.1) indica si el sensor estaba

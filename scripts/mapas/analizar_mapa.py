@@ -88,10 +88,30 @@ def ransac_plano(P, condicion, iteraciones=1500, tolerancia=0.03, rng=None):
     # Ajuste fino por mínimos cuadrados con los puntos del plano.
     Q = P[mejor]
     centro = Q.mean(axis=0)
-    n = np.linalg.svd(Q - centro)[2][2]
+    n = np.linalg.svd(Q - centro, full_matrices=False)[2][2]
     if n[2] < 0:
         n = -n
     return n, -n @ centro, mejor
+
+
+def refinar_plano(xyz, n, d, tolerancia=0.05):
+    """Reajusta un plano con TODOS los puntos del mapa a menos de 'tolerancia' m
+    (RANSAC trabaja sobre una muestra y en planos con pocos puntos puede mezclar
+    bordes de muebles). Devuelve la normal refinada (con z positiva)."""
+    # Se repite: con el plano reajustado se vuelven a elegir los puntos cercanos.
+    # Una sola pasada hereda el error inicial (la franja elegida está torcida igual).
+    for _ in range(10):
+        Q = xyz[np.abs(xyz @ n + d) < tolerancia]
+        if len(Q) < 50:
+            break
+        centro = Q.mean(axis=0)
+        nueva = np.linalg.svd(Q - centro, full_matrices=False)[2][2]
+        nueva = nueva if nueva[2] >= 0 else -nueva
+        cambio = np.degrees(np.arccos(min(1.0, abs(nueva @ n))))
+        n, d = nueva, -nueva @ centro
+        if cambio < 0.01:
+            break
+    return n
 
 
 def analizar_planos(xyz, muestra=40000):
@@ -104,6 +124,7 @@ def analizar_planos(xyz, muestra=40000):
         if r is None or r[2].sum() < 0.03 * len(P):
             break
         n, d, dentro = r
+        n = refinar_plano(xyz, n, d)
         ang = np.degrees(np.arccos(min(1.0, abs(n[2]))))
         z = restantes[dentro][:, 2].mean()
         print(f"    plano horizontal a z = {z:5.2f} m: inclinación {ang:4.1f}° "
