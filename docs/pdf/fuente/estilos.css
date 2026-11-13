@@ -14,20 +14,22 @@
 }
 
 /* ---------- Página ---------- */
+/* Pie: las tres zonas tienen anchos fijos (40 + 94 + 40 = 174 mm, el ancho útil) para que la
+   línea superior sea continua. */
 @page {
   size: A4;
   margin: 26mm 18mm 20mm 18mm;
   @top-left { content: element(encabezado); vertical-align: bottom; padding-bottom: 3mm; }
   @bottom-left {
-    content: "DataPyme"; font: 700 8pt "Open Sans"; color: var(--principal);
+    content: "DataPyme"; font: 700 8pt "Open Sans"; color: var(--principal); width: 40mm;
     border-top: 0.5pt solid var(--gris-linea); vertical-align: top; padding-top: 2.5mm;
   }
   @bottom-center {
-    content: "En colaboración con la UTN Facultad Regional San Francisco"; font: 7.5pt "Open Sans";
+    content: "En colaboración con la UTN Facultad Regional San Francisco"; font: 7.5pt "Open Sans"; width: 94mm;
     color: #8A9099; border-top: 0.5pt solid var(--gris-linea); vertical-align: top; padding-top: 2.5mm;
   }
   @bottom-right {
-    content: "Página " counter(page); font: 8pt "Open Sans"; color: #6B7280;
+    content: "Página " counter(page); font: 8pt "Open Sans"; color: #6B7280; width: 40mm; text-align: right;
     border-top: 0.5pt solid var(--gris-linea); vertical-align: top; padding-top: 2.5mm;
   }
 }
