@@ -574,3 +574,11 @@ Paso 02 (USB) para otro día.
   Página N". Resumen: "proyecto de DataPyme … en conjunto con la UTN FRSF".
 - Detalle: WeasyPrint no aplica `gap` en *flex* (el texto quedaba pegado al logo de la UTN y al
   ícono): se usa `margin-right`.
+
+## 2026-11-13 — PDF: sin el recuadro de polaridad; repositorio público
+
+- Por pedido del usuario se quitó del PDF el recuadro "Polaridad de la fuente" (capítulo 5.1) y la
+  frase del capítulo 3 que remitía a él. El procedimiento de medición sigue en
+  `docs/pasos/01_conexion_ethernet.md`.
+- El usuario va a hacer público el repositorio: se quitó "(privado)" de la portada del PDF
+  (`documento.yaml`) y de `docs/FORMATO_DOCUMENTO.md`. PDF regenerado (40 páginas).

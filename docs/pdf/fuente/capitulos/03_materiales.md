@@ -28,8 +28,6 @@ Fuentes: manual oficial del L2 (v1.1) y manual de Unilidar 2 (v1.0), guardados e
 !!! peligro "Alimentación: solo 12 V"
     El L2 se alimenta con **12 V**. No conectarlo nunca a 24 V ni a 36 V (por ejemplo, a las
     salidas XT30 del robot R1): para usarlo en el robot hace falta un conversor DC-DC a 12 V.
-    El manual no especifica la polaridad del plug: si se usa una fuente distinta de la original,
-    **medirla antes** (capítulo 5).
 
 ### Versiones del sensor del laboratorio
 

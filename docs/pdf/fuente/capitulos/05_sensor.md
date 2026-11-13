@@ -10,13 +10,6 @@ El cable del sensor termina en el **módulo adaptador**:
 | RJ45 (Ethernet) | Placa Ethernet libre de la PC |
 | USB-C | PC, solo en modo serie (punto 5.7) |
 
-!!! peligro "Polaridad de la fuente"
-    El manual no especifica la polaridad del plug. Antes de usar una fuente por primera vez (y
-    siempre que no sea la original): enchufarla **sin conectarla al sensor**, multímetro en tensión
-    continua (escala de 20 V), punta roja **dentro** del plug y punta negra **afuera**. Tiene que
-    marcar unos **+12 V** (centro positivo). Medición de la fuente original del laboratorio:
-    pendiente de registrar.
-
 Pasos:
 
 1. Apoyar el sensor sobre su almohadilla de goma, en una superficie firme.

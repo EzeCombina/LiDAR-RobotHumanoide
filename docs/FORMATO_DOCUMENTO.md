@@ -50,7 +50,7 @@ A4 vertical, márgenes de unos 18 mm a los costados. Las páginas interiores tie
    - Proyecto: Programación del robot humanoide Unitree R1 EDU
    - Colaboración: UTN Facultad Regional San Francisco
    - Equipo: Unitree 4D LiDAR L2 · PC con Ubuntu 24.04 + ROS 2 Jazzy
-   - Repositorio: github.com/EzeCombina/LiDAR-RobotHumanoide (privado)
+   - Repositorio: github.com/EzeCombina/LiDAR-RobotHumanoide
    - Autor: Ezequiel Combina
    - Fecha: mes y año
 5. **Pie de la portada:** banda fina de color principal, con "DataPyme" en negrita a la izquierda y
