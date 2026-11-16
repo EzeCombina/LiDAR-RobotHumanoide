@@ -79,12 +79,14 @@ def capitulo_a_html(texto_md, usados):
 
 def portada(d):
     filas = "".join(f"<tr><td>{html.escape(k)}</td><td>{html.escape(v)}</td></tr>" for k, v in d["metadatos"])
+    # El subtítulo es opcional: si no está en documento.yaml, no se muestra.
+    subtitulo = f'<div class="subtitulo">{html.escape(d["subtitulo"])}</div>' if d.get("subtitulo") else ""
     return f"""
 <section class="portada">
   <div class="banda">
     <div class="logo"><img src="file://{LOGO}" alt="DataPyme"/></div>
     <h1 class="titulo-portada">{html.escape(d['titulo'])}</h1>
-    <div class="subtitulo">{html.escape(d['subtitulo'])}</div>
+    {subtitulo}
     <hr/>
     <div class="descripcion">{html.escape(d['descripcion'])}</div>
     <div class="version">Versión {html.escape(str(d['version']))}</div>

@@ -2,7 +2,6 @@
 # Para una nueva versión: cambiar "version" y "fecha" y volver a generar.
 titulo: Implementación del LiDAR Unitree L2
 titulo_corto: LiDAR Unitree L2
-subtitulo: Del sensor nuevo al mapa de una habitación
 descripcion: Guía de implementación para el robot humanoide Unitree R1 EDU
 version: 0.1.0
 fecha: Noviembre de 2026

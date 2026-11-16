@@ -27,8 +27,8 @@ partida, que eran el mismo) y piso nivelado a menos de 1°.
 
 ## 1.2 Para quién es
 
-Para estudiantes y docentes del laboratorio con conocimientos **básicos, medios o avanzados**. No
-hace falta saber ROS 2 de antemano: los conceptos nuevos se explican en recuadros como este:
+Para estudiantes y docentes con conocimientos **básicos, medios o avanzados**. No
+hace falta saber ROS 2 de antemano. Los conceptos nuevos se explican en recuadros como este:
 
 !!! concepto "Recuadro de concepto"
     Explicación breve de una idea nueva. Quien ya la conoce puede saltearla sin perder el hilo.

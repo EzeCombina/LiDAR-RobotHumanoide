@@ -588,3 +588,11 @@ Paso 02 (USB) para otro día.
   reescribir el historial y publicar en un repositorio nuevo. El usuario decidió dejarlo como está
   por ahora. CLAUDE.md actualizado: repositorio público, no subir credenciales ni documentos
   internos.
+
+## 2026-11-16 — PDF v0.1.0: ajustes del usuario
+
+- El usuario corrigió el texto de la sección 1.2 del resumen ("Para estudiantes y docentes con
+  conocimientos básicos, medios o avanzados…").
+- Se quitó el subtítulo de la portada ("Del sensor nuevo al mapa de una habitación"). En
+  `generar_pdf.py` el subtítulo pasa a ser opcional: solo se muestra si está en `documento.yaml`.
+- PDF regenerado (40 páginas) y revisado por el usuario antes de subirlo.
