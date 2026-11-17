@@ -650,3 +650,7 @@ Paso 02 (USB) para otro día.
   libres) y oficina (limpio 8,4 MB; 2D 283 × 252 celdas, 80 % desconocido).
 - Actualizados: paso 07, `docs/mapas.md`, `docs/grabaciones.md`, CLAUDE.md y el capítulo 10 del
   PDF (pendiente de generar la v0.1.2 y de la revisión del usuario).
+- PDF **v0.1.2** (41 páginas): capítulo 10 con la nivelación nueva (horizontal del plano con más
+  puntos, control de piso y techo), salidas e imagen del mapa 2D regeneradas. Paso 07 actualizado
+  con las cifras del 2D regenerado (origen −2,491 / −3,805; libres 14,1 %; verificado con Nav2).
+  Revisado y aprobado por el usuario.

@@ -205,9 +205,9 @@ Usa `mapa_limpio.pcd` de la carpeta: hay que correr antes el punto 1.
 ```text
 Mapa 3D: mapas/2026-11-12_1445_habitacion_vertical_rapido/mapa_limpio.pcd
 Grilla: 85 x 180 celdas de 5 cm = 4.25 x 9.00 m
-Origen (esquina inferior izquierda): x = -2.497 m, y = -3.800 m
+Origen (esquina inferior izquierda): x = -2.491 m, y = -3.805 m
 Franja de obstáculos: 0.10 a 1.80 m sobre el piso
-Celdas: ocupadas 41.7 %, libres 14.7 %, desconocidas 43.6 %
+Celdas: ocupadas 41.7 %, libres 14.1 %, desconocidas 44.2 %
 Trayectoria usada como zona libre: sí
 Guardado: .../mapa_2d.pgm, .../mapa_2d.yaml y mapa_2d.png
 ```
@@ -232,7 +232,7 @@ ve a través de ellas.
 image: mapa_2d.pgm
 mode: trinary
 resolution: 0.05
-origin: [-2.497, -3.800, 0.0]
+origin: [-2.491, -3.805, 0.0]
 negate: 0
 occupied_thresh: 0.65
 free_thresh: 0.196
@@ -315,8 +315,8 @@ source /opt/ros/jazzy/setup.bash
 ```
 
 ```text
-Mapa en /map: 85 x 180 celdas de 5 cm (4.25 x 9.00 m), origen (-2.497, -3.800), marco 'map'
-Nav2 recibe: ocupadas (100) 41.7 %, libres (0) 14.7 %, desconocidas (-1) 43.6 %, otros valores 0.0 %
+Mapa en /map: 85 x 180 celdas de 5 cm (4.25 x 9.00 m), origen (-2.491, -3.805), marco 'map'
+Nav2 recibe: ocupadas (100) 41.7 %, libres (0) 14.1 %, desconocidas (-1) 44.2 %, otros valores 0.0 %
 ```
 
 Los porcentajes tienen que ser **iguales** a los de `generar_mapa_2d.py` (punto 2.2) y "otros

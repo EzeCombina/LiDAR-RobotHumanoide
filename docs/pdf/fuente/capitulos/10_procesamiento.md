@@ -13,7 +13,7 @@ falta el sensor.
 |---|---|---|
 | Reducción de densidad | Un punto por cubo de 3 cm (Point-LIO repite muchas veces los mismos puntos) | `--voxel 0.03` |
 | Puntos sueltos | Quita los puntos mucho más lejos de sus 10 vecinos que el promedio (ruido, reflejos) | `--vecinos 10`, `--sigma 2.0` |
-| Nivelación | Busca el **piso** (el plano horizontal más bajo), lo deja horizontal y en **z = 0**, y afina con todos los puntos del piso | `--referencia piso` |
+| Nivelación | Toma la horizontal del plano con **más puntos** (en general el techo, que se ve más que el piso), rota el mapa y lleva el **piso** (el plano más bajo) a **z = 0**. Al final controla que piso y techo hayan quedado horizontales | `--orientacion auto`, `--referencia piso` |
 | Alineación | Gira el mapa en planta para que la pared principal quede paralela a un eje | `--sin-alinear` la desactiva |
 
 !!! concepto "RANSAC"
@@ -26,20 +26,20 @@ Salida real (habitación del capítulo 9):
 ```text
 1. Reducción a celdas de 3 cm: 1.102.546 -> 350.797 puntos
 2. Puntos sueltos quitados: 11.446 (vecinos=10, sigma=2.0) -> quedan 339.351
-   plano horizontal a z =   1.96 m, inclinación  1.3°,  8.9 % de los puntos
-   plano horizontal a z =  -0.89 m, inclinación  1.9°,  4.7 % de los puntos
+   plano horizontal a z =   1.96 m, inclinación  2.0°,  8.9 % de los puntos
+   plano horizontal a z =  -0.89 m, inclinación  2.7°,  4.7 % de los puntos
    plano horizontal a z =   0.00 m, inclinación  0.6°,  3.4 % de los puntos
 ...
-3. Nivelación con el piso: inclinación corregida 1.9°; piso llevado a z = 0 (desplazamiento +0.88 m)
-   Refinamiento con la franja del piso (12.395 puntos): 0.35° adicionales
+3. Nivelación: orientación tomada del plano a z = 1.96 m (9 % de los puntos); inclinación corregida 2.0°; piso llevado a z = 0 (desplazamiento +0.87 m)
+   Control después de nivelar: piso 0.5°, techo 0.0°
 4. Alineación de paredes: giro de +40.0° alrededor del eje vertical
 5. Guardado .../mapa_limpio.pcd: 339.351 puntos, 5.4 MB
-   Extensión útil (1 %-99 %): x 3.21 m, y 7.88 m, z -0.06 a 2.85 m
+   Extensión útil (1 %-99 %): x 3.20 m, y 7.88 m, z -0.06 a 2.85 m
 ```
 
 El plano a −0,89 m es el piso; el de 0,00 m, la **mesa** donde se apoyó el sensor al empezar (el
-origen del mapa es la posición inicial del sensor). Resultado: piso en z = 0, inclinación de 0,3 a
-0,8° y un archivo de 5,4 MB en lugar de 34 MB. Se guardan además `trayectoria_limpia.csv`,
+origen del mapa es la posición inicial del sensor). Resultado: piso en z = 0, piso y techo
+nivelados (0,5° y 0,0°) y un archivo de 5,4 MB en lugar de 34 MB. Se guardan además `trayectoria_limpia.csv`,
 `transformacion.txt` (la matriz aplicada, que relaciona las coordenadas de Point-LIO con las del
 mapa limpio) y `limpieza.txt`.
 
@@ -76,9 +76,9 @@ arriba y clasifica cada celda:
 
 ```text
 Grilla: 85 x 180 celdas de 5 cm = 4.25 x 9.00 m
-Origen (esquina inferior izquierda): x = -2.497 m, y = -3.800 m
+Origen (esquina inferior izquierda): x = -2.491 m, y = -3.805 m
 Franja de obstáculos: 0.10 a 1.80 m sobre el piso
-Celdas: ocupadas 41.7 %, libres 14.7 %, desconocidas 43.6 %
+Celdas: ocupadas 41.7 %, libres 14.1 %, desconocidas 44.2 %
 ```
 
 ![Mapa 2D de la habitación. Negro: ocupado (paredes y muebles); blanco: libre; gris: desconocido](docs/img/mapa_2d_habitacion_2026-11-12.png)
@@ -92,7 +92,7 @@ El script genera `mapa_2d.pgm` (la imagen), `mapa_2d.png` (copia para ver) y `ma
 image: mapa_2d.pgm
 mode: trinary
 resolution: 0.05
-origin: [-2.497, -3.800, 0.0]
+origin: [-2.491, -3.805, 0.0]
 negate: 0
 occupied_thresh: 0.65
 free_thresh: 0.196
@@ -130,8 +130,8 @@ Para comprobar cómo interpreta Nav2 cada celda (con el mapa cargado y activado)
 ```
 
 ```text
-Mapa en /map: 85 x 180 celdas de 5 cm (4.25 x 9.00 m), origen (-2.497, -3.800), marco 'map'
-Nav2 recibe: ocupadas (100) 41.7 %, libres (0) 14.7 %, desconocidas (-1) 43.6 %, otros valores 0.0 %
+Mapa en /map: 85 x 180 celdas de 5 cm (4.25 x 9.00 m), origen (-2.491, -3.805), marco 'map'
+Nav2 recibe: ocupadas (100) 41.7 %, libres (0) 14.1 %, desconocidas (-1) 44.2 %, otros valores 0.0 %
 ```
 
 Los porcentajes tienen que ser **iguales** a los de `generar_mapa_2d.py`.

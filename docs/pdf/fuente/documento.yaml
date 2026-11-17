@@ -3,9 +3,9 @@
 titulo: Implementación del LiDAR Unitree L2
 titulo_corto: LiDAR Unitree L2
 descripcion: Guía de implementación para el robot humanoide Unitree R1 EDU
-version: 0.1.1
+version: 0.1.2
 fecha: Noviembre de 2026
-archivo_salida: Guia_LiDAR_L2_v0.1.1.pdf
+archivo_salida: Guia_LiDAR_L2_v0.1.2.pdf
 metadatos:
   - [Proyecto, Programación del robot humanoide Unitree R1 EDU]
   - [Colaboración, UTN Facultad Regional San Francisco]

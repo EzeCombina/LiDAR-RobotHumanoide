@@ -209,7 +209,7 @@ Fuentes: manual oficial del L2 (v1.1), manual de Unilidar 2 (v1.0), código de l
   (nombre fijo en `/dev/serial/by-id/`), verificado.
   También pasan al documento siguiente: el gemelo de Gazebo (simulación) y la altura del robot con
   el sensor montado (algo menos de 1,8 m; se mantiene 1,80 m en `generar_mapa_2d.py`).
-- **PDF:** versión 0.1.1 (2026-11-17; la 0.1.0 es del 2026-11-13), 41 páginas, generado con `scripts/documentacion/generar_pdf.py`
+- **PDF:** versión 0.1.2 (2026-11-17; anteriores: 0.1.1 y 0.1.0), 41 páginas, generado con `scripts/documentacion/generar_pdf.py`
   (WeasyPrint + Markdown) desde `docs/pdf/fuente/` (`documento.yaml`, `capitulos/*.md`,
   `estilos.css`); salida en `docs/pdf/salida/`. Paso 08. Para una versión nueva: editar los
   capítulos y `documento.yaml`, regenerar y revisar página por página.
