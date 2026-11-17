@@ -51,7 +51,7 @@ del robot.
 |---|---|---|
 | 00 | [Preparación del entorno](docs/pasos/00_preparacion_entorno.md) | Completo |
 | 01 | [Conexión por Ethernet](docs/pasos/01_conexion_ethernet.md) | Completo |
-| 02 | Conexión por USB | Pendiente |
+| 02 | [Conexión por USB (modo serie)](docs/pasos/02_conexion_usb.md) | Documentado; adaptador verificado, cambio de modo pendiente de probar |
 | 03 | [Driver ROS 2 y RViz](docs/pasos/03_driver_ros2.md) | Completo (Ethernet) |
 | 04 | [Grabación de datos](docs/pasos/04_grabacion.md) | Completo |
 | 05 | [SLAM con Point-LIO](docs/pasos/05_slam_pointlio.md) | Completo |

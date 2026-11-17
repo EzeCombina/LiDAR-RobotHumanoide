@@ -203,7 +203,9 @@ Fuentes: manual oficial del L2 (v1.1), manual de Unilidar 2 (v1.0), código de l
   `ver_mapa_2d.sh` y `verificar_mapa_2d.py`. Paso 07. Gazebo: pendiente (opcional).
 - **Decisión del usuario (2026-11-13):** la Jetson (etapa 4) se documenta **junto con la etapa 5**
   en el documento siguiente. El PDF actual cubre el objetivo de corto plazo: implementación en
-  Ubuntu (pasos 00–06) + productos del mapa (paso 07). El paso 02 (USB) queda para otro día.
+  Ubuntu (pasos 00–06) + productos del mapa (paso 07). Paso 02 (USB): documentado el 2026-11-17
+  sin probar el cambio de modo (decisión del usuario); adaptador QinHeng `1a86:55d3` → `/dev/ttyACM0`
+  (nombre fijo en `/dev/serial/by-id/`), verificado.
   También pasan al documento siguiente: el gemelo de Gazebo (simulación) y la altura del robot con
   el sensor montado (algo menos de 1,8 m; se mantiene 1,80 m en `generar_mapa_2d.py`).
 - **PDF (2026-11-13):** versión 0.1.0, 40 páginas, generado con `scripts/documentacion/generar_pdf.py`

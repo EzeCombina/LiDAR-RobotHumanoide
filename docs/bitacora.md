@@ -596,3 +596,22 @@ Paso 02 (USB) para otro día.
 - Se quitó el subtítulo de la portada ("Del sensor nuevo al mapa de una habitación"). En
   `generar_pdf.py` el subtítulo pasa a ser opcional: solo se muestra si está en `documento.yaml`.
 - PDF regenerado (40 páginas) y revisado por el usuario antes de subirlo.
+
+## 2026-11-17 — Paso 02: conexión por USB (documentado, sin probar el cambio de modo)
+
+- El usuario conectó el USB-C del módulo adaptador. Al principio la PC no veía nada (cable sin
+  conectar); al conectarlo: `QinHeng Electronics USB Single Serial` (`1a86:55d3`), driver
+  `cdc_acm`, `/dev/ttyACM0` (grupo `dialout`, el usuario ya pertenece), nombre fijo
+  `/dev/serial/by-id/usb-1a86_USB_Single_Serial_5A2A026354-if00`. No hace falta instalar drivers.
+- Con el sensor en modo Ethernet, `estado_lidar serie 5` dio `[WARNING] Serial port timeout!` y
+  ningún paquete: confirma que solo una interfaz está activa.
+- ModemManager revisó el puerto al conectarlo (`couldn't check support for device ... not
+  supported by any plugin`); se documentó como posible causa de problemas.
+- No se pudo pasar a USB en el momento: el enlace Ethernet se había cortado a las 11:09:30
+  (`eno1: Link is Down`, justo antes de conectar el USB) y la orden de cambio viaja por Ethernet.
+  El usuario decidió **no probarlo ahora**, sino documentar si por USB se puede hacer lo mismo,
+  cómo pasar de una conexión a la otra a mano y qué cambia en cada caso.
+- Documento `docs/pasos/02_conexion_usb.md`: comparación Ethernet/USB, reconocimiento del
+  adaptador (verificado), cómo saber en qué modo está el sensor, cambio de modo en los dos
+  sentidos (`cambiar_modo_lidar`, y alternativas con el driver y con el ejemplo `set_to_udp_mode`
+  del SDK), uso por USB, diagnóstico y problemas frecuentes. Lo no probado, marcado A VERIFICAR.

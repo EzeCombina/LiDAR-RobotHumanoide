@@ -13,7 +13,8 @@ Unitree verificó este driver solo en Ubuntu 20.04 + ROS 2 Foxy. En este proyect
 - Paso 00 completo (ROS 2 Jazzy, `ros-jazzy-pcl-ros`, `ros-jazzy-pcl-conversions`, `libpcl-dev`,
   `libeigen3-dev`, `rosdep`).
 - Paso 01 completo: SDK clonado en `~/lidar_ws/unilidar_sdk2` y sensor transmitiendo por Ethernet.
-- Para usar USB: paso 02 (sensor en modo serie).
+- Para usar USB: paso 02 (sensor en modo serie; ver ahí qué cambia y cómo pasar de una conexión a
+  la otra).
 
 > **Nodo, tópico y mensaje.** En ROS 2, un **nodo** es un programa (por ejemplo, el driver del
 > LiDAR). Los nodos publican **mensajes** en **tópicos** con nombre. El driver del L2 publica la
