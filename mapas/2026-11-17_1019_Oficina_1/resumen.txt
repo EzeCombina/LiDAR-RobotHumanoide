@@ -1,0 +1,12 @@
+Mapa: 2026-11-17_1019_Oficina_1/mapa.pcd
+Generado: 2026-11-17 10:21:26 en eze-laptop
+Grabación de origen: bags/2026-11-17_1014_Oficina_1/
+SLAM: Point-LIO (point_lio_ros2), config/unilidar_l2.yaml + mapping_unilidar_l2.launch.py
+Puntos: 1996673
+Tamaño: 61M
+Commit del proyecto: a176d01
+Trayectoria: 1080 muestras, 108.7 s
+Largo del recorrido: 15.09 m
+Zona recorrida (x, y, z): 0.78 x 1.09 x 1.22 m
+Error de cierre (final vs. inicio): 0.451 m (horizontal 0.449 m, vertical -0.034 m)
+Trayectoria guardada en: 2026-11-17_1019_Oficina_1/trayectoria.csv

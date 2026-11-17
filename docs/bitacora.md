@@ -628,3 +628,25 @@ Paso 02 (USB) para otro día.
   Ctrl+C y copiar `scans.pcd`, y la recomendación de grabar al mismo tiempo (A VERIFICAR la carga).
 - PDF v0.1.1 final: 41 páginas (USB en 5.7 y mapa en tiempo real en 8.6). Revisado y aprobado por
   el usuario.
+
+## 2026-11-17 — Mapa Oficina_1 y corrección de la nivelación de `limpiar_mapa.py`
+
+- Mapa del usuario `2026-11-17_1019_Oficina_1` (generado con `procesar_grabacion.sh` desde
+  `bags/2026-11-17_1014_Oficina_1`). Grabación: 110 s, completa, arranque QUIETO. Mapa: 2,0 M de
+  puntos (61 MB), ~8 × 9,1 × 3 m, inclinación 1,4°, error de cierre 0,45 m (vuelta al punto de
+  partida: a confirmar), recorrido corto (zona 0,78 × 1,09 m).
+- **Problema encontrado:** `limpiar_mapa.py` niveló con el piso (corrigió 3,7°) y el **techo quedó
+  torcido 3,3–4,1°** (antes 1,4°). En la oficina el piso se ve poco (3,5 % de los puntos, tapado por
+  escritorios y sillas) y su plano RANSAC no es confiable.
+- **Solución:** la horizontal se toma del plano horizontal con **más puntos** (reajustado con todos
+  sus puntos con `refinar_plano`); el piso solo define z = 0. Opción nueva
+  `--orientacion auto|piso|techo`. Control final: inclinación de las franjas de piso y techo medida
+  con todos sus puntos (`inclinacion_franja`), aviso si supera 1,5°. Primer control con la normal
+  de RANSAC del piso daba 3,1° (falso aviso); medido con la franja, 1,3°.
+- Resultados: Oficina piso 1,3° / techo 0,0°; habitación piso 0,5° / techo 0,0° (antes 0,3–0,8° y
+  0,8–1,0°); `sala_quieta` sigue sin nivelar sin `--referencia techo` (11 % de puntos bajo el plano
+  más bajo) y con `--referencia techo` queda en 0,2°.
+- Productos regenerados: habitación (`mapa_limpio`, 2D prácticamente igual: 41,7 % ocupadas, 14,1 %
+  libres) y oficina (limpio 8,4 MB; 2D 283 × 252 celdas, 80 % desconocido).
+- Actualizados: paso 07, `docs/mapas.md`, `docs/grabaciones.md`, CLAUDE.md y el capítulo 10 del
+  PDF (pendiente de generar la v0.1.2 y de la revisión del usuario).

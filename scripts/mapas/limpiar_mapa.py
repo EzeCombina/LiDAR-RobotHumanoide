@@ -8,10 +8,13 @@
 #      de decenas de MB a pocos MB sin perder forma.
 #   2. Quita puntos sueltos: los que están mucho más lejos de sus vecinos que
 #      el promedio (ruido, reflejos aislados). Ajustable con --vecinos/--sigma.
-#   3. NIVELA el mapa: busca el piso (el plano casi horizontal más bajo, con
-#      RANSAC) y rota la nube para que quede perfectamente horizontal y a
-#      altura z = 0. Corrige la inclinación que deja el SLAM (por ejemplo, si el
-#      sensor no estaba quieto al empezar a grabar).
+#   3. NIVELA el mapa: busca los planos casi horizontales (RANSAC + reajuste con
+#      todos sus puntos), toma la horizontal del que tiene MÁS puntos (en general
+#      el techo, que se ve mucho más que el piso; --orientacion lo cambia), rota
+#      la nube y lleva el piso (el plano más bajo) a z = 0. Corrige la
+#      inclinación que deja el SLAM (por ejemplo, si el sensor no estaba quieto
+#      al empezar a grabar). Al final informa la inclinación que queda en el
+#      piso y en el techo, y avisa si no quedaron paralelos.
 #   4. ALINEA las paredes con los ejes x e y (giro alrededor del eje vertical),
 #      para que la habitación quede "derecha" respecto de la grilla de RViz y
 #      del mapa 2D. Se puede desactivar con --sin-alinear.
@@ -44,7 +47,7 @@ from scipy.spatial import cKDTree
 
 # Lectura de PCD y búsqueda de planos: las mismas funciones que analizar_mapa.py.
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from analizar_mapa import leer_pcd, ransac_plano  # noqa: E402
+from analizar_mapa import leer_pcd, ransac_plano, refinar_plano  # noqa: E402
 
 
 def leer_pcd_con_intensidad(ruta):
@@ -103,6 +106,24 @@ def rotacion_entre(a, b):
     return np.eye(3) + vx + vx @ vx * (1.0 / (1.0 + c))
 
 
+def inclinacion_franja(xyz, z0, ancho=0.06):
+    """Inclinación (grados) del plano formado por los puntos a menos de 'ancho' m de la
+    altura z0, ajustado por mínimos cuadrados y repetido con los puntos a menos de 3 cm.
+    Más robusto que la normal de RANSAC para controlar el resultado."""
+    P = xyz[np.abs(xyz[:, 2] - z0) < ancho]
+    if len(P) < 100:
+        return None
+    c = P.mean(axis=0)
+    n = np.linalg.svd(P - c, full_matrices=False)[2][2]
+    for _ in range(5):
+        Q = P[np.abs((P - c) @ n) < 0.03]
+        if len(Q) < 50:
+            break
+        c = Q.mean(axis=0)
+        n = np.linalg.svd(Q - c, full_matrices=False)[2][2]
+    return float(np.degrees(np.arccos(min(1.0, abs(n[2])))))
+
+
 def buscar_planos_horizontales(xyz, rng, muestra=40000, maximo=5, minimo=0.01):
     """Planos casi horizontales (normal a menos de 30° de la vertical), de mayor a
     menor cantidad de puntos. Devuelve lista de (normal, altura media, fracción,
@@ -129,6 +150,8 @@ def main():
     p.add_argument("--sigma", type=float, default=2.0, help="umbral del filtro, en desvíos (2.0)")
     p.add_argument("--referencia", choices=["piso", "techo"], default="piso",
                    help="plano usado para nivelar (defecto piso)")
+    p.add_argument("--orientacion", choices=["auto", "piso", "techo"], default="auto",
+                   help="plano que define la horizontal: auto = el horizontal con más puntos (defecto)")
     p.add_argument("--sin-nivelar", action="store_true", help="no nivelar")
     p.add_argument("--sin-alinear", action="store_true", help="no alinear las paredes con los ejes")
     p.add_argument("--salida", help="carpeta de salida (defecto: la del mapa)")
@@ -170,60 +193,73 @@ def main():
     t = np.zeros(3)
 
     # 3. Nivelación
+    # - ORIENTACIÓN: se toma del plano horizontal con MÁS puntos (con --orientacion auto,
+    #   el valor por defecto), reajustado con todos sus puntos. Suele ser el techo: se ve
+    #   mucho más que el piso, que queda tapado por muebles. Usar solo el piso daba mapas
+    #   torcidos cuando se veía poco (2026-11-17: techo inclinado 3-4° tras nivelar).
+    # - ALTURA: con --referencia piso, el plano más bajo (el piso) se lleva a z = 0.
     if a.sin_nivelar:
         log("3. Nivelación: omitida (--sin-nivelar)")
     else:
-        planos = buscar_planos_horizontales(xyz, rng)
-        for n, z, f, _ in planos:
-            ang = np.degrees(np.arccos(min(1.0, abs(n[2]))))
+        planos = []
+        for n, z, f, pts in buscar_planos_horizontales(xyz, rng):
+            nr = refinar_plano(xyz, n, -n @ pts.mean(axis=0))   # reajuste con todos los puntos cercanos
+            planos.append((nr, z, f, pts))
+            ang = np.degrees(np.arccos(min(1.0, abs(nr[2]))))
             log(f"   plano horizontal a z = {z:6.2f} m, inclinación {ang:4.1f}°, {f * 100:4.1f} % de los puntos")
         if not planos:
             log("3. Nivelación: NO se encontraron planos horizontales; el mapa no se nivela.")
         else:
-            elegido = min(planos, key=lambda q: q[1]) if a.referencia == "piso" else max(planos, key=lambda q: q[1])
-            n, z_ref, _, puntos_plano = elegido
-            if a.referencia == "piso" and len(planos) > 1 and max(q[1] for q in planos) - z_ref < 1.0:
-                log("   ATENCIÓN: los planos horizontales están a menos de 1 m de altura entre sí; "
-                    "puede que el plano elegido no sea el piso. Revisar el resultado.")
-            R = rotacion_entre(n / np.linalg.norm(n), np.array([0.0, 0.0, 1.0]))
-            rotado = xyz @ R.T
-            # Altura del plano de referencia después de rotar: mediana de sus puntos.
-            z_plano = float(np.median((puntos_plano @ R.T)[:, 2]))
-            # Control: el piso es la superficie más baja, casi no puede haber puntos debajo.
-            debajo = float(np.mean(rotado[:, 2] < z_plano - 0.10))
-            if a.referencia == "piso" and debajo > 0.05:
-                log(f"3. Nivelación: NO se hace. El plano más bajo (z = {z_ref:.2f} m) tiene el "
-                    f"{debajo * 100:.0f} % de los puntos por debajo: no es el piso (¿el mapa no ve el piso?).")
-                log("   Probar con --referencia techo, o --sin-nivelar.")
-                R = np.eye(3)
-                planos = None
+            piso = min(planos, key=lambda q: q[1])
+            if a.orientacion == "auto":
+                orient = max(planos, key=lambda q: q[2])
+            elif a.orientacion == "piso":
+                orient = piso
             else:
-                xyz = rotado
-        if planos:
-            desplazamiento = -z_plano if a.referencia == "piso" else 0.0
-            xyz[:, 2] += desplazamiento
-            t[2] += desplazamiento
-            corr = np.degrees(np.arccos(min(1.0, abs(n[2]))))
-            log(f"3. Nivelación con el {a.referencia}: inclinación corregida {corr:.1f}°"
-                + (f"; piso llevado a z = 0 (desplazamiento {desplazamiento:+.2f} m)" if a.referencia == "piso" else ""))
-            # Segunda pasada (solo con el piso): reajuste con todos los puntos de la franja
-            # del piso (±5 cm de z = 0), más preciso que RANSAC sobre una muestra.
+                orient = max(planos, key=lambda q: q[1])
+            R = rotacion_entre(orient[0], np.array([0.0, 0.0, 1.0]))
+            rotado = xyz @ R.T
+            nivelar = True
+            desplazamiento = 0.0
             if a.referencia == "piso":
-                franja = xyz[np.abs(xyz[:, 2]) < 0.05]
-                if len(franja) > 100:
-                    c = franja.mean(axis=0)
-                    n2 = np.linalg.svd(franja - c, full_matrices=False)[2][2]
-                    cerca = franja[np.abs((franja - c) @ n2) < 0.02]
-                    c = cerca.mean(axis=0)
-                    n2 = np.linalg.svd(cerca - c, full_matrices=False)[2][2]
-                    n2 = n2 if n2[2] > 0 else -n2
-                    R2 = rotacion_entre(n2, np.array([0.0, 0.0, 1.0]))
-                    xyz = xyz @ R2.T
-                    dz = -float(np.median((cerca @ R2.T)[:, 2]))
-                    xyz[:, 2] += dz
-                    R, t = R2 @ R, R2 @ t + np.array([0, 0, dz])
-                    log(f"   Refinamiento con la franja del piso ({miles(len(cerca))} puntos): "
-                        f"{np.degrees(np.arccos(min(1.0, n2[2]))):.2f}° adicionales")
+                z_piso = float(np.median((piso[3] @ R.T)[:, 2]))
+                # Control: el piso es la superficie más baja, casi no puede haber puntos debajo.
+                debajo = float(np.mean(rotado[:, 2] < z_piso - 0.10))
+                if debajo > 0.05:
+                    log(f"3. Nivelación: NO se hace. El plano más bajo (z = {piso[1]:.2f} m) tiene el "
+                        f"{debajo * 100:.0f} % de los puntos por debajo: no es el piso (¿el mapa no ve el piso?).")
+                    log("   Probar con --referencia techo, o --sin-nivelar.")
+                    R = np.eye(3)
+                    nivelar = False
+                else:
+                    desplazamiento = -z_piso
+            if nivelar:
+                xyz = rotado
+                xyz[:, 2] += desplazamiento
+                t[2] += desplazamiento
+                corr = np.degrees(np.arccos(min(1.0, abs(orient[0][2]))))
+                log(f"3. Nivelación: orientación tomada del plano a z = {orient[1]:.2f} m "
+                    f"({orient[2] * 100:.0f} % de los puntos); inclinación corregida {corr:.1f}°"
+                    + (f"; piso llevado a z = 0 (desplazamiento {desplazamiento:+.2f} m)"
+                       if a.referencia == "piso" else ""))
+                # Control: inclinación que queda en el piso (plano más bajo) y en el techo
+                # (plano más alto) después de nivelar, medida con todos los puntos de cada
+                # franja. Tienen que quedar casi en 0°.
+                techo = max(planos, key=lambda q: q[1])
+                restos = {}
+                for nombre, q in (("piso", piso), ("techo", techo)):
+                    z0 = float(np.median((q[3] @ R.T)[:, 2])) + desplazamiento
+                    ang = inclinacion_franja(xyz, z0)
+                    if ang is not None:
+                        restos[nombre] = ang
+                if a.referencia == "techo":
+                    # Sin piso confiable, el plano más bajo puede ser una mesa: solo se controla el techo.
+                    restos = {k: v for k, v in restos.items() if k == "techo"}
+                log("   Control después de nivelar: " + ", ".join(f"{k} {v:.1f}°" for k, v in restos.items()))
+                if restos and max(restos.values()) > 1.5:
+                    log("   ATENCIÓN: algún plano horizontal quedó con más de 1,5° de inclinación "
+                        "(¿piso y techo no son paralelos, o uno de ellos no es un plano real?). "
+                        "Revisar con analizar_mapa.py; se puede forzar con --orientacion piso|techo.")
 
     # 4. Alineación de paredes
     if a.sin_alinear:

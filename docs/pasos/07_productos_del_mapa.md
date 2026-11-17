@@ -61,7 +61,7 @@ cd ~/Documentos/LiDAR-RobotHumanoide
 |---|---|---|
 | 1. Reducción de densidad | Divide el espacio en cubos de 3 cm y deja **un punto por cubo** (el promedio). Point-LIO repite muchas veces los mismos puntos: el archivo baja de decenas de MB a pocos MB sin perder forma | `--voxel 0.03` |
 | 2. Puntos sueltos | Para cada punto calcula la distancia media a sus 10 vecinos más cercanos; quita los que están mucho más lejos que el promedio (más de 2 desvíos): ruido y reflejos aislados | `--vecinos 10`, `--sigma 2.0` |
-| 3. Nivelación | Busca los planos casi horizontales (RANSAC, hasta 30° de inclinación) y toma el **más bajo como piso**. Rota la nube para que quede horizontal y la desplaza para que el piso quede en **z = 0**. Después hace una segunda pasada con todos los puntos de la franja del piso (±5 cm) para afinar | `--referencia piso` |
+| 3. Nivelación | Busca los planos casi horizontales (RANSAC, hasta 30° de inclinación) y reajusta cada uno con todos sus puntos. Toma la **horizontal del plano con más puntos** (en general el techo, que se ve mucho más que el piso) y rota la nube. Después lleva el **piso** (el plano más bajo) a **z = 0**. Al final mide la inclinación que queda en el piso y en el techo, y avisa si alguno supera 1,5° | `--orientacion auto`, `--referencia piso` |
 | 4. Alineación de paredes | Busca la pared principal (plano vertical) y gira el mapa alrededor del eje vertical para que quede paralela al eje x o al y | `--sin-alinear` la desactiva |
 | 5. Guardado | Guarda la nube y la misma transformación aplicada a la trayectoria | — |
 
@@ -81,25 +81,26 @@ Habitación grabada con el sensor vertical (`mapas/2026-11-12_1445_habitacion_ve
 ```text
 1. Reducción a celdas de 3 cm: 1.102.546 -> 350.797 puntos
 2. Puntos sueltos quitados: 11.446 (vecinos=10, sigma=2.0) -> quedan 339.351
-   plano horizontal a z =   1.96 m, inclinación  1.3°,  8.9 % de los puntos
-   plano horizontal a z =   1.86 m, inclinación  3.8°,  3.8 % de los puntos
-   plano horizontal a z =  -0.89 m, inclinación  1.9°,  4.7 % de los puntos
+   plano horizontal a z =   1.96 m, inclinación  2.0°,  8.9 % de los puntos
+   plano horizontal a z =   1.86 m, inclinación  2.5°,  3.8 % de los puntos
+   plano horizontal a z =  -0.89 m, inclinación  2.7°,  4.7 % de los puntos
    plano horizontal a z =   0.00 m, inclinación  0.6°,  3.4 % de los puntos
-   plano horizontal a z =   1.90 m, inclinación  1.9°,  2.9 % de los puntos
-3. Nivelación con el piso: inclinación corregida 1.9°; piso llevado a z = 0 (desplazamiento +0.88 m)
-   Refinamiento con la franja del piso (12.395 puntos): 0.35° adicionales
+   plano horizontal a z =   1.90 m, inclinación  2.0°,  2.9 % de los puntos
+3. Nivelación: orientación tomada del plano a z = 1.96 m (9 % de los puntos); inclinación corregida 2.0°; piso llevado a z = 0 (desplazamiento +0.87 m)
+   Control después de nivelar: piso 0.5°, techo 0.0°
 4. Alineación de paredes: giro de +40.0° alrededor del eje vertical
 5. Guardado .../mapa_limpio.pcd: 339.351 puntos, 5.4 MB
    trayectoria_limpia.csv: trayectoria con la misma transformación
-   Extensión útil (1 %-99 %): x 3.21 m, y 7.88 m, z -0.06 a 2.85 m
+   Extensión útil (1 %-99 %): x 3.20 m, y 7.88 m, z -0.06 a 2.85 m
 ```
 
 Cómo leerla:
 
 - Los planos a z ≈ 1,9 m son el **techo** (visto en partes); el de −0,89 m es el **piso**; el de
   0,00 m es la **mesa** donde se apoyó el sensor al empezar (el origen del mapa es la posición
-  inicial del sensor, por eso la mesa queda en 0 y el piso 0,88 m más abajo).
-- Se corrigieron 1,9° + 0,35° de inclinación y el piso quedó en z = 0.
+  inicial del sensor, por eso la mesa queda en 0 y el piso 0,87 m más abajo).
+- La horizontal se tomó del techo (el plano con más puntos) y se corrigieron 2,0°. El control
+  final da piso 0,5° y techo 0,0°: quedaron paralelos y nivelados.
 - Resultado: habitación de unos 3,2 × 7,9 m y 2,85 m de alto; el archivo pasó de 34 MB a 5,4 MB.
 
 ### 1.3 Archivos que genera (en la carpeta del mapa)
@@ -121,8 +122,8 @@ Con números (la inclinación de piso y techo tiene que ser de 1° o menos):
 
 ```text
   Planos principales (muestra de 40000 puntos):
-    plano horizontal a z =  2.80 m: inclinación  0.3° (11 % de los puntos)
-    plano horizontal a z =  0.00 m: inclinación  0.8° (4 % de los puntos)
+    plano horizontal a z =  2.81 m: inclinación  0.0° (11 % de los puntos)
+    plano horizontal a z =  0.01 m: inclinación  1.0° (4 % de los puntos)
     pared principal: girada 89.6° respecto del eje X en planta (equivale a  -0.4°; ...)
 ```
 
@@ -137,6 +138,11 @@ Visualmente (terminal del escritorio):
 
 El piso debe verse paralelo a la grilla de RViz y las paredes, paralelas a sus líneas.
 
+> **Por qué la horizontal se toma del plano con más puntos (cambio del 2026-11-17):** en un mapa de
+> una oficina, el piso se veía poco (3,5 % de los puntos, tapado por escritorios y sillas) y
+> nivelar con él dejaba el techo torcido 3–4°. El techo (10 % de los puntos, sin obstáculos) da una
+> horizontal mucho más confiable. Con el cambio, en ese mapa quedaron techo 0,0° y piso 1,3°.
+
 ### 1.5 ¿Sirve para cualquier mapa?
 
 Sí: para cualquier archivo `.pcd` con campos `x`, `y`, `z` (de Point-LIO o de otro SLAM), de
@@ -146,7 +152,7 @@ para nivelar. Si no se ve (por ejemplo, grabación con el sensor horizontal apoy
 el script lo detecta:
 
 ```text
-3. Nivelación: NO se hace. El plano más bajo (z = 0.42 m) tiene el 13 % de los puntos por debajo: no es el piso (¿el mapa no ve el piso?).
+3. Nivelación: NO se hace. El plano más bajo (z = 0.42 m) tiene el 11 % de los puntos por debajo: no es el piso (¿el mapa no ve el piso?).
    Probar con --referencia techo, o --sin-nivelar.
 ```
 
@@ -154,7 +160,8 @@ Opciones para esos casos:
 
 | Opción | Efecto |
 |---|---|
-| `--referencia techo` | Nivela usando el techo (el plano horizontal más alto). No mueve la altura (z = 0 queda donde estaba el sensor) |
+| `--referencia techo` | No usa el piso: nivela sin mover la altura (z = 0 queda donde estaba el sensor). Para mapas que no ven el piso |
+| `--orientacion piso` o `techo` | Fuerza qué plano define la horizontal (por defecto, `auto`: el horizontal con más puntos) |
 | `--sin-nivelar` | No nivela |
 | `--sin-alinear` | No gira el mapa en planta |
 | `--voxel 0.05` | Celdas más grandes: archivo más liviano, menos detalle |

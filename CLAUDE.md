@@ -197,8 +197,9 @@ Fuentes: manual oficial del L2 (v1.1), manual de Unilidar 2 (v1.0), código de l
   `trayectoria.csv`, `pointlio.log`). Flujo: `scripts/grabacion/grabar_lidar.sh` →
   `scripts/grabacion/revisar_grabacion.py` → `scripts/mapas/procesar_grabacion.sh` →
   `scripts/mapas/ver_mapa.sh` / `analizar_mapa.py` (aceptan la carpeta del mapa).
-- **Productos de la etapa 3 (2026-11-13):** `scripts/mapas/limpiar_mapa.py` (nivela con el piso,
-  alinea paredes, reduce densidad; universal si se ve el piso, si no `--referencia techo`) y
+- **Productos de la etapa 3 (2026-11-13):** `scripts/mapas/limpiar_mapa.py` (desde el 2026-11-17 toma
+  la horizontal del plano horizontal con más puntos —en general el techo— y lleva el piso a z = 0;
+  control final de piso y techo; alinea paredes, reduce densidad; si no ve el piso, `--referencia techo`) y
   `generar_mapa_2d.py` (franja 0,10–1,80 m, 5 cm, `free_thresh: 0.196`); verificación con
   `ver_mapa_2d.sh` y `verificar_mapa_2d.py`. Paso 07. Gazebo: pendiente (opcional).
 - **Decisión del usuario (2026-11-13):** la Jetson (etapa 4) se documenta **junto con la etapa 5**
