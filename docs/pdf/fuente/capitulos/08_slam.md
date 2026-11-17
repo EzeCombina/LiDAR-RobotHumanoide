@@ -151,3 +151,40 @@ La **extensión útil** son las medidas aproximadas del lugar. La **inclinación
 horizontales (piso y techo) indica si el mapa quedó nivelado: tiene que ser de 1 a 2° como máximo.
 Si es mayor, la causa más común es haber arrancado con el sensor en movimiento. El capítulo 10
 explica cómo nivelar el mapa.
+
+## 8.6 Mapa en tiempo real
+
+Point-LIO también puede trabajar **en vivo**, con los datos que llegan del sensor: el mapa se arma
+en pantalla mientras se recorre el lugar. Sirve para ver en el momento si el recorrido está saliendo
+bien (por ejemplo, si quedaron zonas sin cubrir).
+
+Con el sensor conectado, en dos terminales del escritorio:
+
+```bash
+# Terminal 1: driver (en tmux)
+tmux new -s lidar
+source /opt/ros/jazzy/setup.bash
+source ~/lidar_ws/unilidar_sdk2/unitree_lidar_ros2/install/setup.bash
+cd ~/Documentos/LiDAR-RobotHumanoide
+ros2 launch config/unitree_lidar_ros2/l2_driver.launch.py modo:=ethernet rviz:=false
+
+# Terminal 2: Point-LIO en vivo, con RViz para ver cómo se arma el mapa
+source /opt/ros/jazzy/setup.bash
+source ~/lidar_ws/point_lio_ws/install/setup.bash
+ros2 launch point_lio mapping_unilidar_l2.launch.py rviz:=true
+```
+
+- **Lanzar la terminal 2 con el sensor apoyado y quieto**, igual que al grabar (punto 8.2), y
+  recién después empezar a moverse.
+- En RViz se ven la nube ubicada en el mapa (marco `camera_init`) y el recorrido. Por defecto se
+  muestran solo los últimos 30 segundos de puntos: para ver el mapa completo, subir el
+  **Decay Time** de *CloudRegistered* (por ejemplo, a 9999).
+- Al terminar, **Ctrl+C en la terminal 2**: Point-LIO guarda el mapa en
+  `~/lidar_ws/point_lio_ws/src/point_lio_ros2/PCD/scans.pcd`. Como cada corrida lo sobrescribe,
+  copiarlo a una carpeta propia (punto 8.4) para después verlo, medirlo y procesarlo
+  (capítulo 10).
+
+!!! nota "En vivo o desde una grabación"
+    En vivo se ve el resultado en el momento, pero si algo sale mal no se puede repetir el
+    procesamiento. Conviene **grabar al mismo tiempo** (capítulo 7, en una tercera terminal): así se
+    puede volver a generar el mapa desde la grabación las veces que haga falta.

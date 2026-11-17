@@ -378,6 +378,51 @@ Para revisar el arranque de cualquier grabación **antes de procesarla**:
 quieto en los primeros 4 s. Después de procesarla, la inclinación del mapa se mide con
 `analizar_mapa.py` (punto 4.1).
 
+## 7. Mapa en tiempo real (SLAM en vivo)
+
+Point-LIO también funciona con los datos **en vivo** del sensor: el mapa se arma en pantalla
+mientras se recorre el lugar. Comandos probados por el usuario el 2026-11-17 (funcionaron
+correctamente):
+
+```bash
+# Terminal 1 — driver (en tmux, como siempre)
+tmux new -s lidar
+source /opt/ros/jazzy/setup.bash
+source ~/lidar_ws/unilidar_sdk2/unitree_lidar_ros2/install/setup.bash
+cd ~/Documentos/LiDAR-RobotHumanoide
+ros2 launch config/unitree_lidar_ros2/l2_driver.launch.py modo:=ethernet rviz:=false
+
+# Terminal 2 — Point-LIO en vivo, con RViz para ver cómo se arma el mapa (terminal del escritorio)
+source /opt/ros/jazzy/setup.bash
+source ~/lidar_ws/point_lio_ws/install/setup.bash
+ros2 launch point_lio mapping_unilidar_l2.launch.py rviz:=true
+```
+
+- **Lanzar la terminal 2 con el sensor apoyado y quieto** (Point-LIO mide la gravedad al empezar;
+  punto 6) y recién después moverse.
+- RViz usa la configuración de Point-LIO (`rviz_cfg/loam_livox.rviz`): marco fijo `camera_init`,
+  vistas *Odometry*, *Path* (recorrido), *CloudRegistered* (nube ubicada en el mapa),
+  *CloudEffected* y *CloudMap*. *CloudRegistered* tiene **Decay Time de 30 s**: solo se ven los
+  puntos de los últimos 30 segundos. Para ver el mapa completo, subirlo (por ejemplo, a 9999). El
+  mapa que se guarda tiene todo, sin importar ese valor.
+- Al terminar: **Ctrl+C en la terminal 2**. Point-LIO guarda
+  `~/lidar_ws/point_lio_ws/src/point_lio_ros2/PCD/scans.pcd` (se sobrescribe en cada corrida).
+  Copiarlo a una carpeta propia:
+
+  ```bash
+  CARPETA=mapas/$(date +%Y-%m-%d_%H%M)_<nombre>_vivo
+  mkdir -p $CARPETA
+  cp ~/lidar_ws/point_lio_ws/src/point_lio_ros2/PCD/scans.pcd $CARPETA/mapa.pcd
+  ```
+
+  Después se usan las mismas herramientas: `ver_mapa.sh`, `analizar_mapa.py`, `limpiar_mapa.py`,
+  `generar_mapa_2d.py`. Para tener también la trayectoria, correr
+  `./scripts/mapas/registrar_trayectoria.py $CARPETA/trayectoria.csv` en otra terminal mientras
+  Point-LIO funciona y cortarlo con Ctrl+C antes que Point-LIO (A VERIFICAR en vivo).
+- **Recomendación:** grabar al mismo tiempo con `grabar_lidar.sh` (paso 04) en una tercera
+  terminal. En vivo no se puede repetir el procesamiento; con la grabación, sí (A VERIFICAR la carga
+  de la PC con las tres cosas a la vez).
+
 ## Verificación final
 
 - [ ] `colcon build` termina con `1 package finished`.

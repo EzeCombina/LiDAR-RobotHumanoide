@@ -8,7 +8,7 @@ El cable del sensor termina en el **módulo adaptador**:
 |---|---|
 | Entrada de alimentación (plug DC 3,5 × 1,35 mm) | Fuente de 12 V / 1 A |
 | RJ45 (Ethernet) | Placa Ethernet libre de la PC |
-| USB-C | PC, solo en modo serie (punto 5.7) |
+| USB-C | PC, si se usa la conexión por USB (punto 5.7) |
 
 Pasos:
 
@@ -197,17 +197,32 @@ no, la medición no es válida).
     funciona y los mapas obtenidos son buenos. Los datos están en `docs/mediciones/` para una
     consulta con Unitree.
 
-## 5.7 Conexión por USB (pendiente de probar)
+## 5.7 Ethernet o USB
 
-El L2 también puede enviar sus datos por un puerto serie, a través del USB-C del módulo. Hay un solo
-modo activo a la vez, guardado en el sensor; de fábrica viene en Ethernet.
+Todo lo que explica esta guía se puede hacer con el sensor conectado **por Ethernet o por USB**
+(el USB-C del módulo adaptador). El driver publica los mismos datos con las dos conexiones, así que
+RViz, la grabación, el SLAM y los mapas funcionan igual y con los mismos comandos.
 
-- Para pasar a USB hay que comunicarse primero por Ethernet y cambiar el modo con la herramienta
-  del proyecto `scripts/sensor/build/cambiar_modo_lidar serie`. Después, apagar y prender el sensor.
-  Para volver: `cambiar_modo_lidar ethernet` (conectado por USB).
-- El driver se lanza con `modo:=usb` (capítulo 6), que usa el modo de trabajo 8. Con el `launch`
-  original de Unitree, usar USB sin cambiar también el modo de trabajo devuelve el sensor a
-  Ethernet y se corta la conexión.
+El sensor usa **una sola conexión a la vez**. El modo queda guardado en el sensor (de fábrica,
+Ethernet) y se cambia con una orden enviada **por la conexión activa**, seguida de un apagado y
+encendido:
 
-Este procedimiento está preparado pero **todavía no se probó** con el sensor. Para usar el sensor
-en el robot, tiene que quedar en **modo Ethernet**.
+```bash
+# De Ethernet a USB (conectados: fuente + Ethernet + USB-C)
+./scripts/sensor/build/cambiar_modo_lidar serie
+# De USB a Ethernet (conectados: fuente + USB-C)
+./scripts/sensor/build/cambiar_modo_lidar ethernet
+# En ambos casos: desenchufar la fuente unos segundos y volver a enchufarla.
+```
+
+| Qué cambia | Ethernet | USB |
+|---|---|---|
+| Configurar la PC | Red del punto 5.2 | Nada (el usuario debe estar en el grupo `dialout`) |
+| Lanzar el driver (capítulo 6) | `modo:=ethernet` | `modo:=usb` |
+| Comprobar que llegan datos | `verificar_udp_lidar.py` | `estado_lidar serie 5` |
+
+!!! importante "Para el robot, Ethernet"
+    El robot R1 se conecta por Ethernet: antes de montar el sensor, dejarlo en ese modo. La
+    conexión por USB está documentada en detalle en `docs/pasos/02_conexion_usb.md`; el
+    reconocimiento del adaptador está verificado y el cambio de modo, pendiente de probar con el
+    sensor.

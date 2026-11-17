@@ -25,6 +25,11 @@ Resultado obtenido con una habitación recorrida con el sensor en la mano: mapa 
 3,2 × 7,9 m, con un **error de cierre de 10,5 cm** (diferencia entre el punto de llegada y el de
 partida, que eran el mismo) y piso nivelado a menos de 1°.
 
+!!! nota "Ethernet o USB"
+    Todo lo que se explica en esta guía se puede hacer con el sensor conectado por **Ethernet** o
+    por **USB**. Los ejemplos usan Ethernet, que es la conexión de fábrica y la que va a usar el
+    robot. Cómo pasar de una a otra y qué cambia: punto 5.7.
+
 ## 1.2 Para quién es
 
 Para estudiantes y docentes con conocimientos **básicos, medios o avanzados**. No
@@ -62,7 +67,7 @@ además, **cómo hacer lo mismo a mano**, para entender qué hace cada herramien
 | Implementación en una PC con Ubuntu, conexión por **Ethernet** | Completo y verificado |
 | Mapeo de una habitación con el sensor en la mano | Completo y verificado |
 | Mapa 3D limpio y mapa 2D para Nav2 | Completo y verificado |
-| Conexión por **USB** (modo serie del sensor) | Pendiente: herramientas listas, sin probar |
+| Conexión por **USB** (modo serie del sensor) | Documentada; cambio de modo pendiente de probar |
 | Implementación en la **Jetson** del robot R1 | Próximo documento |
 | Navegación autónoma, mapa en tiempo real, simulación en Gazebo | Próximo documento |
 

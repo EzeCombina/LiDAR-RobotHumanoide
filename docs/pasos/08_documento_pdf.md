@@ -35,7 +35,7 @@ cd ~/Documentos/LiDAR-RobotHumanoide
   capítulo: 02_conceptos.md  (2. Conceptos básicos)
   ...
   capítulo: 15_anexo_d_referencias.md  (Anexo D. Referencias)
-PDF generado: .../docs/pdf/salida/Guia_LiDAR_L2_v0.1.0.pdf (0.7 MB, WeasyPrint 61.1)
+PDF generado: .../docs/pdf/salida/Guia_LiDAR_L2_v0.1.1.pdf (0.8 MB, WeasyPrint 61.1)
 ```
 
 Tarda unos segundos. Con `--html` guarda además el HTML intermedio
@@ -112,7 +112,10 @@ Revisar el PDF página por página (o convertirlo a imágenes con
 - [ ] No hay páginas casi vacías ni tablas o bloques de código cortados.
 - [ ] Las figuras y los recuadros se ven completos.
 
-Contenido de la versión 0.1.0: 40 páginas; capítulos 1 a 11 (objetivo de corto plazo:
+Versiones: 0.1.0 (2026-11-13) y 0.1.1 (2026-11-17: nota y sección 5.7 sobre Ethernet o USB). En
+`docs/pdf/salida/` queda solo la última; las anteriores están en el historial de git.
+
+Contenido de la versión 0.1.1: 40 páginas; capítulos 1 a 11 (objetivo de corto plazo:
 implementación en Ubuntu y mapa de una habitación) y anexos A a D. La Jetson del robot y la
 navegación van en un documento posterior.
 

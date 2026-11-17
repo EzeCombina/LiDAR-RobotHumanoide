@@ -615,3 +615,16 @@ Paso 02 (USB) para otro día.
   adaptador (verificado), cómo saber en qué modo está el sensor, cambio de modo en los dos
   sentidos (`cambiar_modo_lidar`, y alternativas con el driver y con el ejemplo `set_to_udp_mode`
   del SDK), uso por USB, diagnóstico y problemas frecuentes. Lo no probado, marcado A VERIFICAR.
+- (Continuación) PDF **v0.1.1**: nota en el resumen (todo lo de la guía se puede hacer por
+  Ethernet o por USB; los ejemplos usan Ethernet) y sección 5.7 reescrita y breve ("Ethernet o
+  USB": una conexión a la vez, cambio con `cambiar_modo_lidar` + apagar y prender, tabla de qué
+  cambia, Ethernet para el robot). Tabla de alcance actualizada. 40 páginas. Se quitó el
+  `v0.1.0.pdf` de `docs/pdf/salida/` (queda en el historial). Pendiente de revisión del usuario
+  antes de subir.
+- (Continuación) **Mapa en tiempo real:** el usuario probó en otra sesión (2026-11-17) el SLAM en
+  vivo: driver en tmux + `ros2 launch point_lio mapping_unilidar_l2.launch.py rviz:=true`; funcionó
+  correctamente. Se documentó en el paso 05 (sección 7) y en el PDF (sección 8.6): arrancar quieto,
+  Decay Time de 30 s de *CloudRegistered* en la configuración de RViz de Point-LIO, guardar con
+  Ctrl+C y copiar `scans.pcd`, y la recomendación de grabar al mismo tiempo (A VERIFICAR la carga).
+- PDF v0.1.1 final: 41 páginas (USB en 5.7 y mapa en tiempo real en 8.6). Revisado y aprobado por
+  el usuario.
