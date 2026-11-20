@@ -654,3 +654,75 @@ Paso 02 (USB) para otro día.
   puntos, control de piso y techo), salidas e imagen del mapa 2D regeneradas. Paso 07 actualizado
   con las cifras del 2D regenerado (origen −2,491 / −3,805; libres 14,1 %; verificado con Nav2).
   Revisado y aprobado por el usuario.
+
+## 2026-11-20 — Documento 2: el L2 en el robot y la navegación (objetivos 1 y 2)
+
+**Equipo:** sin sensor conectado y sin robot. Todo se probó con grabaciones reales y en Gazebo.
+
+- **Decisiones del usuario:** el siguiente documento es un **PDF separado**, con los objetivos al
+  centro: (1) pasarle al robot un mapa ya hecho para que lo reconozca y se mueva por él, y (2) usar
+  el LiDAR en tiempo real para esquivar obstáculos al moverse solo. Hay que **implementarlo y
+  probarlo** donde se pueda, y documentar todo paso a paso (instalación, configuración y
+  simulación). La etapa queda separada de la primera: `docs/robot/`, `scripts/navegacion/`,
+  `scripts/simulacion/`, `config/navegacion/`, `config/simulacion/`, `docs/pdf/fuente_robot/`.
+- **R01 (Jetson, sin validar):** el paso 09 pasó a `docs/robot/pasos/01_lidar_en_el_robot.md`.
+  Herramienta nueva `scripts/sensor/cambiar_ip_lidar` (compila y valida IPs; **no probada con el
+  sensor**). El panel del R1 tiene un solo RJ45: hace falta un switch para el sensor y la PC.
+  Montaje provisorio: sensor **invertido** y **adelantado 0,20 m** (derecho no ve nada por debajo
+  de su altura; invertido sobre la cabeza, el cuerpo le tapa el piso cercano).
+- **Instalación:** Nav2, Gazebo Harmonic y `ros_gz` ya estaban en la PC. Faltaba
+  `ros-jazzy-pointcloud-to-laserscan`: el asistente no pudo usar `sudo` (pide contraseña sin
+  terminal) y lo instaló el usuario (2.0.2-3noble.20261105.112224).
+- **Implementado:** `base_nivelada.py` (odometría Point-LIO → `odom -> base_footprint` nivelado),
+  `filtro_cuerpo.py`, `navegacion.launch.py` (modos localizacion / navegacion / obstaculos, con
+  sensor o grabación), `nav2_lidar.yaml` (desde `nav2_params.yaml` de Jazzy), evaluadores y
+  `probar_con_grabacion.sh`, `puente_cmd_vel_r1.py` (límites + watchdog), sala de prueba, generador
+  de mundos de Gazebo desde el mapa 2D, robot simplificado y `probar_navegacion_sim.py`.
+- **Objetivo 1 con datos reales (habitación, grabación del mapa):** error medio de AMCL 0,12 m
+  (98 % del tiempo bajo 0,2 m). Arrancando con una pose equivocada (0,5 m y 20°), se corrigió solo a
+  los 31 s y después se mantuvo bajo 0,2 m. **Oficina: falla** (AMCL diverge; mapa con 80 %
+  desconocido y recorrido de menos de 1 m²). Falta probar con una grabación nueva del mismo lugar.
+- **Objetivo 2 con datos reales:** `persona_caminando` frente a `sala_quieta`: grupo dinámico más
+  grande del costmap de 30–50 celdas contra 10–20 en los primeros 35 s; después, una zona grande
+  (hasta 500 celdas) que no se sabe qué fue (A CONFIRMAR con el usuario). Prueba cualitativa.
+- **Simulación (objetivos 1 y 2 juntos):** 4 de 4 corridas llegaron al destino (6,9–7,5 m, con una
+  puerta), AMCL con 5–6 cm de error medio, la caja que aparece en el camino se esquiva con un plan
+  nuevo a 0,66–0,70 m y el costmap la borra al quitarla.
+
+Problemas encontrados y cómo se resolvieron:
+
+1. Costmap suelto sin activar: `Waiting for service costmap/costmap/get_state...` → el nodo se
+   llama `/costmap`; se lo puso en el espacio de nombres `/obstaculos`.
+2. `Failed to activate costmap because transform from base_footprint to odom did not become
+   available before timeout` → con grabación, los gestores de ciclo de vida arrancan después de la
+   reproducción; `initial_transform_timeout: 60.0`. Con tiempo simulado, `bond_timeout: 0.0`
+   (`Server obstaculos/costmap was unable to be reached after 4.00s by bond`).
+3. Lo que pasaba por delante del sensor quedaba marcado para siempre en el costmap → la fuente de
+   la nube filtraba a 0,10–1,80 m y descartaba los rayos al techo; fuente 0–3 m, capa 0,10–1,80 m.
+   Además la grilla de vóxeles llegaba solo a 1,6 m (16 × 0,10): ahora 16 × 0,125 m.
+4. AMCL con incertidumbre creciente (error medio 0,26 m) → `alpha1..5` de 0,2 a 0,05 (0,12 m).
+5. Robot simulado sin moverse: `Failed to make progress` y `Robot to approach for 1.200000 seconds
+   away from collision` → el LiDAR veía el propio cuerpo; `filtro_cuerpo.py`.
+6. Robot detenido antes de la puerta de 1 m → radio 0,26 m, inflado 0,45 m, controlador a 10 Hz
+   (`Control loop missed its desired rate of 20.0000 Hz`).
+7. Robot a 0,18 m del destino sin terminar → la zona "stop" del `collision_monitor` frenaba también
+   el giro frente a la pared; pasó a `slowdown` 40 %, y el destino de la prueba mira hacia la sala.
+8. AMCL saltó a (0, 0) en la prueba (`Setting pose (30.288000): 0.000 0.000 0.000`) →
+   `BasicNavigator` publica esa pose si no se le da una; la prueba le pasa la pose de inicio.
+9. La odometría de Gazebo (`OdometryPublisher`) está en coordenadas del mundo, no desde el inicio
+   (error de la prueba, corregido).
+10. `filtro_cuerpo.py` no publicaba nada con grabaciones (`"base_footprint" passed to lookupTransform
+    argument target_frame does not exist` en la depuración, y antes `Lookup would require
+    extrapolation into the future`) → esperar la transformada dentro del callback colgaba el nodo
+    con el reloj de la grabación; ahora no espera y usa la transformada más reciente si la exacta no
+    llegó. Mientras tanto, quedaron **dos lanzamientos corriendo a la vez** (los `pkill -f` del
+    asistente coincidían con su propia línea de comandos y fallaban): resultados de localización de
+    1,4 m de error. `probar_con_grabacion.sh` ahora se niega a correr si encuentra otro Point-LIO,
+    Gazebo o reproducción.
+11. El evaluador de localización no terminaba al acabar la grabación (el reloj simulado se detiene
+    y los temporizadores de ROS también) → el corte por inactividad usa el reloj de la PC (60 s:
+    en la oficina el sensor estuvo quieto 33 s y AMCL solo publica con movimiento).
+
+Pendiente: probar con el sensor `cambiar_ip_lidar` (R01, 2.3) y la localización con una grabación
+nueva de la habitación; confirmar qué pasó después de los 35 s en `persona_caminando`; todo lo del
+robot (R01, R06).

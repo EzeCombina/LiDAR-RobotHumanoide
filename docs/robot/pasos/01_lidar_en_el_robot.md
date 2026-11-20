@@ -230,6 +230,22 @@ nmap -sn 192.168.123.0/24       # equipos presentes: comprobar que .62 está lib
 `nmcli` crea el perfil `r1` en la PC (no toca el robot). Para quitarlo:
 `sudo nmcli connection delete r1`. Anotar en `docs/versiones.md` la lista de IPs encontradas.
 
+### 3.4 Montaje y orientación del sensor (A VERIFICAR)
+
+El L2 ve una **semiesfera hacia su cúpula** (360° × 90°). Eso define dónde montarlo:
+
+| Montaje | Ve | Sirve para |
+|---|---|---|
+| Derecho (cúpula arriba) sobre la cabeza | Paredes y techo, **nada por debajo de su altura** | Mapear; **no** para esquivar obstáculos bajos |
+| Invertido (cúpula abajo) sobre la cabeza | Piso y obstáculos alrededor, pero el **propio cuerpo** le tapa el piso cercano | Parcial |
+| **Invertido y adelantado** (0,20 m por delante del torso) | Piso y obstáculos delante y a los costados; detrás, el cuerpo tapa | **Navegar** (propuesta provisoria) |
+
+La propuesta provisoria es la tercera, a unos 1,55 m del piso. Así está cargada en
+`config/navegacion/montaje_robot.yaml` (`montaje_xyz: [0.20, 0.0, 1.55]`, `montaje_rpy: [π, 0, 0]`)
+y así está el robot simulado (R05). Cuando exista el soporte, medir en el CAD la posición y la
+orientación reales y reemplazar esos valores. El mapeo (Fase 1) funciona con cualquier orientación,
+siempre que el sensor arranque quieto (guía anterior, capítulo 9).
+
 ## 4. Software en la Jetson
 
 ### 4.1 Primer acceso y relevamiento (solo lectura)
@@ -439,7 +455,24 @@ segundos; por Wi-Fi, minutos.
 sensor montado, el robot mide algo menos de 1,8 m (A VERIFICAR con el soporte). Si hace falta,
 ajustar con `--altura-max`.
 
-## 6. Alternativa sin tocar el robot: kit de grabación
+## 6. Navegar con el robot (objetivos 1 y 2, A VERIFICAR)
+
+Con el driver corriendo en la Jetson (5.1) y Nav2 instalado (R02; en la Jetson, dentro del
+contenedor Jazzy), los mismos comandos que se probaron con grabaciones (R03, R04) y en simulación
+(R05), con `montaje:=robot`:
+
+```bash
+# En la Jetson, con el robot PARADO Y QUIETO (Point-LIO mide la gravedad al arrancar)
+ros2 launch scripts/navegacion/navegacion.launch.py modo:=navegacion montaje:=robot \
+    mapa:=mapas/<carpeta> inicio:=<x>,<y>,<yaw> rviz:=false
+# En otra terminal: el puente hacia la marcha del robot (R06)
+./scripts/navegacion/puente_cmd_vel_r1.py --interfaz <interfaz con .164>
+```
+
+`inicio` es la pose del robot en el mapa al arrancar (o se marca después en RViz con *2D Pose
+Estimate*). La altura inicial sale del montaje. Procedimiento de seguridad y primeras pruebas: R06.
+
+## 7. Alternativa sin tocar el robot: kit de grabación
 
 Si no conviene instalar nada en la Jetson, un kit independiente (L2 + Raspberry Pi 5 + batería
 con salida de 12 V) que solo graba, sujeto al robot. La RPi 5 es `aarch64` como la Jetson: se usa
@@ -447,7 +480,7 @@ la misma librería del SDK, Ubuntu 24.04 + Jazzy nativo (igual que la guía) y l
 del sensor (`192.168.1.x`), sin pasar por la red del robot. **A VERIFICAR** (la RPi 5 no tiene
 disponibilidad asegurada).
 
-## 7. Lista de verificación para cuando llegue el robot
+## 8. Lista de verificación para cuando llegue el robot
 
 - [ ] Modelo de la Jetson, L4T/JetPack, Ubuntu, ROS instalado, Docker (sección 4.1).
 - [ ] Nombre de la interfaz con la `.164` y si hay una segunda interfaz o `wlan0`.
@@ -457,7 +490,7 @@ disponibilidad asegurada).
 - [ ] Destino del USB-C del panel.
 - [ ] Conector y polaridad del XT30 de 24 V; tensión de salida del conversor medida.
 - [ ] Switch funcionando con el sensor y la PC a la vez.
-- [ ] Puntos de montaje en el robot (diseño del soporte con los 4 M3 del sensor).
+- [ ] Puntos de montaje en el robot (diseño del soporte con los 4 M3 del sensor) y medición del montaje real para `montaje_robot.yaml` (3.4).
 - [ ] Driver compilado y `/unilidar/cloud` a ~10 Hz en la Jetson.
 - [ ] Una grabación corta, copiada a la PC y procesada con `procesar_grabacion.sh`.
 - [ ] Registrar todo en `docs/versiones.md` y en la bitácora, y quitar los "A VERIFICAR" de este

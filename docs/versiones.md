@@ -92,3 +92,23 @@ el futuro una versión nueva rompe algo.
 | `weasyprint` | 61.1-1 (instalado 2026-11-13) | Generar el PDF | 08 |
 | `python3-markdown` | 3.5.2-1 (instalado 2026-11-13) | Capítulos del PDF en Markdown | 08 |
 | `fonts-open-sans` | 1.11-2 | Tipografía del PDF | 08 |
+
+## Etapa del robot: navegación y simulación (docs/robot/)
+
+Paquetes que agrega el paso R02 (`docs/robot/pasos/02_instalacion_navegacion.md`), sobre lo
+anterior. Versiones de la PC del laboratorio (2026-11-20).
+
+| Paquete | Versión de referencia | Para qué | Paso |
+|---|---|---|---|
+| `ros-jazzy-navigation2` | 1.3.13-1noble.20260921.033624 | Nav2 completo (AMCL, costmaps, planificador, MPPI, collision_monitor, behaviors) | R02 |
+| `ros-jazzy-nav2-bringup` | 1.3.13-1noble.20261006.042503 | Parámetros de referencia `nav2_params.yaml` | R02 |
+| `ros-jazzy-nav2-simple-commander` | 1.3.13-1noble.20260921.030016 (con `navigation2`) | Prueba automática en la simulación | R05 |
+| `ros-jazzy-pointcloud-to-laserscan` | 2.0.2-3noble.20261105.112224 (instalado 2026-11-20) | Barrido 2D nivelado para AMCL | R02 |
+| `ros-jazzy-ros-gz-sim` | 1.0.24-1noble.20261006.035056 | Gazebo desde ROS 2 (`create`) | R02, R05 |
+| `ros-jazzy-ros-gz-bridge` | 1.0.24-1noble.20260920.234644 | Puente de tópicos Gazebo ↔ ROS 2 | R02, R05 |
+| `ros-jazzy-gz-sim-vendor` | 0.0.13-1noble.20260905.073557 (Gazebo Sim 8.15.0, Harmonic) | Simulador | R05 |
+| `python3-matplotlib` | 3.6.3-1ubuntu5 | Figura del recorrido de la prueba en simulación | R05 |
+
+> En la PC del laboratorio, Nav2 y Gazebo ya estaban instalados antes de esta etapa; solo se
+> instaló `ros-jazzy-pointcloud-to-laserscan` (2026-11-20). El meta-paquete `ros-jazzy-ros-gz`
+> (candidato 1.0.25) no está instalado: alcanzan `ros-gz-sim` y `ros-gz-bridge`.
