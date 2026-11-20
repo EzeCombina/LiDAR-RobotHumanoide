@@ -27,6 +27,10 @@
 # Cómo se usa (desde cualquier carpeta):
 #   ./scripts/documentacion/generar_pdf.py
 #   ./scripts/documentacion/generar_pdf.py --html     # guarda también el HTML intermedio
+#   ./scripts/documentacion/generar_pdf.py --fuente docs/pdf/fuente_robot   # otro documento
+#
+#   --fuente: carpeta con documento.yaml y capitulos/ de otro documento. Si no
+#   tiene estilos.css propio, usa el de docs/pdf/fuente/ (mismo diseño).
 # =============================================================================
 import argparse
 import html
@@ -110,10 +114,21 @@ def indice(titulos, encabezado):
 def main():
     p = argparse.ArgumentParser(description="Genera el PDF del proyecto.")
     p.add_argument("--html", action="store_true", help="guarda también el HTML intermedio")
+    p.add_argument("--fuente", default=FUENTE,
+                   help="carpeta con documento.yaml y capitulos/ (por defecto docs/pdf/fuente)")
     a = p.parse_args()
 
-    d = yaml.safe_load(open(os.path.join(FUENTE, "documento.yaml")))
-    carpeta_cap = os.path.join(FUENTE, "capitulos")
+    fuente = os.path.abspath(a.fuente)
+    if not os.path.isfile(os.path.join(fuente, "documento.yaml")):
+        print(f"ERROR: no existe {os.path.join(fuente, 'documento.yaml')}")
+        sys.exit(1)
+    # Estilos: los de la carpeta del documento o, si no tiene, los de la guía.
+    css = os.path.join(fuente, "estilos.css")
+    if not os.path.isfile(css):
+        css = os.path.join(FUENTE, "estilos.css")
+
+    d = yaml.safe_load(open(os.path.join(fuente, "documento.yaml")))
+    carpeta_cap = os.path.join(fuente, "capitulos")
     archivos = sorted(f for f in os.listdir(carpeta_cap) if f.endswith(".md"))
     if not archivos:
         print(f"ERROR: no hay capítulos en {carpeta_cap}")
@@ -133,7 +148,7 @@ def main():
 
     documento = f"""<!doctype html>
 <html lang="es"><head><meta charset="utf-8"/><title>{html.escape(d['titulo'])}</title>
-<link rel="stylesheet" href="file://{os.path.join(FUENTE, 'estilos.css')}"/></head>
+<link rel="stylesheet" href="file://{css}"/></head>
 <body>{portada(d)}{indice(todos, encabezado("Contenido"))}{''.join(secciones)}</body></html>"""
 
     os.makedirs(SALIDA, exist_ok=True)

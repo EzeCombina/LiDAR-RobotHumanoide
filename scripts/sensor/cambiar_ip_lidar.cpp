@@ -21,7 +21,7 @@
  *   (192.168.123.110 -> 192.168.123.120) escritas en el código.
  *
  *   ESTADO: compilado, NO probado con el sensor (A VERIFICAR, ver
- *   docs/pasos/09_jetson_robot.md).
+ *   docs/robot/pasos/01_lidar_en_el_robot.md).
  *
  * Cómo se usa:
  *   ./cambiar_ip_lidar <ip_sensor_nueva> <ip_destino_nueva> [ip_sensor_actual] [ip_pc_actual]

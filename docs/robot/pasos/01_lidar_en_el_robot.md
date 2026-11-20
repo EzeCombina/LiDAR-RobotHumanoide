@@ -1,4 +1,4 @@
-# Paso 09 — El LiDAR en el robot Unitree R1 (Jetson Orin NX)
+# Paso R01 — El LiDAR en el robot Unitree R1 (Jetson Orin NX)
 
 > **PENDIENTE DE VALIDAR CON EL ROBOT.** El robot todavía no está disponible (2026-11-20). Este
 > paso se escribió a partir de la referencia del R1
