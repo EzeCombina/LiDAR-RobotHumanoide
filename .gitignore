@@ -26,3 +26,8 @@ __pycache__/
 .vscode/
 .idea/
 mapas/**/*.log
+
+# Mundos de Gazebo de mapas reales: se regeneran con scripts/simulacion/generar_mundo_gazebo.py
+mapas/20*/gazebo/
+# Registros de lanzamiento de las pruebas (pueden ser grandes)
+resultados/**/launch.log

@@ -1,0 +1,88 @@
+# Configuración de RViz para obstáculos en vivo (costmap suelto).
+# La abre scripts/navegacion/navegacion.launch.py (rviz:=true).
+Panels:
+- Class: rviz_common/Displays
+  Name: Displays
+- Class: rviz_common/Views
+  Name: Views
+Visualization Manager:
+  Class: ''
+  Enabled: true
+  Name: root
+  Global Options:
+    Fixed Frame: odom
+    Background Color: 48; 48; 48
+    Frame Rate: 30
+  Displays:
+  - Class: rviz_default_plugins/Grid
+    Name: Grilla
+    Enabled: true
+    Cell Size: 1
+    Plane Cell Count: 20
+  - Class: rviz_default_plugins/Map
+    Name: Costmap (obstáculos)
+    Enabled: true
+    Topic:
+      Value: /obstaculos/costmap
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Transient Local
+    Color Scheme: costmap
+    Alpha: 0.7
+    Draw Behind: false
+    Update Topic:
+      Value: /obstaculos/costmap_updates
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Volatile
+  - Class: rviz_default_plugins/PointCloud2
+    Name: Nube del sensor
+    Enabled: true
+    Topic:
+      Value: /cloud_registered_body
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Best Effort
+      Durability Policy: Volatile
+    Style: Points
+    Size (Pixels): 2
+    Size (m): 0.02
+    Color Transformer: AxisColor
+    Axis: Z
+    Decay Time: 0
+    Position Transformer: XYZ
+  - Class: rviz_default_plugins/PointCloud2
+    Name: Vóxeles marcados
+    Enabled: true
+    Topic:
+      Value: /obstaculos/voxel_marked_cloud
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Best Effort
+      Durability Policy: Volatile
+    Style: Boxes
+    Size (m): 0.05
+    Color Transformer: FlatColor
+    Color: 255; 0; 0
+  - Class: rviz_default_plugins/TF
+    Name: Marcos (TF)
+    Enabled: true
+    Show Names: true
+    Marker Scale: 0.5
+  Tools:
+  - Class: rviz_default_plugins/MoveCamera
+  - Class: rviz_default_plugins/Select
+  - Class: rviz_default_plugins/Measure
+  Views:
+    Current:
+      Class: rviz_default_plugins/TopDownOrtho
+      Name: Arriba
+      Scale: 60
+      X: 0
+      Y: 0
+      Target Frame: base_footprint
+Window Geometry:
+  Width: 1400
+  Height: 900

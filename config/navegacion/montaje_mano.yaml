@@ -1,0 +1,20 @@
+# =============================================================================
+# montaje_mano.yaml — Sensor llevado en la mano (pruebas sin el robot)
+# -----------------------------------------------------------------------------
+# Parámetros de scripts/navegacion/base_nivelada.py. En la mano no hay "cuerpo":
+# base_link es el propio sensor y base_footprint es su proyección sobre el piso.
+# eje_adelante [1, 0, 1]: con el sensor horizontal (cúpula arriba) apunta hacia
+# +X del sensor; con el sensor vertical (cúpula hacia adelante) sigue siendo
+# horizontal. Así el yaw no salta al levantar el sensor.
+# La altura inicial la da el launch (argumento altura_inicial o el mapa).
+# =============================================================================
+base_nivelada:
+  ros__parameters:
+    montaje_xyz: [0.0, 0.0, 0.0]
+    montaje_rpy: [0.0, 0.0, 0.0]
+    eje_adelante: [1.0, 0.0, 1.0]
+# Filtro del cuerpo (scripts/navegacion/filtro_cuerpo.py): en la mano, quita los
+# puntos de la persona que lleva el sensor (caja de 0,5 x 0,5 m bajo el sensor).
+filtro_cuerpo:
+  ros__parameters:
+    caja: [-0.25, 0.25, -0.25, 0.25, -0.05, 2.00]

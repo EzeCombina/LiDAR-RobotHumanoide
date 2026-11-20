@@ -1,0 +1,191 @@
+# Configuración de RViz para navegación (mapa, AMCL, costmaps, plan).
+# La abre scripts/navegacion/navegacion.launch.py (rviz:=true).
+Panels:
+- Class: rviz_common/Displays
+  Name: Displays
+- Class: rviz_common/Views
+  Name: Views
+Visualization Manager:
+  Class: ''
+  Enabled: true
+  Name: root
+  Global Options:
+    Fixed Frame: map
+    Background Color: 48; 48; 48
+    Frame Rate: 30
+  Displays:
+  - Class: rviz_default_plugins/Grid
+    Name: Grilla
+    Enabled: true
+    Cell Size: 1
+    Plane Cell Count: 20
+  - Class: rviz_default_plugins/Map
+    Name: Mapa 2D
+    Enabled: true
+    Topic:
+      Value: /map
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Transient Local
+    Color Scheme: map
+    Alpha: 0.7
+    Draw Behind: false
+    Update Topic:
+      Value: /map_updates
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Volatile
+  - Class: rviz_default_plugins/Map
+    Name: Costmap global
+    Enabled: true
+    Topic:
+      Value: /global_costmap/costmap
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Transient Local
+    Color Scheme: costmap
+    Alpha: 0.3
+    Draw Behind: false
+    Update Topic:
+      Value: /global_costmap/costmap_updates
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Volatile
+  - Class: rviz_default_plugins/Map
+    Name: Costmap local
+    Enabled: true
+    Topic:
+      Value: /local_costmap/costmap
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Transient Local
+    Color Scheme: costmap
+    Alpha: 0.5
+    Draw Behind: false
+    Update Topic:
+      Value: /local_costmap/costmap_updates
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Volatile
+  - Class: rviz_default_plugins/LaserScan
+    Name: Barrido (/scan)
+    Enabled: true
+    Topic:
+      Value: /scan
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Best Effort
+      Durability Policy: Volatile
+    Size (m): 0.05
+    Color Transformer: FlatColor
+    Color: 255; 0; 0
+    Style: Flat Squares
+  - Class: rviz_default_plugins/PointCloud2
+    Name: Nube del sensor
+    Enabled: true
+    Topic:
+      Value: /cloud_registered_body
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Best Effort
+      Durability Policy: Volatile
+    Style: Points
+    Size (Pixels): 2
+    Size (m): 0.02
+    Color Transformer: AxisColor
+    Axis: Z
+    Decay Time: 0
+    Position Transformer: XYZ
+  - Class: nav2_rviz_plugins/ParticleCloud
+    Name: Partículas AMCL
+    Enabled: true
+    Topic:
+      Value: /particle_cloud
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Best Effort
+      Durability Policy: Volatile
+    Color: 0; 180; 0
+    Arrow Length: 0.2
+  - Class: rviz_default_plugins/PoseWithCovariance
+    Name: Pose AMCL
+    Enabled: true
+    Topic:
+      Value: /amcl_pose
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Volatile
+    Shape: Arrow
+    Color: 255; 25; 0
+  - Class: rviz_default_plugins/Path
+    Name: Plan global
+    Enabled: true
+    Topic:
+      Value: /plan
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Volatile
+    Color: 25; 255; 0
+    Line Width: 0.05
+  - Class: rviz_default_plugins/Polygon
+    Name: Huella
+    Enabled: true
+    Topic:
+      Value: /local_costmap/published_footprint
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Volatile
+    Color: 0; 120; 255
+  - Class: rviz_default_plugins/Polygon
+    Name: Zona lenta
+    Enabled: true
+    Topic:
+      Value: /zona_lenta
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Volatile
+    Color: 255; 0; 255
+  - Class: rviz_default_plugins/TF
+    Name: Marcos (TF)
+    Enabled: true
+    Show Names: true
+    Marker Scale: 0.5
+  Tools:
+  - Class: rviz_default_plugins/MoveCamera
+  - Class: rviz_default_plugins/Select
+  - Class: rviz_default_plugins/Measure
+  - Class: rviz_default_plugins/SetInitialPose
+    Topic:
+      Value: /initialpose
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Volatile
+  - Class: rviz_default_plugins/SetGoal
+    Topic:
+      Value: /goal_pose
+      Depth: 5
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Volatile
+  Views:
+    Current:
+      Class: rviz_default_plugins/TopDownOrtho
+      Name: Arriba
+      Scale: 60
+      X: 0
+      Y: 0
+      Target Frame: base_footprint
+Window Geometry:
+  Width: 1400
+  Height: 900

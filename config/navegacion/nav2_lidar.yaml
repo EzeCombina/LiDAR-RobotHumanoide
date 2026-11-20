@@ -1,0 +1,449 @@
+# =============================================================================
+# nav2_lidar.yaml — Parámetros de Nav2 para el robot con el LiDAR L2
+# -----------------------------------------------------------------------------
+# Archivo original: /opt/ros/jazzy/share/nav2_bringup/params/nav2_params.yaml
+#                   (paquete ros-jazzy-nav2-bringup 1.3.13)
+#
+# Cambios respecto del original (el resto de los valores queda igual):
+#   1. Se dejan solo los servidores que se usan: amcl, map_server, bt_navigator,
+#      controller_server, planner_server, behavior_server, velocity_smoother,
+#      collision_monitor, los dos costmaps y "costmap" (costmap suelto para el
+#      modo obstaculos). Sin docking, route_server, smoother ni waypoints.
+#   2. Marco del robot: base_footprint en todos (el original mezcla base_link).
+#      base_footprint es nivelado y está sobre el piso (base_nivelada.py).
+#   3. AMCL: modelo de movimiento omnidireccional (el R1 puede caminar de
+#      costado), haz de hasta 20 m, actualiza cada 0,10 m / 0,15 rad y 600-3000
+#      partículas. Ruido de odometría alpha1..5 = 0,05 (el original, 0,2, es para
+#      odometría de ruedas; Point-LIO es mucho más exacta).
+#   4. Costmaps: la fuente de obstáculos es la NUBE 3D del L2 (PointCloud2), no
+#      un LaserScan. Franja de obstáculos 0,10-1,80 m sobre el piso, la misma del
+#      mapa 2D (generar_mapa_2d.py), fijada en la CAPA; la FUENTE acepta puntos de
+#      0 a 3 m para que los rayos hacia el techo borren los obstáculos que se van
+#      (si la fuente filtra a 1,80 m, lo que pasó por delante queda marcado para
+#      siempre: comprobado con la grabación persona_caminando, 2026-11-20). El tópico de la nube lo reemplaza el launch
+#      (/cloud_registered_body con el sensor, /lidar/points en la simulación).
+#   5. Robot: radio 0,26 m (A VERIFICAR con el R1: el modelo simulado mide
+#      0,25 x 0,40 m) e inflado 0,45 m con caída 4,0 (pasa por puertas de 1 m).
+#      Controlador a 10 Hz (con Gazebo en la misma PC no llegaba a 20 Hz).
+#   6. Velocidades bajas para un humanoide: 0,30 m/s hacia adelante, 0,10 m/s
+#      hacia atrás, 0,6 rad/s de giro (A VERIFICAR con el R1).
+#   7. Planificador: no atraviesa zonas desconocidas (allow_unknown: false).
+#   8. collision_monitor: la huella proyectada 1,2 s (detiene antes de chocar) y
+#      una zona delante del robot que baja la velocidad al 40 %, alimentadas por la
+#      nube; actúan aunque el planificador o el controlador fallen.
+#
+# Los valores marcados con "ROBOT" dependen del R1 real y se ajustan al probarlo.
+# use_sim_time, el mapa y la pose inicial los fija el launch
+# (scripts/navegacion/navegacion.launch.py).
+# =============================================================================
+
+amcl:
+  ros__parameters:
+    alpha1: 0.05
+    alpha2: 0.05
+    alpha3: 0.05
+    alpha4: 0.05
+    alpha5: 0.05
+    base_frame_id: "base_footprint"
+    beam_skip_distance: 0.5
+    beam_skip_error_threshold: 0.9
+    beam_skip_threshold: 0.3
+    do_beamskip: false
+    global_frame_id: "map"
+    lambda_short: 0.1
+    laser_likelihood_max_dist: 2.0
+    laser_max_range: 20.0
+    laser_min_range: 0.3
+    laser_model_type: "likelihood_field"
+    max_beams: 120
+    max_particles: 3000
+    min_particles: 600
+    odom_frame_id: "odom"
+    pf_err: 0.05
+    pf_z: 0.99
+    recovery_alpha_fast: 0.0
+    recovery_alpha_slow: 0.0
+    resample_interval: 1
+    robot_model_type: "nav2_amcl::OmniMotionModel"
+    save_pose_rate: 0.5
+    sigma_hit: 0.2
+    tf_broadcast: true
+    transform_tolerance: 1.0
+    update_min_a: 0.15
+    update_min_d: 0.10
+    z_hit: 0.5
+    z_max: 0.05
+    z_rand: 0.5
+    z_short: 0.05
+    scan_topic: scan
+    set_initial_pose: true
+    initial_pose:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      yaw: 0.0
+
+map_server:
+  ros__parameters:
+    yaml_filename: ""
+
+bt_navigator:
+  ros__parameters:
+    global_frame: map
+    robot_base_frame: base_footprint
+    odom_topic: /odom
+    bt_loop_duration: 10
+    default_server_timeout: 20
+    wait_for_service_timeout: 1000
+    action_server_result_timeout: 900.0
+    navigators: ["navigate_to_pose", "navigate_through_poses"]
+    navigate_to_pose:
+      plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
+    navigate_through_poses:
+      plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
+    error_code_names:
+      - compute_path_error_code
+      - follow_path_error_code
+
+controller_server:
+  ros__parameters:
+    controller_frequency: 10.0
+    costmap_update_timeout: 0.30
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.5
+    min_theta_velocity_threshold: 0.001
+    failure_tolerance: 0.3
+    odom_topic: /odom
+    progress_checker_plugins: ["progress_checker"]
+    goal_checker_plugins: ["general_goal_checker"]
+    controller_plugins: ["FollowPath"]
+    use_realtime_priority: false
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      required_movement_radius: 0.3
+      movement_time_allowance: 15.0
+    general_goal_checker:
+      stateful: True
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 0.25
+      yaw_goal_tolerance: 0.35
+    FollowPath:
+      plugin: "nav2_mppi_controller::MPPIController"
+      time_steps: 40
+      model_dt: 0.1          # = 1 / controller_frequency
+      batch_size: 1000
+      ax_max: 1.0
+      ax_min: -1.0
+      ay_max: 1.0
+      ay_min: -1.0
+      az_max: 1.5
+      vx_std: 0.2
+      vy_std: 0.2
+      wz_std: 0.4
+      vx_max: 0.30          # ROBOT
+      vx_min: -0.10         # ROBOT
+      vy_max: 0.10          # ROBOT
+      wz_max: 0.60          # ROBOT
+      iteration_count: 1
+      prune_distance: 1.7
+      transform_tolerance: 0.3
+      temperature: 0.3
+      gamma: 0.015
+      motion_model: "DiffDrive"
+      visualize: false
+      regenerate_noises: true
+      TrajectoryVisualizer:
+        trajectory_step: 5
+        time_step: 3
+      AckermannConstraints:
+        min_turning_r: 0.2
+      critics: ["ConstraintCritic", "CostCritic", "GoalCritic", "GoalAngleCritic",
+                "PathAlignCritic", "PathFollowCritic", "PathAngleCritic", "PreferForwardCritic"]
+      ConstraintCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 4.0
+      GoalCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 5.0
+        threshold_to_consider: 1.4
+      GoalAngleCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 3.0
+        threshold_to_consider: 0.5
+      PreferForwardCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 5.0
+        threshold_to_consider: 0.5
+      CostCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 3.81
+        near_collision_cost: 253
+        critical_cost: 300.0
+        consider_footprint: false
+        collision_cost: 1000000.0
+        near_goal_distance: 1.0
+        trajectory_point_step: 2
+      PathAlignCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 14.0
+        max_path_occupancy_ratio: 0.05
+        trajectory_point_step: 4
+        threshold_to_consider: 0.5
+        offset_from_furthest: 20
+        use_path_orientations: false
+      PathFollowCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 5.0
+        offset_from_furthest: 5
+        threshold_to_consider: 1.4
+      PathAngleCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 2.0
+        offset_from_furthest: 4
+        threshold_to_consider: 0.5
+        max_angle_to_furthest: 1.0
+        mode: 0
+
+# Nube de obstáculos: la misma definición para los tres costmaps. El launch
+# reemplaza "topic" (y el marco del sensor lo toma del mensaje).
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: odom
+      robot_base_frame: base_footprint
+      rolling_window: true
+      width: 5
+      height: 5
+      resolution: 0.05
+      robot_radius: 0.26            # ROBOT
+      transform_tolerance: 0.5
+      initial_transform_timeout: 60.0
+      plugins: ["voxel_layer", "inflation_layer"]
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 4.0
+        inflation_radius: 0.45
+      voxel_layer:
+        plugin: "nav2_costmap_2d::VoxelLayer"
+        enabled: True
+        publish_voxel_map: True
+        origin_z: 0.0
+        z_resolution: 0.125         # 16 vóxeles x 0,125 m = 2 m de alto
+        z_voxels: 16
+        max_obstacle_height: 1.80
+        min_obstacle_height: 0.10
+        mark_threshold: 0
+        observation_sources: nube
+        nube:
+          topic: /cloud_registered_body
+          data_type: "PointCloud2"
+          # La fuente acepta puntos hasta 3 m (techo) para que sus rayos BORREN
+          # lo que ya no está; la capa marca obstáculos solo entre 0,10 y 1,80 m.
+          min_obstacle_height: 0.0
+          max_obstacle_height: 3.0
+          clearing: True
+          marking: True
+          raytrace_max_range: 6.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 5.0
+          obstacle_min_range: 0.3
+          expected_update_rate: 0.0
+          observation_persistence: 0.0
+      always_send_full_costmap: True
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0
+      publish_frequency: 1.0
+      global_frame: map
+      robot_base_frame: base_footprint
+      robot_radius: 0.26            # ROBOT
+      resolution: 0.05
+      track_unknown_space: true
+      transform_tolerance: 0.5
+      initial_transform_timeout: 60.0
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        min_obstacle_height: 0.10
+        max_obstacle_height: 1.80
+        observation_sources: nube
+        nube:
+          topic: /cloud_registered_body
+          data_type: "PointCloud2"
+          # La fuente acepta puntos hasta 3 m (techo) para que sus rayos BORREN
+          # lo que ya no está; la capa marca obstáculos solo entre 0,10 y 1,80 m.
+          min_obstacle_height: 0.0
+          max_obstacle_height: 3.0
+          clearing: True
+          marking: True
+          raytrace_max_range: 6.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 5.0
+          obstacle_min_range: 0.3
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: True
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 4.0
+        inflation_radius: 0.45
+      always_send_full_costmap: True
+
+# Costmap suelto (modo "obstaculos", sin mapa): solo la nube en vivo alrededor
+# del sensor. Sirve para ver qué marcaría Nav2 como obstáculo. Nodo
+# /obstaculos/costmap; publica /obstaculos/costmap y /obstaculos/voxel_marked_cloud.
+obstaculos:
+  costmap:
+    ros__parameters:
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: odom
+      robot_base_frame: base_footprint
+      rolling_window: true
+      width: 8
+      height: 8
+      resolution: 0.05
+      robot_radius: 0.26
+      transform_tolerance: 0.5
+      initial_transform_timeout: 60.0
+      plugins: ["voxel_layer", "inflation_layer"]
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 4.0
+        inflation_radius: 0.45
+      voxel_layer:
+        plugin: "nav2_costmap_2d::VoxelLayer"
+        enabled: True
+        publish_voxel_map: True
+        origin_z: 0.0
+        z_resolution: 0.125         # 16 vóxeles x 0,125 m = 2 m de alto
+        z_voxels: 16
+        max_obstacle_height: 1.80
+        min_obstacle_height: 0.10
+        mark_threshold: 0
+        observation_sources: nube
+        nube:
+          topic: /cloud_registered_body
+          data_type: "PointCloud2"
+          # La fuente acepta puntos hasta 3 m (techo) para que sus rayos BORREN
+          # lo que ya no está; la capa marca obstáculos solo entre 0,10 y 1,80 m.
+          min_obstacle_height: 0.0
+          max_obstacle_height: 3.0
+          clearing: True
+          marking: True
+          raytrace_max_range: 6.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 5.0
+          obstacle_min_range: 0.3
+      always_send_full_costmap: True
+
+planner_server:
+  ros__parameters:
+    expected_planner_frequency: 20.0
+    planner_plugins: ["GridBased"]
+    costmap_update_timeout: 1.0
+    GridBased:
+      plugin: "nav2_navfn_planner::NavfnPlanner"
+      tolerance: 0.3
+      use_astar: false
+      allow_unknown: false
+
+behavior_server:
+  ros__parameters:
+    local_costmap_topic: local_costmap/costmap_raw
+    global_costmap_topic: global_costmap/costmap_raw
+    local_footprint_topic: local_costmap/published_footprint
+    global_footprint_topic: global_costmap/published_footprint
+    cycle_frequency: 10.0
+    behavior_plugins: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait"]
+    spin:
+      plugin: "nav2_behaviors::Spin"
+    backup:
+      plugin: "nav2_behaviors::BackUp"
+    drive_on_heading:
+      plugin: "nav2_behaviors::DriveOnHeading"
+    wait:
+      plugin: "nav2_behaviors::Wait"
+    assisted_teleop:
+      plugin: "nav2_behaviors::AssistedTeleop"
+    local_frame: odom
+    global_frame: map
+    robot_base_frame: base_footprint
+    transform_tolerance: 0.3
+    simulate_ahead_time: 2.0
+    max_rotational_vel: 0.6         # ROBOT
+    min_rotational_vel: 0.2
+    rotational_acc_lim: 1.5
+
+velocity_smoother:
+  ros__parameters:
+    smoothing_frequency: 20.0
+    stamp_smoothed_velocity_with_smoothing_time: False
+    scale_velocities: False
+    feedback: "OPEN_LOOP"
+    max_velocity: [0.30, 0.10, 0.60]     # ROBOT
+    min_velocity: [-0.10, -0.10, -0.60]  # ROBOT
+    max_accel: [1.0, 1.0, 1.5]
+    max_decel: [-1.0, -1.0, -1.5]
+    odom_topic: "odom"
+    odom_duration: 0.1
+    deadband_velocity: [0.0, 0.0, 0.0]
+    velocity_timeout: 1.0
+
+collision_monitor:
+  ros__parameters:
+    base_frame_id: "base_footprint"
+    odom_frame_id: "odom"
+    cmd_vel_in_topic: "cmd_vel_smoothed"
+    cmd_vel_out_topic: "cmd_vel"
+    state_topic: "collision_monitor_state"
+    transform_tolerance: 0.5
+    source_timeout: 1.0
+    base_shift_correction: True
+    stop_pub_timeout: 2.0
+    polygons: ["ZonaLenta", "FootprintApproach"]
+    # Rectángulo delante del robot (de 0,30 a 0,55 m, 0,50 m de ancho): si hay 6
+    # puntos o más adentro, baja la velocidad al 40 %. Empieza fuera del cuerpo;
+    # los puntos del propio robot ya los quita filtro_cuerpo.py.
+    # NO se usa "stop": una zona de parada fija frena también los GIROS, y el robot
+    # queda trabado mirando una pared (comprobado en la simulación, 2026-11-20).
+    ZonaLenta:
+      type: "polygon"
+      points: "[[0.55, 0.25], [0.55, -0.25], [0.30, -0.25], [0.30, 0.25]]"   # ROBOT
+      action_type: "slowdown"
+      slowdown_ratio: 0.4
+      min_points: 6
+      visualize: True
+      polygon_pub_topic: "zona_lenta"
+      enabled: True
+    # Huella del robot proyectada 1,2 s hacia adelante con la velocidad pedida:
+    # si chocaría, reduce la velocidad para detenerse antes (parada de seguridad).
+    FootprintApproach:
+      type: "polygon"
+      action_type: "approach"
+      footprint_topic: "/local_costmap/published_footprint"
+      time_before_collision: 1.2
+      simulation_time_step: 0.1
+      min_points: 6
+      visualize: False
+      enabled: True
+    observation_sources: ["nube"]
+    nube:
+      type: "pointcloud"
+      topic: /cloud_registered_body
+      min_height: 0.10
+      max_height: 1.80
+      enabled: True

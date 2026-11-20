@@ -1,0 +1,27 @@
+# =============================================================================
+# montaje_robot.yaml — Sensor montado en el robot R1 (A VERIFICAR: valores provisorios)
+# -----------------------------------------------------------------------------
+# Parámetros de scripts/navegacion/base_nivelada.py: posición y orientación de la
+# IMU del L2 en base_link (centro entre los pies, sobre el piso, +X adelante).
+# Salen del CAD del soporte. Valores PROVISORIOS hasta tener el soporte:
+#   - Sensor 0,20 m por delante del torso, a 1,55 m del piso (el R1 con el sensor mide
+#     algo menos de 1,8 m: A VERIFICAR).
+#   - Montado INVERTIDO (cúpula hacia abajo, roll = 180°): el L2 ve una
+#     semiesfera hacia su cúpula; invertido ve el piso y los obstáculos
+#     alrededor del robot, que es lo que necesita la navegación (ver el paso R01
+#     del diseño de navegación). Derecho (cúpula arriba) NO ve nada por debajo
+#     de su altura.
+# altura_inicial = montaje_xyz[2] (el robot arranca parado sobre el piso).
+# =============================================================================
+base_nivelada:
+  ros__parameters:
+    montaje_xyz: [0.20, 0.0, 1.55]
+    montaje_rpy: [3.141592653589793, 0.0, 0.0]
+    eje_adelante: [1.0, 0.0, 0.0]
+# Filtro del cuerpo (scripts/navegacion/filtro_cuerpo.py): caja que ocupa el
+# robot en base_footprint [x_min, x_max, y_min, y_max, z_min, z_max], en m. Los
+# puntos adentro son del propio robot y no llegan a Nav2. A VERIFICAR con el R1
+# (brazos abiertos o balanceándose pueden salir de la caja).
+filtro_cuerpo:
+  ros__parameters:
+    caja: [-0.20, 0.20, -0.28, 0.28, -0.05, 1.70]
