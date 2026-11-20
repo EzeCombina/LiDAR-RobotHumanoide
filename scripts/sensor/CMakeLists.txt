@@ -2,6 +2,7 @@
 # precompilada del SDK oficial (unilidar_sdk2):
 #   - cambiar_modo_lidar: cambia la interfaz de datos (Ethernet <-> serie/USB)
 #   - estado_lidar:       muestra el estado interno (motores, temperaturas, etc.)
+#   - cambiar_ip_lidar:   cambia la IP del sensor y la IP de destino de los datos
 #
 # Compilación (requiere el SDK clonado en ~/lidar_ws/unilidar_sdk2):
 #   cd scripts/sensor && mkdir -p build && cd build
@@ -28,7 +29,7 @@ endif()
 
 find_package(Threads REQUIRED)
 
-foreach(programa cambiar_modo_lidar estado_lidar)
+foreach(programa cambiar_modo_lidar estado_lidar cambiar_ip_lidar)
   add_executable(${programa} ${programa}.cpp)
   target_include_directories(${programa} PRIVATE "${UNILIDAR_SDK_DIR}/include")
   target_link_libraries(${programa} PRIVATE "${LIB_SDK}" Threads::Threads)
