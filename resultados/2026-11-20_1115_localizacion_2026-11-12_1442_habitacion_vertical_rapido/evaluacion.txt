@@ -1,0 +1,22 @@
+Escuchando /amcl_pose ... (Ctrl+C para terminar)
+  t=   0.0 s  x=  0.000  y=  0.000  σxy=0.000 m
+  t=   9.9 s  x=  0.283  y= -0.380  σxy=0.119 m
+  t=  14.3 s  x=  0.317  y=  0.467  σxy=0.151 m
+  t=  18.0 s  x=  0.124  y=  0.264  σxy=0.207 m
+  t=  20.8 s  x=  0.154  y=  0.547  σxy=0.203 m
+  t=  25.8 s  x= -0.174  y=  0.023  σxy=0.250 m
+  t=  30.4 s  x= -0.526  y= -0.838  σxy=0.301 m
+  t=  36.3 s  x= -0.336  y= -1.242  σxy=0.269 m
+  t=  42.0 s  x=  0.248  y= -0.995  σxy=0.229 m
+  t=  53.6 s  x=  0.031  y= -1.031  σxy=0.212 m
+  t=  56.3 s  x= -0.019  y= -0.415  σxy=0.241 m
+  t=  61.2 s  x=  0.031  y= -0.152  σxy=0.242 m
+  t=  65.9 s  x= -0.223  y=  0.126  σxy=0.329 m
+(sin poses nuevas hace 30 s: fin)
+
+Resumen (121 poses de AMCL en 65.9 s)
+  incertidumbre final de AMCL: σx=0.329 m  σy=0.277 m  σángulo=14.3°
+  referencia: mapas/2026-11-12_1445_habitacion_vertical_rapido/trayectoria_limpia.csv (trayectoria de Point-LIO en el mapa limpio)
+  error de posición: medio 0.121 m, mediana 0.113 m, máximo 0.217 m, final 0.175 m
+  primera vez bajo 0.2 m: a los 0.0 s; después de eso, 98 % del tiempo bajo 0.2 m (máximo 0.217 m)
+  detalle guardado en /home/eze/Documentos/LiDAR-RobotHumanoide/resultados/2026-11-20_1115_localizacion_2026-11-12_1442_habitacion_vertical_rapido/error.csv

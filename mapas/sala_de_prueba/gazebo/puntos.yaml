@@ -1,0 +1,16 @@
+# Puntos de la prueba automática (generar_mundo_gazebo.py). Coordenadas del mapa, en m.
+inicio:
+  x: 5.275
+  y: 3.375
+  yaw: -2.601
+destino:
+  x: 0.525
+  y: 0.525
+  yaw: 0.54
+obstaculo:
+  x: 3.075
+  y: 1.925
+  lado: 0.4
+  alto: 0.8
+recorrido_m: 7.95
+margen_m: 0.45

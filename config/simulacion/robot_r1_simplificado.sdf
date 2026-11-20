@@ -1,0 +1,116 @@
+<?xml version="1.0" ?>
+<!-- =============================================================================
+  robot_r1_simplificado.sdf — Robot simplificado con un LiDAR parecido al L2
+  ------------------------------------------------------------------------------
+  NO es un modelo del Unitree R1: es un bloque del tamaño aproximado del robot
+  (A VERIFICAR: 0,25 x 0,40 x 1,45 m) que se mueve con las mismas órdenes que
+  recibiría el R1 (velocidad hacia adelante, de costado y de giro, tópico
+  cmd_vel). Sirve para probar la navegación (Nav2) y la detección de obstáculos
+  sin el robot. La marcha del humanoide no se simula.
+
+  - Movimiento: plugin VelocityControl (aplica la velocidad pedida al cuerpo).
+  - Odometría: plugin OdometryPublisher, marcos odom -> base_footprint (como
+    base_nivelada.py con el robot real). En la simulación la odometría es exacta;
+    en el robot real la da Point-LIO.
+  - LiDAR: sensor gpu_lidar con la geometría del L2: 18 anillos de 0 a 90° hacia
+    la cúpula, 360°, 10 Hz, 0,5 a 30 m (0,5 m = "blind" de Point-LIO). Montado
+    INVERTIDO (cúpula hacia abajo) a 1,55 m de altura y 0,20 m por delante del
+    torso, igual que config/navegacion/montaje_robot.yaml (provisorio, A VERIFICAR
+    con el soporte). Publica la nube en /lidar/points, marco lidar_sim.
+  El origen del modelo es base_footprint: en el piso, en el centro del cuerpo.
+============================================================================== -->
+<sdf version="1.9">
+  <model name="r1">
+    <link name="base_footprint">
+      <!-- Masa baja para que no vuelque al frenar o chocar -->
+      <inertial>
+        <pose>0 0 0.25 0 0 0</pose>
+        <mass>40.0</mass>
+        <inertia><ixx>8.0</ixx><iyy>8.0</iyy><izz>2.0</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia>
+      </inertial>
+      <collision name="cuerpo">
+        <pose>0 0 0.735 0 0 0</pose>
+        <geometry><box><size>0.25 0.40 1.45</size></box></geometry>
+        <surface><friction><ode><mu>0.0</mu><mu2>0.0</mu2></ode></friction></surface>
+      </collision>
+      <visual name="cuerpo">
+        <pose>0 0 0.735 0 0 0</pose>
+        <geometry><box><size>0.25 0.40 1.45</size></box></geometry>
+        <material><ambient>0.15 0.5 0.3 1</ambient><diffuse>0.06 0.52 0.31 1</diffuse></material>
+      </visual>
+      <!-- Marca del frente -->
+      <visual name="frente">
+        <pose>0.13 0 1.30 0 0 0</pose>
+        <geometry><box><size>0.02 0.20 0.10</size></box></geometry>
+        <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+      </visual>
+      <!-- Soporte del sensor -->
+      <visual name="soporte">
+        <pose>0.165 0 1.50 0 0 0</pose>
+        <geometry><box><size>0.07 0.06 0.04</size></box></geometry>
+        <material><ambient>0.2 0.2 0.2 1</ambient><diffuse>0.2 0.2 0.2 1</diffuse></material>
+      </visual>
+      <!-- LiDAR: invertido (roll = 180°), 0,20 m adelante, a 1,55 m -->
+      <sensor name="lidar_l2" type="gpu_lidar">
+        <pose>0.20 0 1.55 3.14159265 0 0</pose>
+        <gz_frame_id>lidar_sim</gz_frame_id>
+        <topic>lidar</topic>
+        <update_rate>10</update_rate>
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>360</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.14159265</min_angle>
+              <max_angle>3.14159265</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>18</samples>
+              <resolution>1</resolution>
+              <min_angle>0.0</min_angle>
+              <max_angle>1.5708</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.5</min>
+            <max>30.0</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </lidar>
+      </sensor>
+    </link>
+    <link name="cabeza_lidar">
+      <pose>0.20 0 1.55 0 0 0</pose>
+      <inertial><mass>0.23</mass>
+        <inertia><ixx>0.0002</ixx><iyy>0.0002</iyy><izz>0.0002</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia>
+      </inertial>
+      <visual name="l2">
+        <geometry><cylinder><radius>0.035</radius><length>0.06</length></cylinder></geometry>
+        <material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material>
+      </visual>
+    </link>
+    <joint name="fijo_lidar" type="fixed">
+      <parent>base_footprint</parent>
+      <child>cabeza_lidar</child>
+    </joint>
+
+    <plugin filename="gz-sim-velocity-control-system" name="gz::sim::systems::VelocityControl">
+      <topic>/model/r1/cmd_vel</topic>
+    </plugin>
+    <plugin filename="gz-sim-odometry-publisher-system" name="gz::sim::systems::OdometryPublisher">
+      <odom_frame>odom</odom_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+      <odom_publish_frequency>50</odom_publish_frequency>
+      <dimensions>2</dimensions>
+      <odom_topic>/model/r1/odometry</odom_topic>
+      <tf_topic>/model/r1/tf</tf_topic>
+    </plugin>
+  </model>
+</sdf>

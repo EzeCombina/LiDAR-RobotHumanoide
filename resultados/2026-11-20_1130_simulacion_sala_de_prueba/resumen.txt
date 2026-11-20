@@ -1,0 +1,15 @@
+Prueba de navegación en simulación — 2026-11-20 11:30:50
+Mapa: mapas/sala_de_prueba
+Inicio: (5.275, 3.375)  Destino: (0.525, 0.525)
+Resultado: LLEGÓ en 26.5 s (reloj de la PC); recorrido real 6.90 m
+Distancia final al destino: 0.23 m (tolerancia de Nav2: 0,25 m)
+
+OBJETIVO 1 — Ubicarse en el mapa (AMCL frente a la pose real)
+  error de posición: medio 0.051 m, máximo 0.118 m, final 0.050 m
+  error de orientación: medio 2.3°, máximo 10.2°
+
+OBJETIVO 2 — Esquivar con el LiDAR en vivo
+  caja de 0.4 m puesta en (2.94, 2.94), sobre el plan
+  el plan nuevo pasa a 0.68 m del centro de la caja
+  distancia mínima robot-caja (centros): 0.68 m (choque si < 0.40 m: medio lado de la caja + medio ancho del robot)
+  costmap global en la huella de la caja (valor máximo): 100 con la caja -> 69 5 s después de quitarla (100 = obstáculo; menos de 99 = sin obstáculo, solo inflado)

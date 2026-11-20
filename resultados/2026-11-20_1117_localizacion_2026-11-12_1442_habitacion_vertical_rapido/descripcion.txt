@@ -1,0 +1,5 @@
+Prueba: localizacion
+Grabación: bags/2026-11-12_1442_habitacion_vertical_rapido
+Argumentos del launch: modo:=localizacion bag:=bags/2026-11-12_1442_habitacion_vertical_rapido mapa:=mapas/2026-11-12_1445_habitacion_vertical_rapido inicio:=0.40,-0.30,1.05 altura_inicial:=0.873
+Fecha: 2026-11-20 11:19:34
+Commit del proyecto: 7b00c01

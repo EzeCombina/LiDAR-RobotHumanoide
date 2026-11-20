@@ -1,0 +1,5 @@
+Prueba: obstaculos
+Grabación: bags/2026-11-12_1028_persona_caminando
+Argumentos del launch: modo:=obstaculos bag:=bags/2026-11-12_1028_persona_caminando altura_inicial:=0.05
+Fecha: 2026-11-20 11:21:46
+Commit del proyecto: 7b00c01

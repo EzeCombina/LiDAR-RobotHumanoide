@@ -1,0 +1,5 @@
+Prueba: localizacion
+Grabación: bags/2026-11-17_1014_Oficina_1
+Argumentos del launch: modo:=localizacion bag:=bags/2026-11-17_1014_Oficina_1 mapa:=mapas/2026-11-17_1019_Oficina_1 inicio:=mapa
+Fecha: 2026-11-20 11:29:30
+Commit del proyecto: 7b00c01
