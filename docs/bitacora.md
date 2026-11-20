@@ -726,3 +726,10 @@ Problemas encontrados y cómo se resolvieron:
 Pendiente: probar con el sensor `cambiar_ip_lidar` (R01, 2.3) y la localización con una grabación
 nueva de la habitación; confirmar qué pasó después de los 35 s en `persona_caminando`; todo lo del
 robot (R01, R06).
+- (Continuación) **PDF del documento 2 v0.1.0** (34 páginas):
+  `docs/pdf/salida/Guia_Navegacion_R1_LiDAR_L2_v0.1.0.pdf`, generado con
+  `generar_pdf.py --fuente docs/pdf/fuente_robot` (opción nueva; sin ella, la guía 1 sale con el
+  texto idéntico, comprobado con `pdftotext`). Revisión página por página: la tabla de la portada
+  con 8 filas se superponía con el bloque de la UTN (se dejó en 6) y los bloques de código dentro de
+  listas numeradas salían como texto corrido (se reescribieron como párrafos "Paso N."). Pendiente
+  de revisión del usuario.

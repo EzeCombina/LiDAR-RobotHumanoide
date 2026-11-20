@@ -41,6 +41,28 @@ PDF generado: .../docs/pdf/salida/Guia_LiDAR_L2_v0.1.2.pdf (0.8 MB, WeasyPrint 6
 Tarda unos segundos. Con `--html` guarda además el HTML intermedio
 (`docs/pdf/salida/documento_intermedio.html`), útil para revisar problemas de diseño.
 
+### 1.1 Otro documento con el mismo diseño (`--fuente`)
+
+Desde el 2026-11-20 el script genera también otros documentos. `--fuente` indica la carpeta con su
+`documento.yaml` y sus `capitulos/`; si esa carpeta no tiene `estilos.css`, usa el de
+`docs/pdf/fuente/`. Sin `--fuente`, genera esta guía como siempre (se comprobó que el texto del PDF
+sale idéntico).
+
+```bash
+./scripts/documentacion/generar_pdf.py --fuente docs/pdf/fuente_robot
+```
+
+```text
+PDF generado: .../docs/pdf/salida/Guia_Navegacion_R1_LiDAR_L2_v0.1.0.pdf (0.4 MB, WeasyPrint 61.1)
+```
+
+Es el documento de la etapa del robot (navegación), separado de esta guía.
+
+!!! importante "Bloques de código dentro de listas"
+    El Markdown del generador no admite bloques de código (tres comillas invertidas) dentro de una
+    lista numerada: salen como texto corrido. Escribir los pasos como párrafos ("**Paso 1.** …")
+    con el bloque de código debajo, sin sangría.
+
 ## 2. Cómo está armado
 
 | Archivo | Contenido |

@@ -1,0 +1,17 @@
+# Datos del documento PDF de la etapa del robot (los usa scripts/documentacion/generar_pdf.py).
+# Generar con: ./scripts/documentacion/generar_pdf.py --fuente docs/pdf/fuente_robot
+# Usa el diseño de docs/pdf/fuente/estilos.css (esta carpeta no tiene estilos propios).
+# Para una nueva versión: cambiar "version", "fecha" y "archivo_salida" y volver a generar.
+titulo: Navegación autónoma del robot Unitree R1 con el LiDAR L2
+titulo_corto: Navegación con el LiDAR L2
+descripcion: Mapa guardado, localización y obstáculos en tiempo real
+version: 0.1.0
+fecha: Noviembre de 2026
+archivo_salida: Guia_Navegacion_R1_LiDAR_L2_v0.1.0.pdf
+metadatos:
+  - [Proyecto, Programación del robot humanoide Unitree R1 EDU]
+  - [Equipo, Unitree 4D LiDAR L2 · Unitree R1 EDU · Ubuntu 24.04 + ROS 2 Jazzy]
+  - [Estado, Probado con grabaciones y en simulación · pendiente de validar con el robot]
+  - [Repositorio, github.com/EzeCombina/LiDAR-RobotHumanoide]
+  - [Autor, Ezequiel Combina]
+  - [Fecha, Noviembre de 2026]
